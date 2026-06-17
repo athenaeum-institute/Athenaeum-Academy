@@ -54,14 +54,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: #ffffff;
+  /* backdrop-filter: blur(24px) saturate(200%); (Removed for performance) */
+  /* -webkit-backdrop-filter: blur(24px) saturate(200%); (Removed for performance) */
   color: #1d1d1f;
   
   /* Apply borders to all except right side */
-  border-top: 1px solid rgba(255, 255, 255, 0.8);
-  border-left: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   border-right: none;
   
@@ -125,7 +125,7 @@
 /* #ustad-fab specific open state */
 #ustad-fab.open {
   background: rgba(220, 38, 38, 0.8);
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3), inset 0 0 20px #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(0);
 }
@@ -191,9 +191,9 @@
   max-width: calc(100vw - 24px);
   max-height: 620px;
   height: 620px;
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #ffffff;
+  /* backdrop-filter: blur(20px); (Removed for performance) */
+  /* -webkit-backdrop-filter: blur(20px); (Removed for performance) */
   border-radius: var(--ustad-radius);
   box-shadow: var(--ustad-shadow-lg);
   border: 1px solid var(--ustad-border);
@@ -541,7 +541,7 @@
   padding: 12px 14px;
   border-top: 1px solid var(--ustad-border);
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
 }
 
 #ustad-input-row {
@@ -668,8 +668,8 @@
   position: absolute;
   inset: 0;
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  /* backdrop-filter: blur(6px); (Removed for performance) */
+  /* -webkit-backdrop-filter: blur(6px); (Removed for performance) */
 }
 
 #ustad-quiz-card {
@@ -1029,13 +1029,13 @@
 
 .quiz-score-label {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #ffffff;
   font-weight: 600;
 }
 
 .quiz-encourage-msg {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.95);
+  color: #ffffff;
   margin-top: 10px;
   font-weight: 600;
 }
