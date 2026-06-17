@@ -358,7 +358,7 @@ Rules:
           <div class="ustad-ai-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
           <div class="ustad-header-info">
             <h4>Ustad AI</h4>
-            <p><span class="ustad-online-dot"></span> Online · Aapka Personal Teacher</p>
+            <p><span class="ustad-online-dot"></span> Online · Your Personal Teacher</p>
           </div>
           <div class="ustad-header-actions">
             <button class="ustad-header-btn" id="ustad-clear-btn" title="Clear chat">🗑️</button>
@@ -397,7 +397,7 @@ Rules:
           <div id="ustad-input-row">
             <textarea
               id="ustad-text-input"
-              placeholder="Koi bhi sawaal poochein... Ask anything 💬"
+              placeholder="Ask me anything..."
               rows="1"
               maxlength="1000"
             ></textarea>
