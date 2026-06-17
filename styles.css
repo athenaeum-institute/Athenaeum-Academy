@@ -1463,7 +1463,7 @@ body {
 .footer-grid {
   display: grid;
   grid-template-columns: 1.8fr 1fr 1fr 1fr;
-  gap: var(--sp-10);
+  gap: var(--sp-6);
   padding-block: var(--sp-16);
 }
 
@@ -1760,7 +1760,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--sp-10);
+  gap: var(--sp-6);
   margin-top: var(--sp-16);
   background: linear-gradient(135deg, var(--clr-primary-light), var(--clr-secondary-light));
   border-radius: var(--radius-xl);
@@ -1814,7 +1814,7 @@ body {
 .parent-grid {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-10);
+  gap: var(--sp-6);
 }
 
 /* Trust badge row */
@@ -1832,8 +1832,8 @@ body {
   background: var(--clr-white);
   border: 1.5px solid var(--clr-border);
   border-radius: var(--radius-full);
-  padding: 6px 16px;
-  font-size: 12px;
+  padding: 4px 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--clr-primary);
   box-shadow: var(--shadow-sm);
@@ -1842,7 +1842,7 @@ body {
 
 .trust-badge-item:hover {
   border-color: var(--clr-secondary);
-  box-shadow: 0 0 0 3px rgba(17, 202, 160, .1);
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.2); background: rgba(0, 210, 255, 0.05);
   transform: translateY(-2px);
 }
 
@@ -1855,14 +1855,14 @@ body {
 .parent-testimonials {
   display: grid;
   grid-template-columns: 1fr 1.2fr 1fr;
-  gap: var(--sp-6);
+  gap: 1rem;
   align-items: start;
 }
 
 .parent-card {
   background: var(--clr-white);
-  border-radius: var(--radius-xl);
-  padding: 20px;
+  border-radius: 16px;
+  padding: 16px;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--clr-surface-high);
   transition: opacity var(--transition), transform var(--transition), background-color var(--transition), border-color var(--transition), color var(--transition);
@@ -1875,16 +1875,16 @@ body {
 }
 
 .parent-card--featured {
-  background: var(--clr-primary);
+  background: linear-gradient(135deg, #0A0E27, #005088);
   color: #fff;
-  border-color: var(--clr-primary);
-  box-shadow: var(--shadow-xl);
-  transform: translateY(-8px);
+  border-color: transparent;
+  box-shadow: 0 10px 30px rgba(0, 80, 136, 0.4);
+  transform: translateY(-4px);
 }
 
 .parent-card--featured:hover {
   transform: translateY(-12px);
-  box-shadow: 0 28px 56px rgba(0, 80, 136, .30);
+  box-shadow: 0 15px 40px rgba(0, 210, 255, 0.3);
 }
 
 
@@ -1913,8 +1913,8 @@ body {
 }
 
 .parent-avatar {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-full);
   display: grid;
   place-items: center;
@@ -1951,9 +1951,9 @@ body {
 }
 
 .parent-quote {
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
   font-style: italic;
 }
 
@@ -2344,7 +2344,7 @@ body {
 .footer-grid {
   display: grid;
   grid-template-columns: 1.8fr 1fr 1fr 1fr;
-  gap: var(--sp-10);
+  gap: var(--sp-6);
   padding-block: var(--sp-16);
 }
 
