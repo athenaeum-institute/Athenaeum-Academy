@@ -5,9 +5,17 @@
 
 // ── Navbar: add "scrolled" class on scroll ──────────────────
 const navbar = document.getElementById('navbar');
+let navTicking = false;
+
 window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
-});
+  if (!navTicking) {
+    window.requestAnimationFrame(() => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+      navTicking = false;
+    });
+    navTicking = true;
+  }
+}, { passive: true });
 
 // ── Mobile hamburger ────────────────────────────────────────
 const hamburger    = document.getElementById('hamburger');
@@ -376,19 +384,25 @@ console.log('🎓 Athenaeum JS loaded successfully');
   const bar = document.createElement('div');
   bar.className = 'scroll-progress-bar';
   bar.id = 'scroll-progress-bar';
+  bar.style.transformOrigin = 'left'; // Ensure scaling from left
   
   container.appendChild(bar);
   navbar.appendChild(container);
 
   let ticking = false;
+  let scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+  // Recalculate layout metrics only on resize or layout shifts, not on scroll
+  window.addEventListener('resize', () => {
+    scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  }, { passive: true });
 
   window.addEventListener('scroll', () => {
     if (!ticking) {
       window.requestAnimationFrame(() => {
-        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
         
-        let scrolled = winScroll / height;
+        let scrolled = scrollHeight > 0 ? (winScroll / scrollHeight) : 0;
         if (scrolled > 1) scrolled = 1;
         if (scrolled < 0) scrolled = 0;
         
