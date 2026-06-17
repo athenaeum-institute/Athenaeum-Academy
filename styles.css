@@ -94,7 +94,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; Native scrolling replaced by Lenis */
 }
 
 body {
