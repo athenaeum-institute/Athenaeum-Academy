@@ -389,7 +389,7 @@
           
           const initial = fullName.charAt(0).toUpperCase();
           document.getElementById('success-avatar').innerText = initial;
-          document.getElementById('success-name').innerText = \`Welcome aboard, \${fullName}!\`;
+          document.getElementById('success-name').innerText = `Welcome aboard, ${fullName}!`;
           
           let dashboardUrl = 'dashboard-student.html';
           if (currentRole === 'Admin') dashboardUrl = 'admin.html';

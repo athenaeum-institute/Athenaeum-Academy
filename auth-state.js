@@ -291,7 +291,7 @@ async function showWelcomeMessage() {
   
   const dashboardUrl = redirectBasedOnRole(role);
 
-  const badgeText = planType === 'paid' ? '✨ Premium Member' : \`✨ Free Trial: \${trialStatus.daysLeft} days left\`;
+  const badgeText = planType === 'paid' ? '✨ Premium Member' : ✨ Free Trial: ${trialStatus.daysLeft} days left;
 
   // Build the modal
   const modal = document.createElement('div');
