@@ -367,8 +367,7 @@
           const userId = data.user.id;
           
           // Insert Profile manually to set trial limits
-          const trialEnd = new Date();
-          trialEnd.setDate(trialEnd.getDate() + 3);
+          const trialEnd = new Date(Date.now() + (3 * 24 * 60 * 60 * 1000)); // Exactly 72 hours
           
           await window.supabaseClient.from('profiles').upsert({
             id: userId,

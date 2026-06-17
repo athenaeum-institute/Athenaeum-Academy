@@ -66,7 +66,19 @@ async function isFirstLogin(userId) {
  */
 function checkTrialStatus(profile) {
   if (!profile || profile.plan_type !== 'trial') return { active: false, daysLeft: 0 };
-  const endDate = new Date(profile.trial_end_date);
+  
+  let endDate;
+  if (profile.trial_end_date) {
+    endDate = new Date(profile.trial_end_date);
+  } else if (profile.created_at) {
+    endDate = new Date(profile.created_at);
+    endDate.setTime(endDate.getTime() + (3 * 24 * 60 * 60 * 1000)); // Exactly 72 hours
+  } else {
+    // Fallback if neither exists
+    endDate = new Date();
+    endDate.setDate(endDate.getDate() + 3);
+  }
+  
   const now = new Date();
   const diffTime = endDate - now;
   const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -83,14 +95,27 @@ window.handleLogout = async function() {
       sessionStorage.removeItem(`welcome_shown_${user.id}`);
       sessionStorage.removeItem(`session_started_${user.id}`);
     }
+    
+    // Change button text to show progress
+    const logoutBtns = document.querySelectorAll("button[onclick*=\"handleLogout\"]");
+    logoutBtns.forEach(btn => {
+      btn.innerHTML = "<span class=\"material-symbols-outlined spinner\" style=\"animation: spin 1s linear infinite;\">sync</span> Logging out...";
+      btn.style.pointerEvents = "none";
+    });
+
     await window.supabaseClient.auth.signOut();
+    
+    // Hard clear storage
+    sessionStorage.clear();
+    localStorage.removeItem("supabase.auth.token");
+    localStorage.removeItem("welcome_shown");
     
     // Toast notification
     const toast = document.createElement('div');
     toast.style.position = 'fixed';
     toast.style.bottom = '20px';
     toast.style.right = '20px';
-    toast.style.background = '#333';
+    toast.style.background = '#25D366';
     toast.style.color = '#fff';
     toast.style.padding = '12px 24px';
     toast.style.borderRadius = '8px';
@@ -103,7 +128,8 @@ window.handleLogout = async function() {
     }, 1500);
     
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error("Error logging out:", error);
+    alert("Logout failed. Please try again.");
     window.location.href = 'index.html';
   }
 }
