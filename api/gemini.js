@@ -93,7 +93,7 @@ async function handleFallback(req, res) {
 
     // 3. Prepare OpenAI-compatible payload (works for OpenRouter, Groq, TogetherAI)
     const openAiPayload = {
-      model: 'meta-llama/llama-3-8b-instruct:free', // OpenRouter's excellent free model
+      model: 'openrouter/free', // Automatically routes to the best available free model
       messages: messages,
       temperature: geminiBody.generationConfig?.temperature || 0.7,
       max_tokens: geminiBody.generationConfig?.maxOutputTokens || 1024,
