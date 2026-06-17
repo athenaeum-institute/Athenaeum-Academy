@@ -16,11 +16,11 @@
   'use strict';
 
   /* ──────────────────────────────────────────────────────────
-     CONFIGURATION — Replace with your actual Gemini API key
+     CONFIGURATION — Vercel Serverless Endpoint
   ────────────────────────────────────────────────────────── */
-  const GEMINI_API_KEY = 'AIzaSyDummy_Replace_With_Your_Key'; // ← REPLACE THIS
-  const GEMINI_MODEL   = 'gemini-1.5-flash';
-  const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  // The API key is now securely stored in Vercel Environment Variables.
+  // We call our own secure backend instead of Google directly.
+  const GEMINI_ENDPOINT = `/api/gemini`;
 
   /* ──────────────────────────────────────────────────────────
      LIMITS
@@ -199,6 +199,7 @@ Rules:
 - Make questions appropriate for O-Level / Matric / FSc level
 - Make explanations educational and encouraging
 - Topic must be specifically about: ${topic}
+- STRICT LANGUAGE RULE: ALL text (questions, options, explanations, titles) MUST be in English ONLY. No Urdu or Hinglish.
 - Do not add any text before or after the JSON`;
   }
 
