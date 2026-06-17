@@ -8,14 +8,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Get current session
-  const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+  let { data: { session }, error } = await window.supabaseClient.auth.getSession();
+
+  // Handle OAuth redirect delay (sometimes getSession is faster than URL parsing)
+  if (!session && window.location.hash.includes('access_token')) {
+    await new Promise((resolve) => {
+      const { data: { subscription } } = window.supabaseClient.auth.onAuthStateChange((event, newSession) => {
+        if (event === 'SIGNED_IN' || newSession) {
+          session = newSession;
+          subscription.unsubscribe();
+          resolve();
+        }
+      });
+      // Fallback timeout just in case
+      setTimeout(() => resolve(), 2000);
+    });
+  }
 
   // If no session exists, redirect instantly
   if (!session || error) {
-    // Optional: Keep trial params if checking URL, but generally redirect to auth
+    if (window.location.hash.includes('error_description=')) {
+        alert("Google Login Error: Please check Supabase Redirect URLs configuration.");
+    }
     console.warn('Unauthorized access attempt. Redirecting to auth...');
     window.location.href = 'auth.html';
-  } // <-- Added missing closing brace here
+    return;
+  }
 
   // Session exists. Check user role
   const user = session.user;
