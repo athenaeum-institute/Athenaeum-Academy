@@ -87,7 +87,7 @@
               <span style="background:var(--clr-surface-high); padding:0 10px; position:relative; z-index:2; color: #64748B;">Or send an email</span>
             </div>
 
-            <form id="contact-form" action="mailto:support@athenaeumacademy.com" method="GET" enctype="text/plain" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <form id="contact-form" onsubmit="handleContactSubmit(event)" style="display: flex; flex-direction: column; gap: 1.5rem;">
               <div>
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--clr-text); font-size: 0.95rem;">Subject</label>
                 <input type="text" name="subject" placeholder="What is this regarding?" required style="width: 100%; padding: 0.8rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--clr-border); background: var(--clr-surface); color: var(--clr-text); font-family: inherit; font-size: 1rem; box-sizing: border-box;">
@@ -97,7 +97,31 @@
                 <textarea name="body" rows="5" placeholder="How can we help you?" required style="width: 100%; padding: 0.8rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--clr-border); background: var(--clr-surface); color: var(--clr-text); font-family: inherit; font-size: 1rem; resize: vertical; box-sizing: border-box;"></textarea>
               </div>
               <button type="submit" class="btn btn-outline" style="justify-content: center; padding: 1rem; font-size: 1.05rem;">Send Email</button>
-            </form>
+            
+          </form>
+          <script>
+            function handleContactSubmit(e) {
+              e.preventDefault();
+              const subject = document.getElementById("cf-subject").value;
+              let message = document.getElementById("cf-message").value;
+              
+              // If user is logged in, append their email
+              const sessionStr = localStorage.getItem("supabase.auth.token");
+              if (sessionStr) {
+                try {
+                  const session = JSON.parse(sessionStr);
+                  const userEmail = session.currentSession?.user?.email;
+                  if (userEmail) {
+                    message = message + "\n\n---\nSent by logged-in user: " + userEmail;
+                  }
+                } catch(err) {}
+              }
+
+              const mailtoLink = "mailto:support@athenaeumacademy.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(message);
+              window.location.href = mailtoLink;
+            }
+          </script>
+
           </div>
 
           <!-- Contact Info -->

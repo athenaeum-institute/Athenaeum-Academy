@@ -717,7 +717,7 @@
             <span style="background:var(--clr-surface); padding:0 10px; position:relative; z-index:2;">Or send an email</span>
           </div>
 
-          <form id="contact-form" action="mailto:support@athenaeumacademy.com" method="GET" enctype="text/plain">
+          <form id="contact-form" onsubmit="handleContactSubmit(event)">
             <div class="form-group">
               <label for="cf-subject">Subject</label>
               <input type="text" id="cf-subject" name="subject" placeholder="What is this regarding?" required />
@@ -730,6 +730,26 @@
               Send Email
             </button>
           </form>
+
+          <script>
+            function handleContactSubmit(e) {
+              e.preventDefault();
+              const subject = document.getElementById('cf-subject').value;
+              let message = document.getElementById('cf-message').value;
+              
+              // If user is logged in via Supabase, we can append their email to the message for clarity
+              const userEmail = localStorage.getItem('supabase.auth.token') 
+                ? JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession?.user?.email 
+                : null;
+                
+              if(userEmail) {
+                message = message + `\n\n---\nSent by logged-in user: ${userEmail}`;
+              }
+
+              const mailtoLink = `mailto:support@athenaeumacademy.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+              window.location.href = mailtoLink;
+            }
+          </script>
         </div>
       </div>
     </section>
