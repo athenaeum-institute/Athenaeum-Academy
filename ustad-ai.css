@@ -1263,10 +1263,22 @@
     right: 16px;
   }
 
-  #ustad-teaser-btn {
-    bottom: 16px;
-    right: 16px;
-    max-width: 220px;
+  #ustad-teaser-btn, #ustad-fab {
+    bottom: 90px;
+    right: 20px;
+    border-radius: 50px;
+    padding: 0 16px;
+    /* Reset the bite cutout */
+    -webkit-mask-image: none;
+    mask-image: none;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  #ustad-chat-panel {
+    right: 20px;
+    bottom: 160px;
+    width: calc(100vw - 40px);
+    height: 500px;
   }
 
   #ustad-quiz-modal {
