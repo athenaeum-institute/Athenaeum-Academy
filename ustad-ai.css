@@ -352,6 +352,7 @@
 #ustad-messages {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -898,6 +899,7 @@
   flex-direction: column;
   gap: 20px;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .quiz-question-block {
