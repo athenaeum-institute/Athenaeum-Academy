@@ -12,6 +12,7 @@ window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKe
     autoRefreshToken:  true,
     persistSession:    true,
     detectSessionInUrl: true,
+    storage: window.localStorage,
     storageKey: 'athenaeum-auth',
     experimental: {
       passkey: true

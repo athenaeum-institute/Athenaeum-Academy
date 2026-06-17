@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
   <script src="supabase-teacher.js"></script>
   <script src="announcements.js"></script>
   <script src="security.js"></script>
@@ -657,7 +658,7 @@
 
     async function logout() {
       await window.supabaseClient.auth.signOut();
-      window.location.href = 'auth.html';
+      window.location.href = 'index.html';
     }
 
     // Load Data

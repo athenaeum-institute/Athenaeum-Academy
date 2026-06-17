@@ -15,7 +15,24 @@
   <link rel="stylesheet" href="auth.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
   <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.supabaseClient) {
+        const user = await getCurrentUser();
+        if (user) {
+          const profile = await getUserProfile(user.id);
+          const role = profile?.role || 'Student';
+          let dashboardUrl = 'dashboard-student.html';
+          if (role === 'Admin') dashboardUrl = 'admin.html';
+          else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
+          else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
+          window.location.href = dashboardUrl;
+        }
+      }
+    });
+  </script>
 </head>
 <body>
 

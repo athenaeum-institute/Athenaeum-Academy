@@ -24,12 +24,12 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 -- Auto-create profile trigger
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger LANGUAGE plpgsql SECURITY INVOKER SET search_path = '' AS $$
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = 'public' AS $$
 BEGIN
   INSERT INTO public.profiles (id, full_name, role, plan_type)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(COALESCE(NEW.email, ''), '@', 1)),
     COALESCE(NEW.raw_user_meta_data->>'role', 'student'),
     'trial'
   );
