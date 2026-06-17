@@ -25,7 +25,7 @@
   /* ──────────────────────────────────────────────────────────
      LIMITS
   ────────────────────────────────────────────────────────── */
-  const FREE_TRIAL_QUESTIONS_PER_DAY = 5;
+  const FREE_TRIAL_QUESTIONS_PER_DAY = 999999;
   const FREE_TRIAL_QUIZZES_PER_DAY   = 2;
   const PAID_LIMIT                   = Infinity;
 
@@ -625,16 +625,7 @@ Rules:
   ────────────────────────────────────────────────────────── */
   function updateTrialBanner() {
     const banner = document.getElementById('ustad-trial-banner');
-    const remainEl = document.getElementById('ustad-q-remaining');
-    if (!banner || !remainEl) return;
-
-    if (!state.isPaid && state.isLoggedIn) {
-      banner.classList.remove('hidden');
-      const remaining = getRemainingQuestions();
-      remainEl.textContent = remaining;
-    } else {
-      banner.classList.add('hidden');
-    }
+    if (banner) banner.style.display = 'none'; // Hide banner since it's unlimited now
   }
 
   /* ──────────────────────────────────────────────────────────
