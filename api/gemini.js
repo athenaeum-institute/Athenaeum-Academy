@@ -1,7 +1,7 @@
 // api/gemini.js
 // Vercel Serverless Function to proxy Gemini API securely
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS configuration (allow frontend to call this endpoint)
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*'); // Or replace with your vercel URL
