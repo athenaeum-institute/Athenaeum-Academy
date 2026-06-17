@@ -17,7 +17,7 @@
   --clr-text-main: #0f172a;
   --clr-text-muted: #64748b;
   --sidebar-width: 260px;
-  --header-height: 70px;
+  --header-height: 60px;
   --radius-xl: 16px;
   --radius-lg: 12px;
   --radius-md: 8px;
@@ -41,7 +41,7 @@ body {
 /* ── Sidebar ───────────────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-width);
-  background: var(--clr-primary-dark);
+  background: #0A0E27;
   color: white;
   height: 100vh;
   position: fixed;
@@ -90,6 +90,14 @@ body {
 }
 
 .nav-item:hover, .nav-item.active {
+  color: white;
+  background: rgba(255,255,255,0.05);
+  border-left-color: var(--clr-secondary);
+}
+.nav-item:hover .material-symbols-outlined, .nav-item.active .material-symbols-outlined {
+  text-shadow: 0 0 12px rgba(0, 210, 255, 0.8);
+  color: var(--clr-secondary);
+
   color: white;
   background: rgba(255,255,255,0.05);
   border-left-color: var(--clr-secondary);
@@ -166,7 +174,7 @@ body {
 .mobile-toggle { display: none; }
 
 .dashboard-body {
-  padding: 60px 24px;
+  padding: 30px 24px;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
