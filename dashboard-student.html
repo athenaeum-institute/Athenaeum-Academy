@@ -391,15 +391,18 @@
         planBadge.className = 'badge badge-trial';
         planBadge.innerHTML = 'FREE TRIAL';
         
-        // Check if trial is expired
-        const now = new Date();
-        const trialEnd = profile.trial_end_date ? new Date(profile.trial_end_date) : new Date(now.getTime() - 1000);
-        if (now > trialEnd) {
+        // Check if trial is expired using the global robust function
+        const trialStatus = window.checkTrialStatus(profile);
+        if (!trialStatus.active) {
           const overlay = document.getElementById('trial-expired-overlay');
           document.getElementById('expired-name').innerText = `${profile.full_name?.split(' ')[0] || 'Student'}, you made great progress during your trial period!`;
           overlay.style.display = 'flex';
         } else {
           document.getElementById('trial-banner').style.display = 'flex';
+          const bannerText = document.getElementById('trial-banner').querySelector('h3');
+          if (bannerText) {
+            bannerText.innerHTML = `<span class="material-symbols-outlined">hourglass_empty</span> Free Trial Active (${trialStatus.daysLeft} days left)`;
+          }
         }
       }
     }
