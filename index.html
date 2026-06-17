@@ -423,15 +423,15 @@
 
         <!-- Course filter tabs -->
         <div class="course-tabs" id="course-tabs">
-          <button class="tab-btn active" id="filter-oa">Academics</button>
-          <button class="tab-btn" id="filter-skill" style="border-color:var(--clr-primary); color:var(--clr-primary);">Tech Skills & Bootcamps</button>
+          <button class="tab-btn active" id="tab-academics" onclick="filterCatalog(`academic`)">Academics</button>
+          <button class="tab-btn" id="tab-tech" onclick="filterCatalog(`tech`)" style="border-color:var(--clr-primary); color:var(--clr-primary);">Tech Skills & Bootcamps</button>
         </div>
 
         <!-- Cards grid -->
         <div class="courses-grid">
 
           <!-- Card 1 -->
-          <article class="course-card" id="course-card-1">
+          <article class="course-card" id="course-card-1" data-category="academic">
             <div class="course-thumb">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAhLHg64pwLVV8yaIMmFmOKWpzFsEaPTdPnkdGIick7vaGLVsyCm7lT3N31dSERzbEH_LW-75iNWgiLCf2472m6nKGW6izZQjtjILY59NK0w0vRh6I8e2H-3ON_BMoZCUoEzxPR0pb_pOLkSAHfc4lnNt3apVIL7_bNsR0e_Y3s-Ef4wuseHBP-HYRsEzBnc-nyX4azW05t730S46egrUwbwSn2zMoWhp0GEYRClI7lreMBg4z9pGZOOAucv-BN9FugORh9JIGWis"
@@ -462,7 +462,7 @@
           </article>
 
           <!-- Card 2 -->
-          <article class="course-card" id="course-card-2">
+          <article class="course-card" id="course-card-2" data-category="academic">
             <div class="course-thumb">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQLDTPXwkWB7YfSXWHTUtP7GyLSR2Va4AU-TuZmLUPc-dGy31jj_DkHdI2QAsyqGXN9LA5CCqpC0Gy0wd8E5iLKnUfHgr4TXaGalhNW6EkNoNUC9A5mp-TJ_-BvFrIpFc9OGrHgDOfqOqoWZ8OWBHi2ZBJWPyN_t_bBuqmFq91oGcCrGVxH7HD030RBTofs4BfawF22YjNIP4e7aS_qrQjapbsUnd7oWMSWoeEdO1O2yLD_ZwD7oWDqthgqzn9D4K2t3TRg8_z0E4"
@@ -492,7 +492,7 @@
           </article>
 
           <!-- Card 3 -->
-          <article class="course-card" id="course-card-3">
+          <article class="course-card" id="course-card-3" data-category="academic">
             <div class="course-thumb">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuADOmyQMRUv67kEVizDbtpxbOytz_Hg2ek4svWNOSw1HQnsF8CVXzhwlF3-dPDRuZSJ6HjMidKHCben8rLDCnL1RnaBcWeY9_USDhMhQ9XDKTmmCMgMMmyIqZXmbWujMCWgZO5F4idQ-CtHDUi-JDQobvW6iozwBiTFCKjBCwFv2BCr8Vyf0FTjkPTly5ctqbWMtcbs2PmYgcqQQkNpveBq-mTlSPsYXhDcvWTvtfkRk1C7gDQc91ATkCwp-lV2W-CEVT8LsRmBFdI"
@@ -523,7 +523,7 @@
           </article>
 
           <!-- Card 4 -->
-          <article class="course-card" id="course-card-4">
+          <article class="course-card" id="course-card-4" data-category="academic">
             <div class="course-thumb">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWvWbai5tAsnOuxB6ZzstE45h38glpROI-boGmmlts2-vnS6OsCZDw-gRO8C3JcOGXjyylOG--m5MWJI_IYJv63w-_B5PTaKEPIa_3bAQF2WT1qYSip9wlAp2mBGGOfRh2E13m2qS1TcbilOGEADq3Ge4Dmn2mlKEWefax1t-en4RPca-3WeiF21E-uUEA47_yJaFJYmGslnORGhrxLpzmBEpehnMbFs_WYHwM5nP-b6HvdH2_mhUqqb-PA-5OhKurI-Rp5EoA7uA"
@@ -553,7 +553,7 @@
           </article>
 
           <!-- Card 5 (Tech Skill) -->
-          <article class="course-card tech-card" id="course-card-5">
+          <article class="course-card tech-card" id="course-card-5" data-category="tech">
             <div class="course-thumb">
               <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Python code on screen" loading="lazy" />
               <span class="duration-badge" style="background:#00FFD1; color:#0f172a;">8 WEEKS</span>
@@ -577,9 +577,9 @@
           </article>
 
           <!-- Card 6 (Tech Skill) -->
-          <article class="course-card tech-card" id="course-card-6">
+          <article class="course-card tech-card" id="course-card-6" data-category="tech">
             <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1627398240411-b1e779a9ccb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Frontend web development" loading="lazy" />
+              <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Frontend web development" loading="lazy" />
               <span class="duration-badge" style="background:#00FFD1; color:#0f172a;">12 WEEKS</span>
               <span class="board-badge board-badge--tech" style="background:var(--clr-primary);color:#fff;">BOOTCAMP</span>
             </div>
@@ -1164,6 +1164,48 @@
           }
         }
       }
+    });
+  </script>
+
+
+  <!-- filtering logic -->
+  <script>
+    function filterCatalog(category) {
+      // Get all cards
+      const cards = document.querySelectorAll(".course-card");
+      const tabAca = document.getElementById("tab-academics");
+      const tabTech = document.getElementById("tab-tech");
+
+      // Update active tab styles
+      if (category === "academic") {
+        tabAca.classList.add("active");
+        tabTech.classList.remove("active");
+        tabAca.style.background = "var(--clr-primary)";
+        tabAca.style.color = "#fff";
+        tabTech.style.background = "transparent";
+        tabTech.style.color = "var(--clr-primary)";
+      } else {
+        tabTech.classList.add("active");
+        tabAca.classList.remove("active");
+        tabTech.style.background = "var(--clr-primary)";
+        tabTech.style.color = "#fff";
+        tabAca.style.background = "transparent";
+        tabAca.style.color = "var(--clr-primary)";
+      }
+
+      // Filter cards
+      cards.forEach(card => {
+        if (category === "all" || card.getAttribute("data-category") === category) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    // Initialize to academic tab on load
+    document.addEventListener("DOMContentLoaded", () => {
+      filterCatalog("academics");
     });
   </script>
 

@@ -1143,12 +1143,31 @@ body {
 }
 
 /* ── 13. COURSE CARDS ────────────────────────────────────── */
+
 .courses-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--sp-6);
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  scroll-snap-type: x mandatory;
   margin-bottom: var(--sp-12);
+  padding-bottom: 1rem;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
+
+.courses-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.courses-grid .course-card {
+  flex: 0 0 320px; /* Fixed width for better swiping */
+  scroll-snap-align: start;
+}
+
+
 
 .course-card {
   background: var(--clr-white);
@@ -2457,9 +2476,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .courses-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2577,9 +2594,7 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .courses-grid {
-    grid-template-columns: 1fr;
-  }
+  
 
   .stats-grid {
     grid-template-columns: 1fr 1fr;
