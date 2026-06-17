@@ -1154,12 +1154,22 @@ body {
   margin-bottom: var(--sp-12);
   padding-bottom: 1rem;
   scroll-behavior: smooth;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
 }
 
 .courses-grid::-webkit-scrollbar {
-  display: none;
+  height: 8px;
+}
+.courses-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.courses-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+.courses-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
 .courses-grid .course-card {
