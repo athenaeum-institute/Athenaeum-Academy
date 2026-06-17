@@ -239,31 +239,7 @@
 </head>
 <body>
 
-<!-- ═══════════ LOGIN SCREEN ═══════════ -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">🎓 Athenaeum</div>
-    <div class="login-sub">Admin Control Panel</div>
-    <div style="text-align:center; margin-bottom:1.5rem;">
-      <span class="login-badge">
-        <span class="material-symbols-outlined" style="font-size:.9rem">shield</span>
-        Admin Access Only
-      </span>
-    </div>
-    <div class="l-group">
-      <label>Admin Email</label>
-      <input type="email" class="l-input" id="admin-email" value="athenaeum.institute@gmail.com" placeholder="admin@email.com">
-    </div>
-    <div class="l-group">
-      <label>Password</label>
-      <input type="password" class="l-input" id="admin-password" value="Punjab1212@@@" placeholder="••••••••">
-    </div>
-    <button class="l-btn" onclick="adminLogin()" id="login-btn">
-      <span id="login-btn-text">Login to Admin Panel</span>
-    </button>
-    <div class="l-error" id="login-error"></div>
-  </div>
-</div>
+
 
 <!-- ═══════════ MAIN ADMIN APP ═══════════ -->
 <div id="admin-app">
@@ -893,9 +869,7 @@ document.addEventListener('keydown', (e) => {
 
 async function adminLogout() {
   await window.supabaseClient.auth.signOut();
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('admin-app').style.display = 'none';
-  showToast('Logged out successfully.', 'success');
+  window.location.href = "index.html";
 }
 
 // ── PANEL NAVIGATION ──
@@ -1463,14 +1437,17 @@ function showToast(msg, type = 'success') {
 // ── AUTO-DETECT SESSION ──
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await window.supabaseClient.auth.getSession();
-  if (session?.user?.email === ADMIN_EMAIL) {
-    document.getElementById('sidebar-email').textContent = session.user.email;
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-app').style.display = 'block';
-    loadDashboardStats();
-    loadStudents();
-    showToast('Auto-logged in as Admin 👋', 'success');
+  if (!session || session?.user?.email !== ADMIN_EMAIL) {
+    window.location.href = 'index.html';
+    return;
   }
+  document.getElementById('sidebar-email').textContent = session.user.email;
+  document.getElementById('admin-app').style.display = 'block';
+  loadDashboardStats();
+  loadStudents();
+  loadTeachers();
+  loadAnnouncements();
+  showToast('Auto-logged in as Admin 👋', 'success');
 });
 </script>
 </body>
