@@ -45,6 +45,8 @@
 /* ── Teaser (Logged-out State) ─────────────────────────────── */
 #ustad-teaser-btn, #ustad-fab {
   position: fixed;
+  transform: translateZ(0);
+  will-change: transform;
   bottom: 27px; /* Align vertically with wa-fab */
   right: 54px; /* Align right edge to center of wa-fab */
   z-index: 9998; /* Ensure it stays behind wa-fab */
@@ -357,8 +359,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  scroll-behavior: smooth;
-}
+  }
 
 #ustad-messages::-webkit-scrollbar { width: 4px; }
 #ustad-messages::-webkit-scrollbar-track { background: transparent; }
