@@ -3197,18 +3197,9 @@ body {
   color: var(--clr-primary);
 }
 
-.nav-link.has-dropdown {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
 
-.nav-link.has-dropdown::after {
-  content: "keyboard_arrow_down";
-  font-family: 'Material Symbols Outlined';
-  font-size: 18px;
-  font-weight: normal;
-}
+
+
 
 
 /* ── TECH SKILLS SECTION ─────────────────────────────── */
