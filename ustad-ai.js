@@ -351,7 +351,7 @@ Rules:
       <div id="ustad-chat-panel">
         <!-- Header -->
         <div id="ustad-chat-header">
-          <div class="ustad-ai-avatar">🎓</div>
+          <div class="ustad-ai-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
           <div class="ustad-header-info">
             <h4>Ustad AI</h4>
             <p><span class="ustad-online-dot"></span> Online · Aapka Personal Teacher</p>
@@ -379,7 +379,7 @@ Rules:
         <div id="ustad-messages">
           <!-- Welcome card injected by JS -->
           <div id="ustad-typing" class="">
-            <div class="ustad-msg-avatar">🎓</div>
+            <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
             <div class="ustad-typing-bubble">
               <div class="ustad-typing-dot"></div>
               <div class="ustad-typing-dot"></div>
@@ -411,7 +411,7 @@ Rules:
       </div>
 
       <button id="ustad-fab" title="Open Ustad AI">
-        <div class="teaser-icon">🎓</div>
+        <div class="teaser-icon"><img src="logo_transparent.png" alt="Athenaeum"></div>
         <div class="teaser-text">
           <strong>Ustad AI Personal Teacher</strong>
           <span>Welcome, <span id="ustad-user-name">Student</span>!</span>
@@ -542,7 +542,7 @@ Rules:
       <div style="font-size:24px; margin-bottom:10px;">🔒</div>
       <p style="color: var(--text, #f8fafc); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem;">
         Ustad AI is exclusively available for registered students!<br><br>
-        Start your free trial today — it's completely free! 🎓
+        Start your free trial today — it's completely free! <img src="logo_transparent.png" alt="Athenaeum" style="height:18px; vertical-align:middle;">
       </p>
       <div style="display:flex; flex-direction:column; gap:0.5rem;">
         <a href="auth.html?mode=register&ref=teaser" class="btn btn-primary" style="display:block; text-decoration:none; padding:0.5rem;">Start Free Trial</a>
@@ -568,7 +568,7 @@ Rules:
     const welcomeEl = document.createElement('div');
     welcomeEl.classList.add('ustad-welcome-card');
     welcomeEl.innerHTML = `
-      <div class="welcome-emoji">🎓</div>
+      <div class="welcome-emoji"><img src="logo_transparent.png" alt="Athenaeum" style="width:40px; height:40px; object-fit:contain;"></div>
       <h4>Hello, ${name}!</h4>
       <p>I am your <strong>Ustad AI</strong> — your personal teacher. Ask me anything, I am here to help! 😊</p>
       <div class="ustad-suggestions">
@@ -597,7 +597,7 @@ Rules:
 
     if (role === 'ai') {
       msgEl.innerHTML = `
-        <div class="ustad-msg-avatar">🎓</div>
+        <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
         <div>
           <div class="ustad-msg-bubble">${bubbleContent}</div>
           <div class="ustad-msg-time">${getTimeStr()}</div>
