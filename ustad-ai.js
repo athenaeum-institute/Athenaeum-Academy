@@ -715,9 +715,9 @@ Rules:
         <h4 style="margin-bottom: 0.5rem;">🔒 Daily Limit Reached!</h4>
         <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;">
           Your free trial allows ${FREE_TRIAL_QUESTIONS_PER_DAY} AI questions per day.<br><br>
-          Upgrade to Premium for unlimited access to Ustad AI, mock exams, and all lessons!
+          Purchase a course for unlimited access to Ustad AI, mock exams, and all lessons for that subject!
         </p>
-        <a href="pricing.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Upgrade to Premium ✨</a>
+        <a href="courses.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Browse Courses ✨</a>
         <button class="btn btn-ghost full-width" onclick="this.parentElement.remove()">Maybe Tomorrow</button>
       `;
     } else {
@@ -725,9 +725,9 @@ Rules:
         <h4 style="margin-bottom: 0.5rem;">🔒 Quiz Limit Reached!</h4>
         <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;">
           Your free trial allows ${FREE_TRIAL_QUIZZES_PER_DAY} quizzes per day.<br><br>
-          Upgrade to Premium for unlimited practice!
+          Purchase a course for unlimited practice!
         </p>
-        <a href="pricing.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Upgrade to Premium ✨</a>
+        <a href="courses.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Browse Courses ✨</a>
         <button class="btn btn-ghost full-width" onclick="this.parentElement.remove()">Maybe Tomorrow</button>
       `;
     }

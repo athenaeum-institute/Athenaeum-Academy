@@ -537,12 +537,10 @@
         `;
       } else {
         container.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-            <div>
-              <div class="badge badge-red" style="margin-bottom:0.5rem; display:inline-block">Free Trial</div>
-              <div style="font-size:0.9rem; color:var(--muted)">Limited access to exams & AI.</div>
-            </div>
-            <button class="btn btn-primary" onclick="window.location.href='pricing.html'">Upgrade Now</button>
+          <div style="background:rgba(210,153,34,0.1); border:1px solid rgba(210,153,34,0.3); padding:1rem; border-radius:8px;">
+            <div style="color:#d29922; font-weight:800; margin-bottom:0.5rem;">Free Trial Active</div>
+            <p style="font-size:0.9rem; margin-bottom:1rem;">Fatima's trial expires in 2 days. Purchase a course to avoid interruption.</p>
+            <button class="btn btn-primary" onclick="window.location.href='courses.html'">Browse Courses</button>
           </div>
         `;
       }

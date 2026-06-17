@@ -20,7 +20,7 @@
   <!-- ── Nav ─────────────────────────────────────────────── -->
   <nav class="page-nav">
     <a href="index.html" class="brand">🎓 Athenaeum Checkout</a>
-    <a href="pricing.html" style="color:rgba(255,255,255,.8); font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:.25rem;">
+    <a href="courses.html" style="color:rgba(255,255,255,.8); font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:.25rem;">
       <span class="material-symbols-outlined" style="font-size:1.1rem;">arrow_back</span> Cancel
     </a>
   </nav>
@@ -231,40 +231,48 @@
       <aside class="order-summary">
         <div class="order-header">
           <h3>Order Summary</h3>
-          <a href="pricing.html" class="order-edit">Change</a>
+          <a href="courses.html" class="order-edit">Change</a>
         </div>
         <div class="order-body">
 
           <div class="order-plan-card">
-            <div class="order-plan-icon">🎓</div>
+            <div class="order-plan-icon">📚</div>
             <div>
-              <div class="order-plan-name">
-                Scholar Plan <span class="order-plan-badge">Most Popular</span>
+              <div class="order-plan-name" id="course-name-disp">
+                O-Level Mathematics
               </div>
-              <div class="order-plan-desc">Monthly Subscription</div>
+              <div class="order-plan-desc">Full Course Access</div>
             </div>
           </div>
 
           <div class="order-features">
-            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Up to 3 Subjects</div>
-            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Unlimited Mock Exams</div>
-            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Live Classes</div>
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Unlimited Video Lessons</div>
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Chapter Quizzes & Past Papers</div>
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> 24/7 Ustad AI Tutor Access</div>
           </div>
 
-          <!-- Promo Input -->
-          <div class="promo-row">
-            <input type="text" class="promo-input" id="promo-code" placeholder="Gift or promo code">
-            <button class="promo-apply" onclick="applyPromo()">Apply</button>
+          <!-- Financial Aid Slider -->
+          <div class="promo-row" style="flex-direction:column; align-items:flex-start; gap:10px; background: rgba(0, 80, 136, 0.05); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(0, 80, 136, 0.2);">
+            <div style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem;">Need Financial Aid?</div>
+            <p style="font-size: 0.8rem; color: var(--clr-muted); line-height: 1.4; margin: 0;">We believe education should be accessible. Slide to choose a price you can comfortably afford right now.</p>
+            
+            <div style="width: 100%; margin-top: 10px;">
+              <input type="range" id="price-slider" min="500" max="2499" value="2499" step="100" style="width: 100%; cursor: pointer;" oninput="updateSliderPrice()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--clr-muted); margin-top: 5px; font-weight: 600;">
+                <span>Rs. 500 (Min)</span>
+                <span>Rs. 2,499</span>
+              </div>
+            </div>
           </div>
 
           <div class="order-line-items">
             <div class="order-line">
-              <span class="o-label">Subtotal</span>
+              <span class="o-label">Standard Price</span>
               <span class="o-val">Rs. 2,499</span>
             </div>
             <div class="order-line" id="discount-line" style="display:none;">
-              <span class="o-label">Discount (FINAID40)</span>
-              <span class="o-val discount">- Rs. 1,000</span>
+              <span class="o-label">Financial Aid Discount</span>
+              <span class="o-val discount" id="discount-val">- Rs. 0</span>
             </div>
             <div class="order-line">
               <span class="o-label">Tax (0%)</span>
@@ -276,7 +284,7 @@
             <span class="t-label">Total due today</span>
             <div style="text-align:right;">
               <span class="t-val" id="total-price">Rs. 2,499</span>
-              <div class="t-period" id="total-period">then Rs. 2,499/mo</div>
+              <div class="t-period" id="total-period">One-time payment</div>
             </div>
           </div>
 
@@ -300,7 +308,7 @@
       </div>
       <h2>Payment Successful!</h2>
       <p>
-        Welcome aboard, Fatima! Your Scholar Plan is now active. We've sent a receipt to <strong>fatima.anwar@student.academypro.com</strong>.
+        Welcome aboard! Your course <strong><span id="receipt-course-name">O-Level Mathematics</span></strong> is now active. We've sent a receipt to your email.
       </p>
 
       <div class="receipt-grid">
@@ -332,35 +340,16 @@
 </div>
   <script>
     let isTrialMode = false;
+    let basePrice = 2499;
+    let currentPrice = 2499;
+
     document.addEventListener("DOMContentLoaded", () => {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('mode') === 'trial') {
-        isTrialMode = true;
-        // Hide payment sections
-        const payCard = document.getElementById('pay-card');
-        const payLocal = document.getElementById('pay-local');
-        const payTabs = document.querySelector('.payment-tabs');
-        if(payCard) payCard.style.display = 'none';
-        if(payLocal) payLocal.style.display = 'none';
-        if(payTabs) payTabs.style.display = 'none';
-        
-        // Remove required constraints from hidden inputs
-        ['cc-num', 'cc-exp', 'cc-cvc', 'cc-name', 'local-tid'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.required = false;
-        });
-
-        // Update button text
-        const submitBtn = document.getElementById('pay-submit-btn');
-        if (submitBtn) {
-          submitBtn.innerHTML = '<span class="material-symbols-outlined">bolt</span> Activate Free Trial';
-        }
-
-        // Update Order Summary to reflect Trial mode
-        const totalPrice = document.getElementById('total-price');
-        const totalPeriod = document.getElementById('total-period');
-        if(totalPrice) totalPrice.textContent = 'Rs. 0 (Trial)';
-        if(totalPeriod) totalPeriod.textContent = 'then Rs. 2,499/mo after 3 days';
+      const courseNameParam = urlParams.get('course');
+      
+      if (courseNameParam) {
+        document.getElementById('course-name-disp').textContent = courseNameParam;
+        document.getElementById('receipt-course-name').textContent = courseNameParam;
       }
     });
 
@@ -462,24 +451,23 @@
       document.getElementById('card-name-disp').textContent = (val || 'YOUR NAME').toUpperCase();
     }
 
-    // ── Promo Code ──────────────────────────────────────────
-    let isDiscountApplied = false;
-
-    function applyPromo() {
-      const input = document.getElementById('promo-code');
-      const val = input.value.trim().toUpperCase();
-
-      if (val === 'FINAID40') {
-        isDiscountApplied = true;
-        document.getElementById('discount-line').style.display = 'flex';
-        document.getElementById('total-price').textContent = 'Rs. 1,499';
-        document.getElementById('total-period').textContent = 'then Rs. 1,499/mo';
-        document.getElementById('pay-submit-btn').innerHTML = '<span class="material-symbols-outlined">lock</span> Pay Rs. 1,499';
-        input.value = '';
-        input.placeholder = 'Code Applied!';
-        input.disabled = true;
+    // ── Price Slider ──────────────────────────────────────────
+    function updateSliderPrice() {
+      const slider = document.getElementById('price-slider');
+      currentPrice = parseInt(slider.value);
+      const discount = basePrice - currentPrice;
+      
+      const priceStr = 'Rs. ' + currentPrice.toLocaleString();
+      
+      document.getElementById('total-price').textContent = priceStr;
+      document.getElementById('pay-submit-btn').innerHTML = '<span class="material-symbols-outlined">lock</span> Pay ' + priceStr;
+      
+      const discountLine = document.getElementById('discount-line');
+      if (discount > 0) {
+        discountLine.style.display = 'flex';
+        document.getElementById('discount-val').textContent = '- Rs. ' + discount.toLocaleString();
       } else {
-        alert('Invalid promo code');
+        discountLine.style.display = 'none';
       }
     }
 
@@ -492,7 +480,7 @@
       document.body.style.cursor = 'wait';
 
       // Set receipt data
-      document.getElementById('receipt-amount').textContent = isDiscountApplied ? 'Rs. 1,499' : 'Rs. 2,499';
+      document.getElementById('receipt-amount').textContent = 'Rs. ' + currentPrice.toLocaleString();
       const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       document.getElementById('receipt-date').textContent = today;
 
@@ -508,11 +496,6 @@
         document.getElementById('receipt-tid').textContent = tid || ('tx_' + Math.floor(Math.random()*1000000));
       }
       document.getElementById('receipt-method').textContent = methodStr;
-
-      if (isTrialMode) {
-        document.getElementById('receipt-amount').textContent = 'Rs. 0 (Free Trial)';
-        document.getElementById('receipt-method').textContent = 'No Payment Required';
-      }
 
       // Simulate API call
       setTimeout(() => {
