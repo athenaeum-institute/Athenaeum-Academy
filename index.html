@@ -21,6 +21,9 @@
 
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="ustad-ai.css" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
 </head>
 
 <body>
@@ -1035,6 +1038,37 @@
     <path d="M19 12H5M12 19l-7-7 7-7" />
   </svg>
 </button>
+
+  <!-- Add Auth State Checker -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (window.supabaseClient) {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (session) {
+          const userRole = session.user.user_metadata?.role?.toLowerCase() || 'student';
+          let dashLink = 'dashboard-student.html';
+          if (userRole === 'admin') dashLink = 'admin.html';
+          else if (userRole === 'teacher') dashLink = 'dashboard-teacher.html';
+          else if (userRole === 'parent') dashLink = 'dashboard-parent.html';
+
+          // Update desktop buttons
+          const btnLogin = document.getElementById('btn-login');
+          if (btnLogin) {
+            btnLogin.innerText = 'Go to Dashboard';
+            btnLogin.href = dashLink;
+          }
+
+          // Update mobile buttons
+          const mobileBtns = document.querySelectorAll('.mobile-actions .btn-ghost');
+          if (mobileBtns.length > 0) {
+            mobileBtns[0].innerText = 'Go to Dashboard';
+            mobileBtns[0].href = dashLink;
+          }
+        }
+      }
+    });
+  </script>
+
 </body>
 
 </html>
