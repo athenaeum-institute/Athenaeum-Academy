@@ -20,9 +20,15 @@
       </a>
       <ul class="nav-links" id="nav-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
-        <li><a href="oa-levels.html" class="nav-link">O/A Levels</a></li>
-        <li><a href="matric-inter.html" class="nav-link">Matric/Inter</a></li>
-        <li><a href="about.html" class="nav-link active">About</a></li>
+        <li class="nav-dropdown">
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics</a>
+          <ul class="dropdown-menu">
+            <li><a href="oa-levels.html">O/A Levels</a></li>
+            <li><a href="matric-inter.html">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
         <li><a href="contact.html" class="nav-link">Contact</a></li>
       </ul>
       <div class="nav-actions">
@@ -36,8 +42,14 @@
     <div class="mobile-drawer" id="mobile-drawer">
       <ul class="mobile-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
-        <li><a href="oa-levels.html" class="nav-link">O/A Levels</a></li>
-        <li><a href="matric-inter.html" class="nav-link">Matric/Inter</a></li>
+        <li class="nav-dropdown" style="padding-left:1rem;">
+          <strong style="color:var(--clr-primary);">Academics</strong>
+          <ul style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <li><a href="oa-levels.html" class="nav-link" style="font-size:0.9em;">O/A Levels</a></li>
+            <li><a href="matric-inter.html" class="nav-link" style="font-size:0.9em;">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
         <li><a href="about.html" class="nav-link">About</a></li>
         <li><a href="contact.html" class="nav-link">Contact</a></li>
       </ul>

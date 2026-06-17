@@ -44,8 +44,14 @@
       <!-- Desktop nav links -->
       <ul class="nav-links" id="nav-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
-        <li><a href="oa-levels.html" class="nav-link">O/A Levels</a></li>
-        <li><a href="matric-inter.html" class="nav-link">Matric/Inter</a></li>
+        <li class="nav-dropdown">
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics</a>
+          <ul class="dropdown-menu">
+            <li><a href="oa-levels.html">O/A Levels</a></li>
+            <li><a href="matric-inter.html">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
         <li><a href="about.html" class="nav-link">About</a></li>
         <li><a href="contact.html" class="nav-link">Contact</a></li>
       </ul>
@@ -78,8 +84,14 @@
     <div class="mobile-drawer" id="mobile-drawer">
       <ul class="mobile-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
-        <li><a href="oa-levels.html" class="nav-link">O/A Levels</a></li>
-        <li><a href="matric-inter.html" class="nav-link">Matric/Inter</a></li>
+        <li class="nav-dropdown" style="padding-left:1rem;">
+          <strong style="color:var(--clr-primary);">Academics</strong>
+          <ul style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <li><a href="oa-levels.html" class="nav-link" style="font-size:0.9em;">O/A Levels</a></li>
+            <li><a href="matric-inter.html" class="nav-link" style="font-size:0.9em;">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
         <li><a href="about.html" class="nav-link">About</a></li>
         <li><a href="contact.html" class="nav-link">Contact</a></li>
       </ul>
@@ -411,10 +423,8 @@
 
         <!-- Course filter tabs -->
         <div class="course-tabs" id="course-tabs">
-          <button class="tab-btn active" id="filter-oa">O/A Levels</button>
-          <button class="tab-btn" id="filter-matric-sci">Matric Science</button>
-          <button class="tab-btn" id="filter-inter-arts">Intermediate Arts</button>
-          <button class="tab-btn" id="filter-skill">Skill Development</button>
+          <button class="tab-btn active" id="filter-oa">Academics</button>
+          <button class="tab-btn" id="filter-skill" style="border-color:var(--clr-primary); color:var(--clr-primary);">Tech Skills & Bootcamps</button>
         </div>
 
         <!-- Cards grid -->
@@ -542,6 +552,54 @@
             </div>
           </article>
 
+          <!-- Card 5 (Tech Skill) -->
+          <article class="course-card tech-card" id="course-card-5">
+            <div class="course-thumb">
+              <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Python code on screen" loading="lazy" />
+              <span class="duration-badge" style="background:#00FFD1; color:#0f172a;">8 WEEKS</span>
+              <span class="board-badge board-badge--tech" style="background:var(--clr-primary);color:#fff;">BOOTCAMP</span>
+            </div>
+            <div class="course-body">
+              <div class="stars">★★★★★<span class="rating-text">(5.0)</span></div>
+              <h3 class="course-title">Python Masterclass (Zero to Hero)</h3>
+              <div class="course-meta">
+                <span><span class="material-symbols-outlined">person</span> 350+</span>
+                <span><span class="material-symbols-outlined">terminal</span> Coding</span>
+              </div>
+              <div class="course-footer">
+                <div class="instructor">
+                  <span class="material-symbols-outlined" style="font-size:32px; color:var(--clr-primary);">code_blocks</span>
+                  <span>Tech Lead</span>
+                </div>
+                <span class="course-price" style="color: var(--clr-secondary); font-weight: 800;">Rs. 5,000</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 6 (Tech Skill) -->
+          <article class="course-card tech-card" id="course-card-6">
+            <div class="course-thumb">
+              <img src="https://images.unsplash.com/photo-1627398240411-b1e779a9ccb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Frontend web development" loading="lazy" />
+              <span class="duration-badge" style="background:#00FFD1; color:#0f172a;">12 WEEKS</span>
+              <span class="board-badge board-badge--tech" style="background:var(--clr-primary);color:#fff;">BOOTCAMP</span>
+            </div>
+            <div class="course-body">
+              <div class="stars">★★★★<span class="half-star">½</span><span class="rating-text">(4.9)</span></div>
+              <h3 class="course-title">Frontend Web Dev (HTML/CSS/JS)</h3>
+              <div class="course-meta">
+                <span><span class="material-symbols-outlined">person</span> 220+</span>
+                <span><span class="material-symbols-outlined">web</span> Web Dev</span>
+              </div>
+              <div class="course-footer">
+                <div class="instructor">
+                  <span class="material-symbols-outlined" style="font-size:32px; color:var(--clr-primary);">code_blocks</span>
+                  <span>Tech Lead</span>
+                </div>
+                <span class="course-price" style="color: var(--clr-secondary); font-weight: 800;">Rs. 7,500</span>
+              </div>
+            </div>
+          </article>
+
         </div><!-- /.courses-grid -->
 
         <div class="courses-cta">
@@ -550,6 +608,49 @@
           </a>
         </div>
 
+      </div>
+    </section>
+
+    <!-- ============================================================
+         WHY LEARN TECH SKILLS SECTION
+    ============================================================ -->
+    <section class="tech-why-section section" id="tech-skills-why" style="background: #0f172a; padding: 6rem 0;">
+      <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+          <div class="tech-why-content">
+            <span class="section-eyebrow" style="color: #00D2FF; font-weight:700; letter-spacing: 2px;">THE FUTURE IS NOW</span>
+            <h2 class="section-title" style="color: #fff; margin-bottom: 1.5rem;">Why Learn Tech Skills?</h2>
+            <p style="color: #94a3b8; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+              The world is moving faster than ever. Equip yourself with high-income skills like Python, Web Development, and AI. Start freelancing, build your own startups, and secure your financial future before you even graduate.
+            </p>
+            <ul style="list-style: none; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem; padding:0;">
+              <li style="display: flex; align-items: center; gap: 0.8rem; color: #fff; font-size: 1.05rem;">
+                <span class="material-symbols-outlined" style="color: #00D2FF; background:rgba(0, 210, 255, 0.1); padding:8px; border-radius:50%;">payments</span>
+                <span><strong>High Earning Potential</strong> (Earn via Freelancing)</span>
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.8rem; color: #fff; font-size: 1.05rem;">
+                <span class="material-symbols-outlined" style="color: #00D2FF; background:rgba(0, 210, 255, 0.1); padding:8px; border-radius:50%;">work</span>
+                <span><strong>Global Opportunities</strong> (Work remotely from anywhere)</span>
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.8rem; color: #fff; font-size: 1.05rem;">
+                <span class="material-symbols-outlined" style="color: #00D2FF; background:rgba(0, 210, 255, 0.1); padding:8px; border-radius:50%;">rocket_launch</span>
+                <span><strong>Future-Proof Career</strong> (Stay ahead of Automation)</span>
+              </li>
+            </ul>
+            <a href="courses.html?tab=tech" class="btn btn-primary" style="background: linear-gradient(135deg, #00D2FF, #005088); border:none; box-shadow: 0 4px 20px rgba(0, 210, 255, 0.4); padding: 1rem 2rem; font-size: 1.1rem;">Explore Bootcamps</a>
+          </div>
+          <div class="tech-why-visual" style="position: relative;">
+            <div class="tech-glass-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 2.5rem; backdrop-filter: blur(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+              <div class="tech-code-snippet" style="font-family: monospace; color: #e2e8f0; font-size: 1.2rem; line-height: 1.8;">
+                <span style="color:#FF0076;">const</span> future = <span style="color:#00D2FF;">"Yours"</span>;<br><br>
+                <span style="color:#FF0076;">if</span> (skills === <span style="color:#00D2FF;">"Tech"</span>) {<br>
+                &nbsp;&nbsp;console.<span style="color:#FFD700;">log</span>(<span style="color:#00D2FF;">"Success Unlocked!"</span>);<br>
+                }<br><br>
+                <span style="color:#94a3b8;">// Output: Success Unlocked!</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
