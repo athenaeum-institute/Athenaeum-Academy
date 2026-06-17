@@ -416,3 +416,53 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
+
+// ============================================================
+// PREMIUM DESKTOP DRAG-TO-SCROLL (COURSES GRID)
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const grids = document.querySelectorAll(".courses-grid");
+  grids.forEach(grid => {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    grid.style.cursor = "grab";
+
+    grid.addEventListener("mousedown", (e) => {
+      isDown = true;
+      grid.style.cursor = "grabbing";
+      grid.style.userSelect = "none"; 
+      startX = e.pageX - grid.offsetLeft;
+      scrollLeft = grid.scrollLeft;
+    });
+
+    grid.addEventListener("mouseleave", () => {
+      isDown = false;
+      grid.style.cursor = "grab";
+      grid.style.userSelect = "auto";
+    });
+
+    grid.addEventListener("mouseup", () => {
+      isDown = false;
+      grid.style.cursor = "grab";
+      grid.style.userSelect = "auto";
+    });
+
+    grid.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - grid.offsetLeft;
+      const walk = (x - startX) * 2; // Scroll multiplier for effortless feel
+      grid.scrollLeft = scrollLeft - walk;
+    });
+    
+    // Disable drag on images/links to prevent dragging ghosts
+    grid.querySelectorAll("img, a").forEach(el => {
+      el.addEventListener("dragstart", (e) => {
+        e.preventDefault();
+      });
+    });
+  });
+});
