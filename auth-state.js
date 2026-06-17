@@ -23,7 +23,7 @@ async function getUserProfile(userId) {
   try {
     const { data, error } = await window.supabaseClient
       .from('profiles')
-      .select('full_name, plan_type, role')
+      .select('*')
       .eq('id', userId)
       .maybeSingle();
     
@@ -36,6 +36,44 @@ async function getUserProfile(userId) {
 }
 
 /**
+ * Redirect based on user role
+ */
+function redirectBasedOnRole(role) {
+  if (role === 'Admin') return 'admin.html';
+  if (role === 'Teacher') return 'dashboard-teacher.html';
+  if (role === 'Parent') return 'dashboard-parent.html';
+  return 'dashboard-student.html';
+}
+
+/**
+ * Check if the user is logging in for the very first time
+ */
+async function isFirstLogin(userId) {
+  const profile = await getUserProfile(userId);
+  if (!profile) return false;
+  // If last_login_date is null or matches created_at (roughly), it's first login
+  // Alternatively, we can rely on streak_days === 0 and last_login_date being today.
+  // A simpler way: we set last_login_date on registration. If we haven't set it yet, it's first login.
+  // For safety, let's check localStorage.
+  const key = `first_login_${userId}`;
+  if (localStorage.getItem(key)) return false;
+  localStorage.setItem(key, 'false');
+  return true;
+}
+
+/**
+ * Check Trial Status
+ */
+function checkTrialStatus(profile) {
+  if (!profile || profile.plan_type !== 'trial') return { active: false, daysLeft: 0 };
+  const endDate = new Date(profile.trial_end_date);
+  const now = new Date();
+  const diffTime = endDate - now;
+  const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return { active: daysLeft > 0, daysLeft: Math.max(0, daysLeft) };
+}
+
+/**
  * Handle Logout
  */
 window.handleLogout = async function() {
@@ -43,6 +81,7 @@ window.handleLogout = async function() {
     const user = await getCurrentUser();
     if(user) {
       sessionStorage.removeItem(`welcome_shown_${user.id}`);
+      sessionStorage.removeItem(`session_started_${user.id}`);
     }
     await window.supabaseClient.auth.signOut();
     
@@ -50,19 +89,18 @@ window.handleLogout = async function() {
     const toast = document.createElement('div');
     toast.style.position = 'fixed';
     toast.style.bottom = '20px';
-    toast.style.left = '50%';
-    toast.style.transform = 'translateX(-50%)';
+    toast.style.right = '20px';
     toast.style.background = '#333';
     toast.style.color = '#fff';
-    toast.style.padding = '10px 20px';
-    toast.style.borderRadius = '50px';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '8px';
     toast.style.zIndex = '10000';
-    toast.innerText = 'Logged out successfully 👋';
+    toast.innerText = 'You have been logged out successfully. See you soon! 👋';
     document.body.appendChild(toast);
     
     setTimeout(() => {
       window.location.href = 'index.html';
-    }, 1000);
+    }, 1500);
     
   } catch (error) {
     console.error("Logout error:", error);
@@ -85,12 +123,10 @@ async function updateNavbar() {
     const firstName = profile?.full_name?.split(' ')[0] || 'Student';
     const initial = firstName.charAt(0).toUpperCase();
     const role = profile?.role || 'Student';
+    const planType = profile?.plan_type || 'trial';
     
-    // Determine Dashboard URL
-    let dashboardUrl = 'dashboard-student.html';
-    if (role === 'Admin') dashboardUrl = 'admin.html';
-    else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
-    else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
+    const dashboardUrl = redirectBasedOnRole(role);
+    const badgeText = planType === 'paid' ? '✨ Premium Member' : '✨ Free Trial';
 
     // Desktop Nav Update
     const loginBtn = document.getElementById('btn-login');
@@ -106,15 +142,23 @@ async function updateNavbar() {
       userWrapper.className = 'nav-user-wrapper';
       userWrapper.innerHTML = `
         <button class="nav-user-btn" onclick="document.getElementById('nav-user-dropdown').classList.toggle('show')">
-          <div class="nav-user-avatar">${initial}</div>
+          <div class="nav-user-avatar" style="transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${initial}</div>
           ${firstName} <span class="material-symbols-outlined" style="font-size:18px">expand_more</span>
         </button>
         <div id="nav-user-dropdown" class="nav-user-dropdown">
+          <div style="padding: 10px 12px; display:flex; flex-direction:column; gap:2px;">
+            <strong style="color: var(--clr-primary); font-size: 14px;">👤 ${profile?.full_name || 'Student'}</strong>
+            <span style="font-size: 11px; color: var(--clr-on-surface-var);">${badgeText}</span>
+          </div>
+          <hr>
           <a href="${dashboardUrl}">
             <span class="material-symbols-outlined">space_dashboard</span> My Dashboard
           </a>
-          <a href="#">
-            <span class="material-symbols-outlined">person</span> My Profile
+          <a href="courses.html">
+            <span class="material-symbols-outlined">library_books</span> My Courses
+          </a>
+          <a href="#" onclick="if(window.toggleUstadAI) toggleUstadAI(); return false;">
+            <span class="material-symbols-outlined">smart_toy</span> Ustad AI
           </a>
           <a href="#">
             <span class="material-symbols-outlined">settings</span> Settings
@@ -125,8 +169,6 @@ async function updateNavbar() {
           </button>
         </div>
       `;
-      // Append to the right side of nav-actions (before or after icons? The user wants replace Login/Register)
-      // nav-icons are there, we append to the end.
       navActions.appendChild(userWrapper);
       
       // Close dropdown when clicking outside
@@ -172,10 +214,7 @@ async function updateHeroSection() {
   const firstName = profile?.full_name?.split(' ')[0] || 'Student';
   const role = profile?.role || 'Student';
   
-  let dashboardUrl = 'dashboard-student.html';
-  if (role === 'Admin') dashboardUrl = 'admin.html';
-  else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
-  else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
+  const dashboardUrl = redirectBasedOnRole(role);
 
   const titleEl = document.querySelector('.hero-title');
   const ctas = document.querySelector('.hero-ctas');
@@ -184,7 +223,7 @@ async function updateHeroSection() {
     // Smooth transition
     titleEl.style.opacity = '0';
     setTimeout(() => {
-      titleEl.innerHTML = `Welcome back, <span class="accent-text">${firstName}!</span> 👋<br><span style="font-size: 24px; color: var(--clr-on-surface-var); font-weight: 500; display:block; margin-top:10px;">Ready to continue your journey?</span>`;
+      titleEl.innerHTML = `Welcome back, <span class="accent-text">${firstName}!</span> 👋<br><span style="font-size: 24px; color: var(--clr-on-surface-var); font-weight: 500; display:block; margin-top:10px;">Ready to continue your learning journey?</span>`;
       titleEl.style.transition = 'opacity 0.5s ease';
       titleEl.style.opacity = '1';
     }, 300);
@@ -195,10 +234,10 @@ async function updateHeroSection() {
     setTimeout(() => {
       ctas.innerHTML = `
         <a href="${dashboardUrl}" class="btn btn-primary btn-lg">
-          Go to Dashboard <span class="material-symbols-outlined">arrow_forward</span>
+          Go to Dashboard <span class="material-symbols-outlined">rocket_launch</span>
         </a>
         <a href="courses.html" class="btn btn-outline btn-lg">
-          Explore Courses
+          Browse Courses
         </a>
       `;
       ctas.style.transition = 'opacity 0.5s ease';
@@ -221,35 +260,12 @@ async function showWelcomeMessage() {
   const firstName = profile?.full_name?.split(' ')[0] || 'Student';
   const planType = profile?.plan_type || 'trial';
   const role = profile?.role || 'Student';
+  const streak = profile?.streak_days || 1;
+  const trialStatus = checkTrialStatus(profile);
   
-  let dashboardUrl = 'dashboard-student.html';
-  if (role === 'Admin') dashboardUrl = 'admin.html';
-  else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
-  else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
+  const dashboardUrl = redirectBasedOnRole(role);
 
-  // Determine time of day
-  const hour = new Date().getHours();
-  let emoji, greeting, subtitle;
-  
-  if (hour >= 5 && hour < 12) {
-    emoji = '🌅';
-    greeting = `Subah Bakhair, ${firstName}!`;
-    subtitle = `Aaj ka din productive banao.<br>Tumhara Ustad AI ready hai! ✨`;
-  } else if (hour >= 12 && hour < 17) {
-    emoji = '☀️';
-    greeting = `Assalam o Alaikum, ${firstName}!`;
-    subtitle = `Chalo aaj kuch naya seekhte hain.<br>Tumhari journey continue karo! 🚀`;
-  } else if (hour >= 17 && hour < 21) {
-    emoji = '🌙';
-    greeting = `Shaam Bakhair, ${firstName}!`;
-    subtitle = `Aaj bhi kuch seekhne ka waqt hai.<br>Ustad AI tumhara intezaar kar raha hai! 💫`;
-  } else {
-    emoji = '⭐';
-    greeting = `Good Night, ${firstName}!`;
-    subtitle = `Kal subah fresh start karo.<br>Tumhari progress save hai! 🎯`;
-  }
-
-  const badgeText = planType === 'paid' ? '✨ Premium Member' : '🎓 Free Trial Active';
+  const badgeText = planType === 'paid' ? '✨ Premium Member' : \`✨ Free Trial: \${trialStatus.daysLeft} days left\`;
 
   // Build the modal
   const modal = document.createElement('div');
@@ -257,16 +273,15 @@ async function showWelcomeMessage() {
   modal.innerHTML = `
     <button class="welcome-close-btn" onclick="this.parentElement.classList.remove('show')">✕</button>
     <div class="welcome-header">
-      <div class="welcome-emoji">${emoji}</div>
+      <div class="welcome-emoji">👋</div>
       <div class="welcome-content">
-        <h4>${greeting}</h4>
-        <p>${subtitle}</p>
+        <h4>Welcome back, ${firstName}!</h4>
       </div>
     </div>
     <div class="welcome-footer">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; flex-direction:column; gap:4px; margin-bottom: 8px;">
+        <span style="font-size: 13px; font-weight: 700; color: #ff5722;">🔥 ${streak} Day Streak!</span>
         <span class="welcome-badge">${badgeText}</span>
-        <span style="font-size: 11px; font-weight: 700; color: #ff5722;">🔥 1 Day Streak!</span>
       </div>
       <a href="${dashboardUrl}" class="welcome-btn">Go to Dashboard →</a>
     </div>
@@ -284,7 +299,7 @@ async function showWelcomeMessage() {
     const m = document.querySelector('.premium-welcome-modal');
     if (m) m.classList.remove('show');
     setTimeout(() => { if(m) m.remove() }, 500);
-  }, 6000);
+  }, 5500);
 
   // Mark as shown
   sessionStorage.setItem(sessionKey, 'true');

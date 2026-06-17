@@ -132,14 +132,20 @@
             <span class="material-symbols-outlined input-icon">mail</span>
           </div>
           <div class="form-group">
-            <label for="reg-phone">Parent Phone</label>
-            <input type="text" id="reg-phone" class="form-control" placeholder="Enter parent's phone number" required>
-            <span class="material-symbols-outlined input-icon">phone</span>
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Minimum 8 characters" required minlength="8">
+            <span class="material-symbols-outlined input-icon">lock</span>
           </div>
           <div class="form-group">
-            <label for="reg-password">Password</label>
-            <input type="password" id="reg-password" class="form-control" placeholder="Create a password" required>
+            <label for="reg-confirm-password">Confirm Password</label>
+            <input type="password" id="reg-confirm-password" class="form-control" placeholder="Confirm your password" required minlength="8">
             <span class="material-symbols-outlined input-icon">lock</span>
+          </div>
+          <div class="form-group" style="flex-direction:row; align-items:center; gap:8px; margin: 8px 0;">
+            <input type="checkbox" id="reg-terms" required style="width:16px; height:16px; cursor:pointer;">
+            <label for="reg-terms" style="margin:0; text-transform:none; font-size:12px; cursor:pointer;">
+              I agree to the Terms & Privacy Policy
+            </label>
           </div>
 
           <div class="h-captcha" data-sitekey="9be2a1b4-3c70-4b56-a184-24b688645fd4" style="margin: 6px 0; display: flex; justify-content: center; transform: scale(0.85); transform-origin: left center;"></div>
@@ -155,21 +161,46 @@
           <a href="javascript:void(0)" id="toggle-auth" onclick="toggleAuthMode()">Register here</a>
         </div>
       </div>
+      
+      <!-- Success Screen -->
+      <div id="success-screen" class="auth-form-wrapper" style="display:none; text-align:center; padding: 40px 30px;">
+        <h2 style="font-family: var(--font-heading); color: var(--clr-primary); margin-bottom: 16px;">🎉 Welcome to Athenaeum!</h2>
+        
+        <div id="success-avatar" style="width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg, var(--clr-primary), var(--clr-secondary)); color:white; font-size:24px; font-weight:800; display:flex; align-items:center; justify-content:center; margin: 0 auto 16px;">
+          A
+        </div>
+        
+        <h3 id="success-name" style="font-size: 18px; color: var(--clr-on-surface); margin-bottom: 12px;">Welcome aboard!</h3>
+        
+        <p style="font-size:14px; color:var(--clr-on-surface-var); line-height:1.5; margin-bottom:20px;">
+          Your free trial has started!<br>Explore everything for 3 days completely free.
+        </p>
+        
+        <ul style="text-align:left; font-size:13px; font-weight:600; color:var(--clr-on-surface-var); margin:0 auto 24px; display:inline-block;">
+          <li style="margin-bottom:6px;">✅ Account Created</li>
+          <li style="margin-bottom:6px;">✅ Free Trial Active</li>
+          <li>✅ Ustad AI Unlocked</li>
+        </ul>
+        
+        <a href="dashboard-student.html" id="success-dashboard-btn" class="btn-submit" style="text-decoration:none;">Go to My Dashboard 🚀</a>
+        <p style="font-size:12px; color:#94a3b8; margin-top:12px;">Redirecting in <span id="countdown">3</span> seconds...</p>
+      </div>
     </div>
 
   <script>
     let currentRole = 'Student';
     let isLogin = true;
-    let isTrialSource = false;
 
     document.addEventListener("DOMContentLoaded", () => {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('source') === 'trial') {
-        isTrialSource = true;
-        document.getElementById('trial-banner').style.display = 'block';
-        // Auto-switch to register mode for trial users
-        if(isLogin) toggleAuthMode();
+      const mode = urlParams.get('mode');
+      
+      if (mode === 'register') {
+        isLogin = false;
       }
+      
+      // Call update immediately based on mode
+      updateUI();
     });
     
     function setRole(role) {
@@ -186,6 +217,10 @@
 
     function toggleAuthMode() {
       isLogin = !isLogin;
+      updateUI();
+    }
+    
+    function updateUI() {
       if (isLogin) {
         document.getElementById('login-form').style.display = 'block';
         document.getElementById('register-form').style.display = 'none';
@@ -226,17 +261,8 @@
       try {
         const { data, error } = await window.supabaseClient.auth.signInWithPasskey();
         if (error) throw error;
-        
-        // Success -> Route to dashboard
-        const userRole = data.user.user_metadata?.role || currentRole || 'Student';
-        if (isTrialSource && userRole === 'Student') {
-          window.location.href = 'dashboard-student.html?status=trial_active';
-        } else {
-          if (userRole === 'Admin') window.location.href = 'admin.html';
-          else if (userRole === 'Teacher') window.location.href = 'dashboard-teacher.html';
-          else if (userRole === 'Parent') window.location.href = 'dashboard-parent.html';
-          else window.location.href = 'dashboard-student.html';
-        }
+        // The dashboard redirect logic will be handled inside auth-state or here
+        window.location.href = 'dashboard-student.html';
       } catch (err) {
         console.error("Passkey Auth Error:", err);
         alert(err.message || 'Passkey login failed. Please ensure you have registered a passkey.');
@@ -261,51 +287,132 @@
       const submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.classList.add('btn-loading');
       
-      const email = formId === 'login-form' ? document.getElementById('email').value : document.getElementById('reg-email').value;
-      const password = formId === 'login-form' ? document.getElementById('password').value : document.getElementById('reg-password').value;
-      
       try {
         if (formId === 'login-form') {
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          
           const { data, error } = await window.supabaseClient.auth.signInWithPassword({ 
             email, password, options: { captchaToken } 
           });
-          if (error) throw error;
+          
+          if (error) {
+            alert("Incorrect email or password. Please try again!");
+            throw error;
+          }
+          
+          // Login Success - Update streak and redirect
+          const userId = data.user.id;
+          const { data: profile } = await window.supabaseClient.from('profiles').select('*').eq('id', userId).single();
+          
+          if (profile) {
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const lastLoginStr = profile.last_login_date ? new Date(profile.last_login_date).toISOString().split('T')[0] : null;
+            
+            let newStreak = profile.streak_days || 0;
+            
+            if (lastLoginStr) {
+              const lastLoginDate = new Date(lastLoginStr);
+              const todayDate = new Date(todayStr);
+              const diffTime = Math.abs(todayDate - lastLoginDate);
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+              
+              if (diffDays === 1) {
+                newStreak += 1;
+              } else if (diffDays > 1) {
+                newStreak = 1;
+              }
+              // If diffDays === 0, streak remains same
+            } else {
+              newStreak = 1;
+            }
+            
+            await window.supabaseClient.from('profiles').update({
+              last_login_date: new Date().toISOString(),
+              streak_days: newStreak
+            }).eq('id', userId);
+            
+            const userRole = profile.role || currentRole || 'Student';
+            let dashboardUrl = 'dashboard-student.html';
+            if (userRole === 'Admin') dashboardUrl = 'admin.html';
+            else if (userRole === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
+            else if (userRole === 'Parent') dashboardUrl = 'dashboard-parent.html';
+            
+            window.location.href = dashboardUrl;
+          }
+          
         } else {
+          // Register form
           const fullName = document.getElementById('reg-name').value;
+          const email = document.getElementById('reg-email').value;
+          const password = document.getElementById('reg-password').value;
+          const confirmPassword = document.getElementById('reg-confirm-password').value;
+          
+          if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            submitBtn.classList.remove('btn-loading');
+            return;
+          }
+          
           const { data, error } = await window.supabaseClient.auth.signUp({
             email, password, options: { data: { full_name: fullName, role: currentRole }, captchaToken }
           });
-          if (error) throw error;
           
-          // Check if email confirmation is required (session will be null)
-          if (!data.session) {
-            alert('Registration successful! Please check your email to confirm your account before logging in. (If you disabled email confirmation in Supabase, you can login now).');
-            toggleAuthMode(); // Switch back to login view
-            form.reset(); // Clear the form
-            submitBtn.classList.remove('btn-loading');
-            return; // Stop execution, don't route to dashboard
+          if (error) {
+            alert(error.message);
+            throw error;
           }
-        }
-        
-        // Success and session exists -> Route to dashboard
-        const userRole = data.user.user_metadata?.role || currentRole || 'Student';
-        
-        if (isTrialSource && userRole === 'Student') {
-          window.location.href = 'dashboard-student.html?status=trial_active';
-        } else {
-          if (userRole === 'Admin') {
-            window.location.href = 'admin.html';
-          } else if (userRole === 'Teacher') {
-            window.location.href = 'dashboard-teacher.html';
-          } else if (userRole === 'Parent') {
-            window.location.href = 'dashboard-parent.html';
-          } else {
-            window.location.href = 'dashboard-student.html';
-          }
+          
+          const userId = data.user.id;
+          
+          // Insert Profile manually to set trial limits
+          const trialEnd = new Date();
+          trialEnd.setDate(trialEnd.getDate() + 3);
+          
+          await window.supabaseClient.from('profiles').upsert({
+            id: userId,
+            full_name: fullName,
+            email: email,
+            role: currentRole,
+            plan_type: 'trial',
+            trial_start_date: new Date().toISOString(),
+            trial_end_date: trialEnd.toISOString(),
+            xp: 0,
+            streak_days: 0,
+            last_login_date: new Date().toISOString(),
+            created_at: new Date().toISOString()
+          });
+          
+          // Show Success Screen
+          document.querySelector('.auth-form-wrapper').style.display = 'none';
+          document.getElementById('success-screen').style.display = 'block';
+          
+          const initial = fullName.charAt(0).toUpperCase();
+          document.getElementById('success-avatar').innerText = initial;
+          document.getElementById('success-name').innerText = \`Welcome aboard, \${fullName}!\`;
+          
+          let dashboardUrl = 'dashboard-student.html';
+          if (currentRole === 'Admin') dashboardUrl = 'admin.html';
+          else if (currentRole === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
+          else if (currentRole === 'Parent') dashboardUrl = 'dashboard-parent.html';
+          
+          document.getElementById('success-dashboard-btn').href = dashboardUrl;
+          
+          // Auto Redirect Countdown
+          let count = 3;
+          const counterEl = document.getElementById('countdown');
+          const interval = setInterval(() => {
+            count--;
+            counterEl.innerText = count;
+            if(count <= 0) {
+              clearInterval(interval);
+              window.location.href = dashboardUrl;
+            }
+          }, 1000);
         }
       } catch (err) {
         console.error("Auth Error:", err);
-        alert(err.message || 'Authentication failed. Please check your credentials.');
         if (typeof hcaptcha !== 'undefined') {
           hcaptcha.reset();
         }

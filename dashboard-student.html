@@ -106,6 +106,15 @@
 </head>
 <body>
 
+  <!-- ── Trial Expiration Overlay ─────────────────────────── -->
+  <div id="trial-expired-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:99999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem;">
+    <h2 style="color:var(--primary); font-size:2rem; margin-bottom:1rem; font-family: 'Merriweather', serif;">⏰ Your Free Trial Has Ended!</h2>
+    <p id="expired-name" style="font-size:1.2rem; margin-bottom:1rem; color:var(--text);"></p>
+    <p style="color:var(--muted); margin-bottom:2rem;">Upgrade to Premium and continue your learning journey without any interruptions.</p>
+    <a href="pricing.html" class="btn btn-primary btn-lg" style="margin-bottom:1rem; font-size: 1.1rem; padding: 1rem 2rem;">Upgrade Now — Best Value 🚀</a>
+    <a href="pricing.html" class="btn btn-ghost" style="color:var(--muted);">View All Plans</a>
+  </div>
+
   <!-- ── Sidebar ──────────────────────────────────────────── -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -341,7 +350,7 @@
         const todayStr = new Date().toDateString();
         if (joinedDate === todayStr && !sessionStorage.getItem('ai_welcomed')) {
           setTimeout(() => {
-            openUstadAI(false, `Assalam o Alaikum ${data.profile.full_name.split(' ')[0]}!\nAthenaeum mein khush aamdeed! 🎉\nMain hun Ustad AI, tumhara personal teacher. Koi bhi sawal poochho, main hamesha ready hun! 😊`);
+            openUstadAI(false, `Welcome to Athenaeum, ${data.profile.full_name.split(' ')[0]}! 🎉\nI am Ustad AI — your personal teacher.\nI am here to help you with Math, Science, and English.\nAsk me anything! 😊`);
             sessionStorage.setItem('ai_welcomed', 'true');
           }, 2000);
         }
@@ -361,9 +370,9 @@
     function getGreeting(name) {
       const hour = new Date().getHours();
       const firstName = name.split(' ')[0];
-      if (hour >= 5 && hour < 12) return `Subah Bakhair, ${firstName}! 🌅`;
-      if (hour >= 12 && hour < 17) return `Assalam o Alaikum, ${firstName}! ☀️`;
-      if (hour >= 17 && hour < 21) return `Shaam Bakhair, ${firstName}! 🌙`;
+      if (hour >= 5 && hour < 12) return `Good Morning, ${firstName}! 🌅`;
+      if (hour >= 12 && hour < 17) return `Good Afternoon, ${firstName}! ☀️`;
+      if (hour >= 17 && hour < 21) return `Good Evening, ${firstName}! 🌙`;
       return `Good Night, ${firstName}! ⭐`;
     }
 
@@ -381,7 +390,17 @@
       } else {
         planBadge.className = 'badge badge-trial';
         planBadge.innerHTML = 'FREE TRIAL';
-        document.getElementById('trial-banner').style.display = 'flex';
+        
+        // Check if trial is expired
+        const now = new Date();
+        const trialEnd = profile.trial_end_date ? new Date(profile.trial_end_date) : new Date(now.getTime() - 1000);
+        if (now > trialEnd) {
+          const overlay = document.getElementById('trial-expired-overlay');
+          document.getElementById('expired-name').innerText = `${profile.full_name?.split(' ')[0] || 'Student'}, you made great progress during your trial period!`;
+          overlay.style.display = 'flex';
+        } else {
+          document.getElementById('trial-banner').style.display = 'flex';
+        }
       }
     }
 
@@ -526,7 +545,7 @@
       if (customMsg) {
         document.getElementById('ustad-msg').innerText = customMsg;
       } else if (defaultMsg) {
-        document.getElementById('ustad-msg').innerText = "Assalam o Alaikum! Koi concept samajh nahi aa raha ya practice karni hai? Main hazir hun! 😊";
+        document.getElementById('ustad-msg').innerText = "Hello! How can I help you today? I'm here for Math, Science, and English! 😊";
       }
       w.style.display = 'block';
       w.style.animation = 'fadeIn 0.5s ease';

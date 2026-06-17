@@ -130,25 +130,24 @@
   function buildSystemPrompt(name, subject) {
     const subjectInstructions = {
       math: `- You are helping with Mathematics. ALWAYS show step-by-step solutions. Number each step clearly. Format math expressions clearly.`,
-      science: `- You are helping with Science. Use simple, real-life Pakistani examples to explain concepts. Make abstract ideas relatable.`,
+      science: `- You are helping with Science. Use simple, real-life examples to explain concepts. Make abstract ideas relatable.`,
       english: `- You are helping with English. Gently correct any grammar mistakes in the student's message. Never make them feel bad. Encourage improvement warmly.`,
       general: `- Help with any academic subject. Ask the student what subject they need help with if unclear.`,
     };
 
-    return `You are Ustad AI, a personal AI teacher for Pakistani students at Athenaeum Online Academy.
+    return `You are Ustad AI, a personal AI teacher for students at Athenaeum Online Academy.
 
 PERSONA:
-- Your name is "Ustad AI" — a warm, encouraging Pakistani tutor
-- You are friendly, patient, and genuinely care about the student's success
-- You speak like a caring Pakistani teacher — supportive and motivating
+- Your name is "Ustad AI" — a warm, encouraging personal tutor.
+- You are friendly, patient, and genuinely care about the student's success.
+- You speak like a caring teacher — supportive and motivating.
 - The student's name is "${name}". Use it occasionally to make responses personal.
 
-LANGUAGE RULES (VERY IMPORTANT):
-- If the student writes in English → reply in English
-- If the student writes in Urdu script → reply in Urdu script
-- If the student writes in Roman Urdu (e.g., "mujhe samajh nahi aya", "kya matlab hai", "bata do") → reply in Roman Urdu
-- Auto-detect the language and ALWAYS match it
-- Your greeting is: "Assalam o Alaikum ${name}! Main hoon aapka Ustad AI, aaj aapki kaise madad kar sakta hoon? 😊"
+LANGUAGE RULES (STRICTLY ENFORCED):
+- You MUST ALWAYS respond in English ONLY.
+- NEVER use Urdu, Hinglish, or Roman Urdu under any circumstances.
+- If a student asks a question in Urdu or another language, reply to them in English and politely mention you only speak English.
+- Your greeting is: "Hello ${name}! How can I help you today? 😊"
 
 SUBJECT-SPECIFIC RULES:
 ${subjectInstructions[subject] || subjectInstructions.general}
@@ -159,14 +158,12 @@ FORMATTING:
 - Use bullet points for lists
 - For code or formulas, keep them clear
 - ALWAYS end every response with an encouraging line. Examples:
-  * "Shabaash! You're doing great 🌟"
-  * "Bohat acha! Keep it up! 🎉"
+  * "Great question, ${name}! You are doing amazing! 🌟"
   * "Excellent work — you're getting better every day! 💪"
-  * "You've got this! Hamesha mehnat karo 🌟"
-  * "Well done! Your hard work will pay off 🏆"
+  * "Well done! Your hard work will pay off! 🏆"
 
 BOUNDARIES:
-- Only help with academic topics (Math, Science, English, Urdu, History, etc.)
+- Only help with academic topics (Math, Science, English, etc.)
 - If asked non-academic questions, gently redirect to studying
 - Never be dismissive or harsh — always be encouraging`;
   }
@@ -510,17 +507,54 @@ Rules:
      DOM INJECTION — Teaser (for logged-out users)
   ────────────────────────────────────────────────────────── */
   function injectTeaser() {
-    const teaser = document.createElement('a');
+    // Inject the teaser button
+    const teaser = document.createElement('button');
     teaser.id = 'ustad-teaser-btn';
-    teaser.href = 'auth.html';
+    teaser.style.border = 'none';
+    teaser.style.cursor = 'pointer';
     teaser.innerHTML = `
       <div class="teaser-icon">🔒</div>
-      <div class="teaser-text">
+      <div class="teaser-text" style="text-align: left;">
         <strong>Ustad AI Personal Teacher</strong>
         <span>Login to unlock your AI tutor</span>
       </div>
     `;
+    
+    // Inject the popup modal
+    const popup = document.createElement('div');
+    popup.id = 'ustad-teaser-popup';
+    popup.style.display = 'none';
+    popup.style.position = 'fixed';
+    popup.style.bottom = '90px';
+    popup.style.right = '20px';
+    popup.style.width = '320px';
+    popup.style.background = 'var(--card, #1e293b)';
+    popup.style.border = '1px solid var(--border, #334155)';
+    popup.style.borderRadius = '12px';
+    popup.style.padding = '1.5rem';
+    popup.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+    popup.style.zIndex = '10001';
+    popup.style.textAlign = 'center';
+    
+    popup.innerHTML = `
+      <button onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#94a3b8; cursor:pointer; font-size:16px;">✕</button>
+      <div style="font-size:24px; margin-bottom:10px;">🔒</div>
+      <p style="color: var(--text, #f8fafc); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem;">
+        Ustad AI is exclusively available for registered students!<br><br>
+        Start your free trial today — it's completely free! 🎓
+      </p>
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        <a href="auth.html?mode=register&ref=teaser" class="btn btn-primary" style="display:block; text-decoration:none; padding:0.5rem;">Start Free Trial</a>
+        <a href="auth.html?mode=login&ref=teaser" class="btn btn-ghost" style="display:block; text-decoration:none; padding:0.5rem;">Login</a>
+      </div>
+    `;
+    
+    document.body.appendChild(popup);
     document.body.appendChild(teaser);
+    
+    teaser.addEventListener('click', () => {
+      popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+    });
   }
 
   /* ──────────────────────────────────────────────────────────
@@ -534,13 +568,13 @@ Rules:
     welcomeEl.classList.add('ustad-welcome-card');
     welcomeEl.innerHTML = `
       <div class="welcome-emoji">🎓</div>
-      <h4>Assalam o Alaikum, ${name}!</h4>
-      <p>Main hoon aapka <strong>Ustad AI</strong> — aapka personal teacher. Koi bhi sawaal poochein, main madad ke liye hazir hoon! 😊</p>
+      <h4>Hello, ${name}!</h4>
+      <p>I am your <strong>Ustad AI</strong> — your personal teacher. Ask me anything, I am here to help! 😊</p>
       <div class="ustad-suggestions">
         <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
         <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>
         <button class="ustad-suggestion-chip" data-msg="How to use past perfect tense with examples?">📝 Past Perfect</button>
-        <button class="ustad-suggestion-chip" data-msg="مجھے الجبرا سمجھاو">🇵🇰 Urdu Help</button>
+        <button class="ustad-suggestion-chip" data-msg="Help me understand Newton's laws">🔬 Newton's Laws</button>
       </div>
     `;
 
@@ -643,12 +677,12 @@ Rules:
       typingEl.classList.remove('visible');
       console.error('Ustad AI error:', err);
 
-      let errorMsg = 'Maafi! Mujhe abhi AI se connect karne mein mushkil ho rahi hai. Thodi der baad dobara try karein. 🙏';
+      let errorMsg = 'I apologize! I am having trouble connecting to my AI core right now. Please try again in a moment. 🙏';
 
       if (err.message && err.message.includes('API key')) {
-        errorMsg = '⚠️ API key configure nahi hua. Please check the ustad-ai.js configuration.';
+        errorMsg = '⚠️ API key is not configured. Please check the ustad-ai.js configuration.';
       } else if (err.message && err.message.includes('quota')) {
-        errorMsg = '⚠️ API quota exceed ho gaya. Thodi der baad try karein.';
+        errorMsg = '⚠️ API quota has been exceeded. Please try again later.';
       }
 
       appendMessage('ai', errorMsg, true);
@@ -670,20 +704,31 @@ Rules:
 
     const limitEl = document.createElement('div');
     limitEl.classList.add('ustad-limit-msg');
+    limitEl.style.textAlign = 'center';
+    limitEl.style.border = '1px solid var(--border)';
+    limitEl.style.padding = '1.5rem';
+    limitEl.style.borderRadius = '12px';
+    limitEl.style.margin = '1rem';
 
     if (type === 'questions') {
       limitEl.innerHTML = `
-        <div class="limit-icon">⏰</div>
-        <h4>Daily limit reached!</h4>
-        <p>Free trial mein aap sirf <strong>${FREE_TRIAL_QUESTIONS_PER_DAY} questions</strong> per day pooch sakte hain.<br>Kal phir aa saktay hain ya paid plan le kar unlimited access pao!</p>
-        <a href="courses.html" class="ustad-upgrade-btn">🚀 Upgrade to Paid</a>
+        <h4 style="margin-bottom: 0.5rem;">🔒 Daily Limit Reached!</h4>
+        <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;">
+          Your free trial allows ${FREE_TRIAL_QUESTIONS_PER_DAY} AI questions per day.<br><br>
+          Upgrade to Premium for unlimited access to Ustad AI, mock exams, and all lessons!
+        </p>
+        <a href="pricing.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Upgrade to Premium ✨</a>
+        <button class="btn btn-ghost full-width" onclick="this.parentElement.remove()">Maybe Tomorrow</button>
       `;
     } else {
       limitEl.innerHTML = `
-        <div class="limit-icon">📝</div>
-        <h4>Quiz limit reached!</h4>
-        <p>Free trial mein aap sirf <strong>${FREE_TRIAL_QUIZZES_PER_DAY} quizzes</strong> per day le sakte hain.<br>Paid plan le kar unlimited practice karo!</p>
-        <a href="courses.html" class="ustad-upgrade-btn">🚀 Upgrade to Paid</a>
+        <h4 style="margin-bottom: 0.5rem;">🔒 Quiz Limit Reached!</h4>
+        <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;">
+          Your free trial allows ${FREE_TRIAL_QUIZZES_PER_DAY} quizzes per day.<br><br>
+          Upgrade to Premium for unlimited practice!
+        </p>
+        <a href="pricing.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Upgrade to Premium ✨</a>
+        <button class="btn btn-ghost full-width" onclick="this.parentElement.remove()">Maybe Tomorrow</button>
       `;
     }
 
