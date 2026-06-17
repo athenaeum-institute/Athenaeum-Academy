@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Login to Athenaeum</title>
+  
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+<body>
+
+    <!-- Animated Background & Orbs -->
+    <div class="auth-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="auth-container">
+      <!-- Centered Auth Form (Glassmorphism) -->
+      <div class="auth-form-wrapper">
+        <a href="index.html" class="auth-brand">
+          🎓 Athenaeum
+        </a>
+
+        <div class="auth-header">
+          <div id="trial-banner" style="display:none; background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05)); border: 1px solid rgba(239,68,68,0.2); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; color: #ef4444; font-weight: 600; font-size: 0.95rem; text-align: center;">
+            🎁 You are one step away from your 3-Day Free Trial! Create your free account below.
+          </div>
+          <h2>Welcome Back</h2>
+          <p>Please select your role to continue securely.</p>
+        </div>
+
+        <!-- Role Selector -->
+        <div class="role-selector">
+          <button type="button" class="role-btn active" id="role-student" onclick="setRole('Student')">
+            <span class="material-symbols-outlined">school</span>
+            Student
+          </button>
+          <button type="button" class="role-btn" id="role-parent" onclick="setRole('Parent')">
+            <span class="material-symbols-outlined">family_restroom</span>
+            Parent
+          </button>
+          <button type="button" class="role-btn" id="role-teacher" onclick="setRole('Teacher')">
+            <span class="material-symbols-outlined">person_play</span>
+            Teacher
+          </button>
+        </div>
+
+        <!-- Google Sign-In -->
+        <button type="button" class="btn-google" onclick="signInWithGoogle()">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+          Continue with Google
+        </button>
+
+        <!-- Passkey Sign-In -->
+        <button type="button" class="btn-google" onclick="signInWithPasskey()" style="margin-top: 0.5rem; justify-content: center;">
+          <span class="material-symbols-outlined" style="margin-right: 0.5rem;">fingerprint</span>
+          Sign in with Passkey
+        </button>
+
+        <div class="auth-separator">
+          <span>OR</span>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email Address or ID</label>
+            <input type="text" id="email" class="form-control" placeholder="Enter your email or ID" required>
+            <span class="material-symbols-outlined input-icon">mail</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+            <span class="material-symbols-outlined input-icon">lock</span>
+          </div>
+
+          <div class="auth-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="remember">
+              Remember me
+            </label>
+            <a href="javascript:void(0)" onclick="alert('Password reset coming soon!')">Forgot Password?</a>
+          </div>
+
+          <div class="h-captcha" data-sitekey="9be2a1b4-3c70-4b56-a184-24b688645fd4" style="margin-bottom: 1.5rem; display: flex; justify-content: center;"></div>
+
+          <button type="submit" class="btn-submit">
+            Login as <span id="btn-role-text">Student</span>
+            <span class="material-symbols-outlined">login</span>
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" style="display: none;">
+          <div class="form-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="Enter your full name" required>
+            <span class="material-symbols-outlined input-icon">person</span>
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="Enter your email address" required>
+            <span class="material-symbols-outlined input-icon">mail</span>
+          </div>
+          <div class="form-group">
+            <label for="reg-phone">Parent Phone</label>
+            <input type="text" id="reg-phone" class="form-control" placeholder="Enter parent's phone number" required>
+            <span class="material-symbols-outlined input-icon">phone</span>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Create a password" required>
+            <span class="material-symbols-outlined input-icon">lock</span>
+          </div>
+
+          <div class="h-captcha" data-sitekey="9be2a1b4-3c70-4b56-a184-24b688645fd4" style="margin-bottom: 1.5rem; display: flex; justify-content: center;"></div>
+
+          <button type="submit" class="btn-submit">
+            Sign Up as <span id="btn-role-text-reg">Student</span>
+            <span class="material-symbols-outlined">person_add</span>
+          </button>
+        </form>
+
+        <div class="auth-footer" id="auth-footer">
+          <span id="footer-text">Don't have an account?</span> 
+          <a href="javascript:void(0)" id="toggle-auth" onclick="toggleAuthMode()">Register here</a>
+        </div>
+      </div>
+    </div>
+
+  <script>
+    let currentRole = 'Student';
+    let isLogin = true;
+    let isTrialSource = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('source') === 'trial') {
+        isTrialSource = true;
+        document.getElementById('trial-banner').style.display = 'block';
+        // Auto-switch to register mode for trial users
+        if(isLogin) toggleAuthMode();
+      }
+    });
+    
+    function setRole(role) {
+      currentRole = role;
+      
+      // Update buttons
+      document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('role-' + role.toLowerCase()).classList.add('active');
+      
+      // Update CTA
+      document.getElementById('btn-role-text').innerText = role;
+      document.getElementById('btn-role-text-reg').innerText = role;
+    }
+
+    function toggleAuthMode() {
+      isLogin = !isLogin;
+      if (isLogin) {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('register-form').style.display = 'none';
+        document.getElementById('footer-text').innerText = "Don't have an account?";
+        document.getElementById('toggle-auth').innerText = "Register here";
+        document.querySelector('.auth-header h2').innerText = "Welcome Back";
+        document.querySelector('.auth-header p').innerText = "Please select your role to continue securely.";
+      } else {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('register-form').style.display = 'block';
+        document.getElementById('footer-text').innerText = "Already have an account?";
+        document.getElementById('toggle-auth').innerText = "Login here";
+        document.querySelector('.auth-header h2').innerText = "Create Account";
+        document.querySelector('.auth-header p').innerText = "Join Athenaeum to start learning.";
+      }
+    }
+
+    async function signInWithGoogle() {
+      try {
+        const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin + '/dashboard-student.html',
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            }
+          }
+        });
+        if (error) throw error;
+      } catch (err) {
+        console.error("Google Auth Error:", err);
+        alert('Could not start Google Sign-In. Check console for details.');
+      }
+    }
+
+    async function signInWithPasskey() {
+      try {
+        const { data, error } = await window.supabaseClient.auth.signInWithPasskey();
+        if (error) throw error;
+        
+        // Success -> Route to dashboard
+        const userRole = data.user.user_metadata?.role || currentRole || 'Student';
+        if (isTrialSource && userRole === 'Student') {
+          window.location.href = 'dashboard-student.html?status=trial_active';
+        } else {
+          if (userRole === 'Admin') window.location.href = 'admin.html';
+          else if (userRole === 'Teacher') window.location.href = 'dashboard-teacher.html';
+          else if (userRole === 'Parent') window.location.href = 'dashboard-parent.html';
+          else window.location.href = 'dashboard-student.html';
+        }
+      } catch (err) {
+        console.error("Passkey Auth Error:", err);
+        alert(err.message || 'Passkey login failed. Please ensure you have registered a passkey.');
+      }
+    }
+
+    async function handleAuthSubmit(e, formId) {
+      e.preventDefault();
+      const form = document.getElementById(formId);
+      
+      let captchaToken = null;
+      const captchaTextarea = form.querySelector('[name="h-captcha-response"]');
+      if (captchaTextarea && captchaTextarea.value) {
+        captchaToken = captchaTextarea.value;
+      }
+      
+      if (!captchaToken) {
+        alert('Please complete the hCaptcha to continue.');
+        return;
+      }
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.classList.add('btn-loading');
+      
+      const email = formId === 'login-form' ? document.getElementById('email').value : document.getElementById('reg-email').value;
+      const password = formId === 'login-form' ? document.getElementById('password').value : document.getElementById('reg-password').value;
+      
+      try {
+        if (formId === 'login-form') {
+          const { data, error } = await window.supabaseClient.auth.signInWithPassword({ 
+            email, password, options: { captchaToken } 
+          });
+          if (error) throw error;
+        } else {
+          const fullName = document.getElementById('reg-name').value;
+          const { data, error } = await window.supabaseClient.auth.signUp({
+            email, password, options: { data: { full_name: fullName, role: currentRole }, captchaToken }
+          });
+          if (error) throw error;
+          
+          // Check if email confirmation is required (session will be null)
+          if (!data.session) {
+            alert('Registration successful! Please check your email to confirm your account before logging in. (If you disabled email confirmation in Supabase, you can login now).');
+            toggleAuthMode(); // Switch back to login view
+            form.reset(); // Clear the form
+            submitBtn.classList.remove('btn-loading');
+            return; // Stop execution, don't route to dashboard
+          }
+        }
+        
+        // Success and session exists -> Route to dashboard
+        const userRole = data.user.user_metadata?.role || currentRole || 'Student';
+        
+        if (isTrialSource && userRole === 'Student') {
+          window.location.href = 'dashboard-student.html?status=trial_active';
+        } else {
+          if (userRole === 'Admin') {
+            window.location.href = 'admin.html';
+          } else if (userRole === 'Teacher') {
+            window.location.href = 'dashboard-teacher.html';
+          } else if (userRole === 'Parent') {
+            window.location.href = 'dashboard-parent.html';
+          } else {
+            window.location.href = 'dashboard-student.html';
+          }
+        }
+      } catch (err) {
+        console.error("Auth Error:", err);
+        alert(err.message || 'Authentication failed. Please check your credentials.');
+        if (typeof hcaptcha !== 'undefined') {
+          hcaptcha.reset();
+        }
+      } finally {
+        submitBtn.classList.remove('btn-loading');
+      }
+    }
+
+    document.getElementById('login-form').addEventListener('submit', (e) => handleAuthSubmit(e, 'login-form'));
+    document.getElementById('register-form').addEventListener('submit', (e) => handleAuthSubmit(e, 'register-form'));
+  </script>
+
+<!-- Floating Glass Back Button -->
+<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+</button>
+</body>
+</html>

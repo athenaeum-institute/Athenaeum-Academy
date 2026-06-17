@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Parent Portal | Athenaeum</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="dashboard.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script src="supabase-client.js"></script>
+  <script src="supabase-parent.js"></script>
+  <script src="announcements.js"></script>
+  <script src="security.js"></script>
+
+  <style>
+    /* ── CUSTOM UI MODS FOR PARENT DASHBOARD ── */
+    :root {
+      --primary: #005088;
+      --accent: #00D2FF;
+      --gold: #FFD700;
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #7d8590;
+    }
+
+    body { font-family:'Urbanist',sans-serif; background:var(--bg); color:var(--text); }
+
+    /* Animations */
+    .fade-in { animation: fadeIn 0.4s ease forwards; opacity: 0; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Skeletons */
+    .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; color:transparent!important; min-height: 20px;}
+    .skeleton * { visibility: hidden; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Modal */
+    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:2000; display:none; justify-content:center; align-items:center; }
+    .modal { background:var(--card); border:1px solid var(--accent); padding:2rem; border-radius:16px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
+    .modal h2 { margin-bottom:1rem; font-family:'Merriweather',serif; color:var(--accent); }
+    
+    /* Tabs */
+    .child-tabs { display:flex; gap:0.5rem; margin-bottom:2rem; overflow-x:auto; padding-bottom:0.5rem; }
+    .child-tab { padding:0.75rem 1.5rem; background:var(--card); border:1px solid var(--border); border-radius:30px; color:var(--muted); font-weight:700; cursor:pointer; transition:.2s; white-space:nowrap; display:flex; align-items:center; gap:0.5rem; }
+    .child-tab:hover { background:var(--border); color:var(--text); }
+    .child-tab.active { background:rgba(0,210,255,0.1); border-color:var(--accent); color:var(--accent); }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; }
+    .stat-val { font-size: 2rem; font-weight: 800; font-family: 'Merriweather', serif; margin-top:0.5rem; }
+    .stat-label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+
+    /* Layout */
+    .dashboard-layout { display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem; }
+    @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
+    
+    .panel { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
+    .panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border); padding-bottom:1rem; }
+    .panel-title { font-size:1.2rem; font-weight:800; font-family:'Merriweather',serif; }
+
+    /* Timeline */
+    .timeline { position:relative; padding-left:1.5rem; border-left:2px solid var(--border); }
+    .tl-item { position:relative; margin-bottom:1.5rem; }
+    .tl-icon { position:absolute; left:-2.25rem; width:24px; height:24px; border-radius:50%; background:var(--card); border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; color:var(--accent); }
+    .tl-icon .material-symbols-outlined { font-size:14px; }
+    .tl-content { background:rgba(255,255,255,0.02); padding:1rem; border-radius:8px; border:1px solid var(--border); }
+    .tl-date { font-size:0.75rem; color:var(--muted); margin-bottom:0.25rem; }
+
+    /* Lists */
+    .list-item { display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid var(--border); }
+    .list-item:last-child { border-bottom:none; }
+    .progress-bar-wrap { width:100%; height:6px; background:var(--bg); border-radius:3px; overflow:hidden; margin-top:0.5rem; }
+    .progress-fill { height:100%; background:var(--accent); width:0%; transition:1s; }
+
+    /* Badges */
+    .badge { padding:0.25rem 0.5rem; border-radius:4px; font-size:0.75rem; font-weight:700; text-transform:uppercase; }
+    .badge-green { background:rgba(63,185,80,.1); color:#3fb950; border:1px solid rgba(63,185,80,.2); }
+    .badge-red { background:rgba(248,81,73,.1); color:#f85149; border:1px solid rgba(248,81,73,.2); }
+    .badge-gold { background:rgba(255,215,0,.1); color:var(--gold); border:1px solid rgba(255,215,0,.2); }
+
+    /* Toasts */
+    #toast-container { position:fixed; bottom:20px; right:20px; z-index:3000; display:flex; flex-direction:column; gap:0.5rem; }
+    .toast { background:var(--card); border:1px solid var(--accent); padding:1rem 1.5rem; border-radius:8px; color:#fff; font-weight:600; box-shadow:0 5px 15px rgba(0,0,0,0.5); animation:slideIn 0.3s forwards; }
+    @keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-brand" style="font-family:'Merriweather',serif">🎓 Athenaeum</a>
+    </div>
+    <div class="sidebar-nav">
+      <a href="dashboard-parent.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span> Overview</a>
+      <a href="#" class="nav-item" onclick="alert('Feature coming soon!')"><span class="material-symbols-outlined">payments</span> Billing</a>
+      <a href="#" class="nav-item" onclick="alert('Feature coming soon!')"><span class="material-symbols-outlined">forum</span> Messages</a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sb-initials" style="background:var(--primary); color:#fff;">..</div>
+        <div class="user-info">
+          <p id="sb-name">Loading...</p>
+          <span style="color:var(--gold)">Parent Account</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="icon-btn mobile-toggle" id="mobile-toggle"><span class="material-symbols-outlined">menu</span></button>
+        <h1>Parent Portal</h1>
+      </div>
+      <div class="header-actions">
+        <div class="badge badge-gold" id="link-count" style="display:flex; align-items:center; gap:0.25rem;">
+          <span class="material-symbols-outlined" style="font-size:1rem">family_restroom</span> 0 Children
+        </div>
+        <button class="icon-btn" title="Add Child" onclick="document.getElementById('add-modal').style.display='flex'">
+          <span class="material-symbols-outlined">person_add</span>
+        </button>
+        <div id="notification-bell"></div>
+        <button class="icon-btn" title="Logout" onclick="logout()">
+          <span class="material-symbols-outlined">logout</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-body fade-in">
+      
+      <div id="global-announcements"></div>
+
+      <!-- Greeting -->
+      <div style="margin-bottom:2rem; display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <h1 id="greeting" class="skeleton" style="font-family:'Merriweather',serif; font-size:2.5rem; margin-bottom:0.5rem">Loading...</h1>
+          <p style="color:var(--muted); font-size:1.1rem;">Monitor your children's progress and performance.</p>
+        </div>
+        <button class="btn btn-primary" onclick="document.getElementById('add-modal').style.display='flex'">
+          <span class="material-symbols-outlined">add</span> Link Child
+        </button>
+      </div>
+
+      <!-- Child Selector Tabs -->
+      <div class="child-tabs" id="child-tabs">
+        <!-- Injected via JS -->
+      </div>
+
+      <div id="content-area" style="display:none;">
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total XP Earned</div>
+            <div class="stat-val skeleton" id="stat-xp">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Current Level</div>
+            <div class="stat-val skeleton" id="stat-level" style="font-size:1.5rem; color:var(--accent)">Beginner 🌱</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Daily Streak</div>
+            <div class="stat-val skeleton" id="stat-streak" style="color:#ff5722">0 Days 🔥</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Exam Score</div>
+            <div class="stat-val skeleton" id="stat-avg">0%</div>
+          </div>
+        </div>
+
+        <div class="dashboard-layout">
+          <!-- Left Column -->
+          <div>
+            <!-- Course Progress -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Course Progress</div>
+              </div>
+              <div id="course-list">
+                <div class="skeleton" style="height:60px; margin-bottom:10px"></div>
+                <div class="skeleton" style="height:60px; margin-bottom:10px"></div>
+              </div>
+            </div>
+
+            <!-- Exam Performance -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Exam Performance Trend</div>
+              </div>
+              <div style="height: 300px;">
+                <canvas id="examChart"></canvas>
+              </div>
+              
+              <div style="margin-top:2rem; border-top:1px solid var(--border); padding-top:1rem;">
+                <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--muted)">Recent Results</h3>
+                <div id="exam-list">
+                  <div class="skeleton" style="height:40px; margin-bottom:10px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <!-- Weekly Report -->
+            <div class="panel" style="background:linear-gradient(135deg, rgba(0,80,136,0.2), rgba(0,210,255,0.1)); border-color:var(--primary);">
+              <div class="panel-header" style="border-bottom-color:var(--primary)">
+                <div class="panel-title" style="display:flex; align-items:center; gap:0.5rem; color:var(--accent)">
+                  <span class="material-symbols-outlined">auto_awesome</span> Weekly Report
+                </div>
+              </div>
+              <div id="weekly-report" style="line-height:1.6; color:var(--text)">
+                <div class="skeleton" style="height:100px;"></div>
+              </div>
+              <button class="btn btn-outline" style="width:100%; margin-top:1rem; justify-content:center" onclick="window.print()">
+                <span class="material-symbols-outlined">print</span> Print Report
+              </button>
+            </div>
+
+            <!-- Subscription -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Subscription Status</div>
+              </div>
+              <div id="sub-status">
+                <div class="skeleton" style="height:80px;"></div>
+              </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Recent Activity</div>
+              </div>
+              <div class="timeline" id="activity-timeline">
+                <div class="skeleton" style="height:50px; margin-bottom:15px"></div>
+                <div class="skeleton" style="height:50px; margin-bottom:15px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" style="display:none; text-align:center; padding:5rem 2rem; background:var(--card); border:1px dashed var(--muted); border-radius:16px;">
+        <span class="material-symbols-outlined" style="font-size:4rem; color:var(--muted); margin-bottom:1rem">family_restroom</span>
+        <h2>No Children Linked Yet</h2>
+        <p style="color:var(--muted); margin-bottom:2rem; max-width:400px; margin-left:auto; margin-right:auto;">Link your child's Athenaeum account using their registered email to start monitoring their progress.</p>
+        <button class="btn btn-primary" onclick="document.getElementById('add-modal').style.display='flex'">Link Child Account</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Child Modal -->
+  <div class="modal-overlay" id="add-modal">
+    <div class="modal">
+      <h2>Link Child Account</h2>
+      <p style="font-size:0.9rem; color:var(--muted); margin-bottom:1.5rem">Enter your child's registered Athenaeum email address.</p>
+      <div style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="email" id="child-email" placeholder="student@example.com" style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:#fff; font-family:'Urbanist'; outline:none;">
+        <button class="btn btn-primary" onclick="submitLink()" style="justify-content:center" id="link-btn">Send Link Request</button>
+        <button class="btn btn-outline" onclick="document.getElementById('add-modal').style.display='none'" style="justify-content:center">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script>
+    const svc = window.AthenaeumParent;
+    let linkedChildren = [];
+    let currentChild = null;
+    let chartInstance = null;
+
+    // Levels Reference
+    const LEVELS = [
+      { xp: 0, name: 'Beginner 🌱' },
+      { xp: 501, name: 'Explorer 🔍' },
+      { xp: 1501, name: 'Scholar 📚' },
+      { xp: 3001, name: 'Expert 🎯' },
+      { xp: 5001, name: 'Master 🏆' }
+    ];
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.innerText = msg;
+      container.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 300); }, 3000);
+    }
+
+    function getLevelName(xp) {
+      let name = LEVELS[0].name;
+      for (let i = 0; i < LEVELS.length; i++) {
+        if (xp >= LEVELS[i].xp) name = LEVELS[i].name;
+      }
+      return name;
+    }
+
+    function getGreeting(name) {
+      const hour = new Date().getHours();
+      const firstName = name.split(' ')[0];
+      if (hour >= 5 && hour < 12) return `Subah Bakhair, ${firstName}! 🌅`;
+      if (hour >= 12 && hour < 17) return `Assalam o Alaikum, ${firstName}! ☀️`;
+      if (hour >= 17 && hour < 21) return `Shaam Bakhair, ${firstName}! 🌙`;
+      return `Good Night, ${firstName}! ⭐`;
+    }
+
+    async function init() {
+      try {
+        const profile = await svc.getProfile();
+        if (!profile) return window.location.href = 'auth.html';
+
+        document.getElementById('greeting').innerText = getGreeting(profile.full_name || 'Parent');
+        document.getElementById('sb-name').innerText = profile.full_name || 'Parent';
+        document.getElementById('sb-initials').innerText = (profile.full_name||'P').substring(0,2).toUpperCase();
+        document.getElementById('greeting').classList.remove('skeleton');
+
+        await loadChildren();
+      } catch (e) {
+        console.error(e);
+        showToast("Error loading profile");
+      }
+    }
+
+    async function loadChildren() {
+      linkedChildren = await svc.getLinkedChildren();
+      document.getElementById('link-count').innerHTML = `<span class="material-symbols-outlined" style="font-size:1rem">family_restroom</span> ${linkedChildren.length} Linked`;
+
+      if (linkedChildren.length === 0) {
+        document.getElementById('content-area').style.display = 'none';
+        document.getElementById('empty-state').style.display = 'block';
+        document.getElementById('child-tabs').innerHTML = '';
+      } else {
+        document.getElementById('empty-state').style.display = 'none';
+        document.getElementById('content-area').style.display = 'block';
+        
+        // Render tabs
+        const tabsHtml = linkedChildren.map((c, idx) => `
+          <div class="child-tab ${idx === 0 ? 'active' : ''}" onclick="selectChild('${c.id}', this)">
+            <div style="width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px">${c.full_name.charAt(0)}</div>
+            ${c.full_name.split(' ')[0]}
+          </div>
+        `).join('');
+        document.getElementById('child-tabs').innerHTML = tabsHtml;
+
+        // Select first by default
+        await selectChild(linkedChildren[0].id, document.querySelector('.child-tab'));
+      }
+    }
+
+    async function selectChild(studentId, tabEl) {
+      // Update UI tabs
+      if (tabEl) {
+        document.querySelectorAll('.child-tab').forEach(t => t.classList.remove('active'));
+        tabEl.classList.add('active');
+      }
+
+      currentChild = linkedChildren.find(c => c.id === studentId);
+      
+      // Add skeleton classes back temporarily
+      ['stat-xp','stat-level','stat-streak','stat-avg'].forEach(id => document.getElementById(id).classList.add('skeleton'));
+      
+      try {
+        const data = await svc.getChildData(studentId);
+        renderOverview(currentChild, data);
+        renderCourses(data.courses);
+        renderExams(data.exams);
+        renderTimeline(data.timeline);
+        renderWeeklyReport(currentChild, data);
+        renderSubscription(currentChild);
+        
+        // Remove skeletons
+        ['stat-xp','stat-level','stat-streak','stat-avg'].forEach(id => document.getElementById(id).classList.remove('skeleton'));
+      } catch (e) {
+        console.error(e);
+        showToast("Error loading child data");
+      }
+    }
+
+    function renderOverview(child, data) {
+      document.getElementById('stat-xp').innerText = child.xp;
+      document.getElementById('stat-level').innerText = getLevelName(child.xp);
+      document.getElementById('stat-streak').innerText = `${child.streak_days || 0} Days 🔥`;
+      
+      const exams = data.exams;
+      const avg = exams.length ? Math.round(exams.reduce((sum, e) => sum + e.percentage, 0) / exams.length) : 0;
+      document.getElementById('stat-avg').innerText = avg + '%';
+    }
+
+    function renderCourses(courses) {
+      const container = document.getElementById('course-list');
+      if (!courses.length) {
+        container.innerHTML = '<div style="color:var(--muted)">Not enrolled in any courses.</div>';
+        return;
+      }
+      container.innerHTML = courses.map(c => `
+        <div class="list-item" style="flex-direction:column; align-items:flex-start; gap:0.5rem">
+          <div style="display:flex; justify-content:space-between; width:100%">
+            <div>
+              <strong style="display:block">${c.title}</strong>
+              <span style="font-size:0.8rem; color:var(--muted)">Last active: ${c.lastWatched}</span>
+            </div>
+            <div style="font-weight:700; color:var(--accent)">${c.progressPct}%</div>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-fill" style="width:${c.progressPct}%"></div></div>
+        </div>
+      `).join('');
+    }
+
+    function renderExams(exams) {
+      // 1. Table
+      const container = document.getElementById('exam-list');
+      if (!exams.length) {
+        container.innerHTML = '<div style="color:var(--muted)">No exams taken yet.</div>';
+      } else {
+        container.innerHTML = exams.slice(0,5).map(e => `
+          <div class="list-item">
+            <div>
+              <strong style="display:block">${e.exams?.title || 'Exam'}</strong>
+              <span style="font-size:0.8rem; color:var(--muted)">${new Date(e.completed_at).toLocaleDateString()}</span>
+            </div>
+            <div class="badge ${e.percentage>=50?'badge-green':'badge-red'}">${e.percentage}%</div>
+          </div>
+        `).join('');
+      }
+
+      // 2. Chart
+      const ctx = document.getElementById('examChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      
+      if (!exams.length) return; // leave blank if no exams
+
+      // Sort chronological for chart
+      const sorted = [...exams].sort((a,b) => new Date(a.completed_at) - new Date(b.completed_at));
+      const labels = sorted.map(e => new Date(e.completed_at).toLocaleDateString(undefined, {month:'short', day:'numeric'}));
+      const dataPoints = sorted.map(e => e.percentage);
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Score %',
+            data: dataPoints,
+            borderColor: '#00D2FF',
+            backgroundColor: 'rgba(0, 210, 255, 0.1)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#FFD700',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7d8590' } },
+            x: { grid: { display: false }, ticks: { color: '#7d8590' } }
+          }
+        }
+      });
+    }
+
+    function renderTimeline(timeline) {
+      const container = document.getElementById('activity-timeline');
+      if (!timeline.length) {
+        container.innerHTML = '<div style="color:var(--muted)">No recent activity found.</div>';
+        return;
+      }
+      container.innerHTML = timeline.map(t => `
+        <div class="tl-item">
+          <div class="tl-icon" style="border-color:${t.color}; color:${t.color}">
+            <span class="material-symbols-outlined">${t.icon}</span>
+          </div>
+          <div class="tl-content">
+            <div class="tl-date">${t.date.toLocaleString()}</div>
+            <div style="font-weight:600">${t.title}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderWeeklyReport(child, data) {
+      const name = child.full_name.split(' ')[0];
+      const xpThisWeek = data.timeline.filter(t => t.type==='xp').reduce((sum,t)=>sum+parseInt(t.title.match(/\d+/)[0]), 0);
+      const examsCount = data.timeline.filter(t => t.type==='exam').length;
+      
+      let tip = `Keep encouraging ${name} to maintain their learning streak!`;
+      if (child.streak_days >= 3) tip = `${name} is on fire this week! 🔥 Great consistency.`;
+      if (child.streak_days === 0) tip = `${name} hasn't logged in recently. Encourage them to do a 15-minute review today!`;
+
+      document.getElementById('weekly-report').innerHTML = `
+        <p style="margin-bottom:1rem">Here is a quick summary of <strong>${name}'s</strong> activity over the last 7 days:</p>
+        <ul style="padding-left:1.5rem; margin-bottom:1.5rem; color:var(--text)">
+          <li>Maintained a <strong>${child.streak_days || 0} day</strong> login streak.</li>
+          <li>Completed <strong>${examsCount}</strong> practice exams.</li>
+          <li>Earned a total of <strong>${xpThisWeek} XP</strong>.</li>
+        </ul>
+        <div style="background:rgba(0,0,0,0.2); padding:1rem; border-radius:8px; border-left:3px solid var(--gold)">
+          <strong style="color:var(--gold); display:block; margin-bottom:0.25rem">Parent Tip:</strong>
+          <span style="font-size:0.9rem">${tip}</span>
+        </div>
+      `;
+    }
+
+    function renderSubscription(child) {
+      const container = document.getElementById('sub-status');
+      if (child.plan_type === 'paid') {
+        container.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div class="badge badge-gold" style="margin-bottom:0.5rem; display:inline-block">✨ Premium</div>
+              <div style="font-size:0.9rem; color:var(--muted)">Active Subscription</div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <div class="badge badge-red" style="margin-bottom:0.5rem; display:inline-block">Free Trial</div>
+              <div style="font-size:0.9rem; color:var(--muted)">Limited access to exams & AI.</div>
+            </div>
+            <button class="btn btn-primary" onclick="window.location.href='pricing.html'">Upgrade Now</button>
+          </div>
+        `;
+      }
+    }
+
+    async function submitLink() {
+      const email = document.getElementById('child-email').value;
+      if (!email) return alert("Please enter an email");
+      
+      const btn = document.getElementById('link-btn');
+      btn.innerText = "Sending..."; btn.disabled = true;
+
+      try {
+        const res = await svc.linkChild(email);
+        if (res.success) {
+          showToast("Child linked successfully!");
+          document.getElementById('add-modal').style.display = 'none';
+          document.getElementById('child-email').value = '';
+          await loadChildren(); // refresh
+        } else {
+          alert(res.message);
+        }
+      } catch(e) {
+        alert("Error: " + e.message);
+      } finally {
+        btn.innerText = "Send Link Request"; btn.disabled = false;
+      }
+    }
+
+    async function logout() {
+      await window.supabaseClient.auth.signOut();
+      window.location.href = 'auth.html';
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

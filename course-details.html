@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Course Details | Athenaeum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="supabase-courses.js"></script>
+  
+  <style>
+    /* Premium Course Details Styles */
+    .cd-hero {
+      background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+      color: #fff;
+      padding: 4rem 0;
+      position: relative;
+    }
+
+    .cd-hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1.5" fill="rgba(255,255,255,0.05)"/></svg>');
+      pointer-events: none;
+    }
+
+    .cd-hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .cd-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .cd-title {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .cd-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .cd-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cd-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 3rem;
+      margin-top: 3rem;
+      margin-bottom: 5rem;
+      align-items: start;
+    }
+
+    .cd-main h2 {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--clr-text);
+    }
+
+    .cd-desc {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--clr-text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .cd-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 3rem 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .cd-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: var(--clr-surface-high);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .cd-features li .material-symbols-outlined {
+      color: var(--clr-success, #10B981);
+    }
+
+    .cd-sidebar {
+      position: sticky;
+      top: 100px;
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--clr-border);
+    }
+
+    .cd-sidebar img {
+      width: 100%;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+
+    .cd-price {
+      font-size: 2.25rem;
+      font-weight: 900;
+      color: var(--clr-text);
+      margin-bottom: 1.5rem;
+      font-family: var(--font-heading);
+    }
+
+    .cd-sidebar .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 1rem;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 992px) {
+      .cd-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cd-sidebar {
+        position: relative;
+        top: 0;
+      }
+
+      .cd-features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar Placeholder -->
+  <header id="navbar" class="navbar">
+    <nav class="container nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" />
+        <span class="logo-text">Athenaeum</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="courses.html" class="nav-link active">Courses</a></li>
+        <li><a href="oa-levels.html" class="nav-link">O/A Levels</a></li>
+        <li><a href="matric-inter.html" class="nav-link">Matric/Inter</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn btn-ghost" id="btn-login">Login</a>
+        <a href="courses.html" class="btn btn-primary" id="btn-start-learning">Start Learning</a>
+      </div>
+    </nav>
+  </header>
+
+  <nav class="breadcrumbs">
+    <div class="container">
+      <a href="index.html">Home</a> &gt; <a href="courses.html">Courses</a> &gt; <span id="bc-title">Loading...</span>
+    </div>
+  </nav>
+
+  <div id="course-content" style="display: none;">
+    <!-- Hero Section -->
+    <section class="cd-hero">
+      <div class="container cd-hero-content">
+        <div class="cd-badge" id="cd-category"><span class="material-symbols-outlined">category</span> O-Level</div>
+        <h1 class="cd-title" id="cd-title">Course Title</h1>
+        <div class="cd-meta">
+          <div class="cd-meta-item">
+            <span class="material-symbols-outlined" style="color: #FBBF24;">star</span>
+            <strong id="cd-rating">4.9</strong>
+          </div>
+          <div class="cd-meta-item">
+            <span class="material-symbols-outlined">group</span>
+            <span id="cd-enrolled">120+ Enrolled</span>
+          </div>
+          <div class="cd-meta-item">
+            <span class="material-symbols-outlined">schedule</span>
+            <span id="cd-duration">08 WEEKS</span>
+          </div>
+          <div class="cd-meta-item">
+            <span class="material-symbols-outlined">school</span>
+            <span id="cd-level">Intermediate</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content & Sidebar -->
+    <main class="container cd-grid">
+      <div class="cd-main">
+        <h2>About this course</h2>
+        <p class="cd-desc" id="cd-desc">Course description goes here.</p>
+
+        <h2>What you'll learn</h2>
+        <ul class="cd-features" id="cd-features">
+          <!-- Features injected via JS -->
+        </ul>
+      </div>
+
+      <aside class="cd-sidebar">
+        <img id="cd-image" src="" alt="Course Image" />
+        <div class="cd-price" id="cd-price">Rs. 2,499</div>
+        <a href="checkout.html" class="btn btn-primary">Enroll Now</a>
+        <a href="auth.html?source=trial" class="btn btn-outline"
+          style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem; border: 2px solid var(--clr-primary); color: var(--clr-primary); text-decoration: none;">Start
+          3-Day Free Trial</a>
+        <p style="text-align: center; font-size: 0.85rem; color: var(--clr-text-muted);">Includes full lifetime access &
+          updates</p>
+
+        <hr style="border:none; border-top: 1px solid var(--clr-border); margin: 1.5rem 0;" />
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <img id="cd-instructor-img" src=""
+            style="width: 50px; height: 50px; border-radius: 50%; margin: 0; aspect-ratio: 1;" />
+          <div>
+            <div style="font-weight: 700; color: var(--clr-text);">Instructor</div>
+            <div id="cd-instructor-name" style="color: var(--clr-text-muted); font-size: 0.95rem;">Prof. Name</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div id="error-content" class="container text-center" style="display: none; padding: 5rem 0; min-height: 50vh;">
+    <h2 style="font-family: var(--font-heading); margin-bottom: 1rem;">Course not found</h2>
+    <p style="margin-bottom: 2rem;">The course you are looking for does not exist or has been removed.</p>
+    <a href="courses.html" class="btn btn-primary" style="margin: 0 auto;">Browse Courses</a>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo footer-logo">
+          <img src="logo_transparent.png" alt="Athenaeum Logo"
+            style="height: 50px; width: auto; object-fit: contain;" />
+          <span class="logo-text">Athenaeum</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseId = urlParams.get('id');
+
+      if (!courseId || !window.AthenaeumCourses) {
+        document.getElementById('error-content').style.display = 'block';
+        return;
+      }
+
+      try {
+        const course = await window.AthenaeumCourses.fetchCourseById(courseId);
+
+        if (!course) {
+          document.getElementById('error-content').style.display = 'block';
+          return;
+        }
+
+        const priceDisplay = parseFloat(course.price) === 0 ? 'FREE' : `Rs. ${course.price}`;
+        const instructorName = course.profiles?.full_name || 'Instructor';
+        const instructorAvatar = course.profiles?.avatar_url || 'https://via.placeholder.com/40';
+
+        // Populate DOM
+        document.getElementById('course-content').style.display = 'block';
+        document.getElementById('bc-title').textContent = course.title;
+        document.getElementById('cd-category').innerHTML = `<span class="material-symbols-outlined">category</span> ${course.category || 'Course'}`;
+        document.getElementById('cd-title').textContent = course.title;
+        
+        // We do not have ratings in the new schema, hardcoding 4.9 for UI sake
+        document.getElementById('cd-rating').textContent = '4.9';
+        
+        // We do not have enrolled count per course easily without grouping, keeping static for now
+        document.getElementById('cd-enrolled').textContent = `New`;
+        
+        // Duration/Level fallback
+        document.getElementById('cd-duration').textContent = `Self-paced`;
+        document.getElementById('cd-level').textContent = course.subject || 'General';
+        
+        document.getElementById('cd-desc').textContent = course.description || 'No description provided.';
+        document.getElementById('cd-image').src = course.thumbnail_url || 'https://via.placeholder.com/600x400';
+        document.getElementById('cd-price').textContent = priceDisplay;
+        document.getElementById('cd-instructor-img').src = instructorAvatar;
+        document.getElementById('cd-instructor-name').textContent = instructorName;
+
+        // Populate mock features
+        const featuresHtml = `
+          <li><span class="material-symbols-outlined">check_circle</span><span>Lifetime Access</span></li>
+          <li><span class="material-symbols-outlined">check_circle</span><span>Expert Instruction</span></li>
+        `;
+        document.getElementById('cd-features').innerHTML = featuresHtml;
+      } catch (err) {
+        console.error('Failed to load course details:', err);
+        document.getElementById('error-content').style.display = 'block';
+      }
+    });
+  </script>
+
+  <!-- Floating Glass Back Button -->
+  <button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  </button>
+</body>
+
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Mock Exams | Athenaeum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&family=Merriweather:ital,wght@0,700;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="lms.css">
+  <link rel="stylesheet" href="ustad-ai.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="supabase-exam.js"></script>
+  <script src="announcements.js"></script>
+  <script src="security.js"></script>
+  
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --card2: #1c2128;
+      --border: #30363d;
+      --primary: #005088;
+      --accent: #00D2FF;
+      --gold: #FFD700;
+      --green: #3fb950;
+      --red: #f85149;
+      --orange: #d29922;
+      --text: #e6edf3;
+      --muted: #7d8590;
+      --radius: 12px;
+    }
+    body { font-family:'Urbanist',sans-serif; background:var(--bg); color:var(--text); margin:0; padding:0; min-height:100vh; display:flex; flex-direction:column; }
+    
+    /* NAV */
+    .exam-nav { padding:1rem 2rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:rgba(13,17,23,0.8); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; }
+    .nav-brand { font-family:'Merriweather',serif; font-weight:700; font-size:1.25rem; color:var(--accent); text-decoration:none; }
+    .nav-center { display:flex; align-items:center; gap:1rem; }
+    .badge { padding:.25rem .75rem; border-radius:20px; font-size:.75rem; font-weight:800; text-transform:uppercase; display:inline-flex; align-items:center; gap:.25rem; }
+    .badge-warn { background:rgba(210,153,34,.15); color:var(--orange); border:1px solid rgba(210,153,34,.3); }
+    .badge-green { background:rgba(63,185,80,.15); color:var(--green); border:1px solid rgba(63,185,80,.3); }
+    .badge-red { background:rgba(248,81,73,.15); color:var(--red); border:1px solid rgba(248,81,73,.3); }
+    
+    /* SCREENS */
+    .screen { display:none; flex:1; padding:2rem; animation:fadeIn .4s ease; max-width:1200px; margin:0 auto; width:100%; }
+    .screen.active { display:block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    
+    /* TYPOGRAPHY */
+    h1 { font-family:'Merriweather',serif; font-size:2rem; margin-bottom:.5rem; }
+    p.subtitle { color:var(--muted); margin-bottom:2rem; font-size:1.1rem; }
+
+    /* BUTTONS */
+    .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1.5rem; border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; transition:.2s; border:none; font-family:'Urbanist',sans-serif; text-decoration:none; }
+    .btn-primary { background:linear-gradient(135deg,var(--primary),#0077cc); color:#fff; }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,80,136,.4); }
+    .btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+    .btn-outline:hover { background:var(--card2); border-color:var(--muted); }
+    .btn-danger { background:rgba(248,81,73,.1); color:var(--red); border:1px solid rgba(248,81,73,.3); }
+    .btn-danger:hover { background:var(--red); color:#fff; }
+    
+    /* SCREEN 1: EXAM LIST */
+    .exam-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem; }
+    .exam-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; display:flex; flex-direction:column; transition:.3s; }
+    .exam-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,210,255,.05); }
+    .exam-card h3 { font-size:1.25rem; margin-bottom:.5rem; }
+    .exam-meta { color:var(--muted); font-size:.85rem; margin-bottom:1rem; display:flex; flex-direction:column; gap:.25rem; }
+    .exam-meta span { display:flex; align-items:center; gap:.5rem; }
+    .exam-card .btn { margin-top:auto; justify-content:center; }
+    
+    /* OVERLAY */
+    .overlay-blur { filter:blur(4px); pointer-events:none; }
+    .upgrade-banner { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:1px solid var(--gold); border-radius:16px; padding:3rem; text-align:center; z-index:1000; box-shadow:0 20px 50px rgba(0,0,0,0.8); max-width:400px; }
+
+    /* SCREEN 2: INSTRUCTIONS */
+    .inst-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; max-width:800px; margin:0 auto; }
+    .inst-list { margin:1.5rem 0; padding-left:1.5rem; color:var(--muted); line-height:1.8; font-size:1.1rem; }
+
+    /* SCREEN 3: ACTIVE EXAM */
+    .exam-topbar { display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:1rem 1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:2rem; position:sticky; top:80px; z-index:50; }
+    .timer { font-size:1.5rem; font-weight:800; font-family:monospace; display:flex; align-items:center; gap:.5rem; }
+    .timer.urgent { color:var(--red); animation:pulse 1s infinite; }
+    @keyframes pulse { 0%{opacity:1} 50%{opacity:.5} 100%{opacity:1} }
+    
+    .q-list { display:flex; flex-direction:column; gap:2rem; padding-bottom:100px; }
+    .q-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; }
+    .q-number { font-size:.9rem; color:var(--muted); font-weight:700; margin-bottom:.5rem; display:block; text-transform:uppercase; letter-spacing:1px; }
+    .q-text { font-size:1.25rem; font-weight:600; margin-bottom:1.5rem; line-height:1.6; }
+    
+    .options-grid { display:flex; flex-direction:column; gap:.75rem; }
+    .option-btn { width:100%; text-align:left; padding:1rem 1.25rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'Urbanist'; font-size:1.05rem; cursor:pointer; transition:.2s; display:flex; align-items:center; gap:1rem; }
+    .option-btn:hover { background:var(--card2); }
+    .option-btn.selected { background:rgba(0,210,255,.1); border-color:var(--accent); color:var(--accent); }
+    .opt-label { width:30px; height:30px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9rem; color:var(--muted); }
+    .option-btn.selected .opt-label { background:var(--accent); color:#000; }
+    
+    .floating-submit { position:fixed; bottom:0; left:0; width:100%; background:rgba(13,17,23,.9); backdrop-filter:blur(10px); border-top:1px solid var(--border); padding:1.5rem; display:flex; justify-content:center; z-index:90; }
+
+    /* SCREEN 4: RESULTS */
+    .result-card { text-align:center; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:4rem 2rem; max-width:800px; margin:0 auto; }
+    .score-circle { width:200px; height:200px; border-radius:50%; border:8px solid var(--border); margin:0 auto 2rem; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .score-circle.pass { border-color:var(--green); }
+    .score-circle.fail { border-color:var(--orange); }
+    .score-val { font-size:3rem; font-weight:800; line-height:1; }
+    .score-tot { font-size:1rem; color:var(--muted); }
+    .result-stats { display:flex; justify-content:center; gap:3rem; margin:2rem 0; }
+    .r-stat { display:flex; flex-direction:column; gap:.5rem; }
+    .r-stat span { font-size:.85rem; color:var(--muted); text-transform:uppercase; font-weight:700; }
+    .r-stat strong { font-size:1.5rem; }
+
+    /* SCREEN 5: REVIEW */
+    .review-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:1.5rem; }
+    .opt-review { padding:1rem; border-radius:8px; border:1px solid var(--border); margin-bottom:.5rem; display:flex; justify-content:space-between; align-items:center; }
+    .opt-review.correct { background:rgba(63,185,80,.1); border-color:var(--green); color:var(--green); }
+    .opt-review.incorrect { background:rgba(248,81,73,.1); border-color:var(--red); color:var(--red); }
+    .opt-review.neutral { opacity:0.6; }
+
+  </style>
+</head>
+<body>
+
+  <nav class="exam-nav">
+    <a href="dashboard-student.html" class="nav-brand">🎓 Athenaeum</a>
+    <div class="nav-center" id="nav-center-info">
+      <span class="badge badge-warn"><span class="material-symbols-outlined" style="font-size:1rem;">quiz</span> Mock Exam Center</span>
+    </div>
+    <div class="nav-right" id="nav-user-info">Loading...</div>
+  </nav>
+
+  <div id="global-announcements" style="max-width:1200px; margin:2rem auto 0; padding:0 2rem; width:100%; box-sizing:border-box;"></div>
+
+  <!-- SCREEN 1: EXAM LIST -->
+  <div id="screen-list" class="screen active">
+    <h1>Available Mock Exams</h1>
+    <p class="subtitle">Test your knowledge with these full-length past papers and custom mocks.</p>
+    
+    <div id="exam-grid" class="exam-grid">
+      <!-- Injected via JS -->
+      <div style="color:var(--muted)">Loading exams...</div>
+    </div>
+  </div>
+
+  <!-- UPGRADE OVERLAY -->
+  <div id="upgrade-banner" class="upgrade-banner" style="display:none;">
+    <div style="color:var(--gold); font-size:3rem; margin-bottom:1rem;"><span class="material-symbols-outlined" style="font-size:4rem">workspace_premium</span></div>
+    <h2 style="margin-bottom:1rem">Daily Limit Reached</h2>
+    <p style="color:var(--muted); margin-bottom:2rem; line-height:1.5;">Free trial users can only take 2 exams per day. Upgrade to Premium for unlimited access!</p>
+    <a href="dashboard-student.html" class="btn btn-primary" style="width:100%">Upgrade Now</a>
+  </div>
+
+  <!-- SCREEN 2: INSTRUCTIONS -->
+  <div id="screen-instructions" class="screen">
+    <button class="btn btn-outline" style="margin-bottom:2rem;" onclick="showScreen('list')">← Back to List</button>
+    <div class="inst-card">
+      <h1 id="inst-title">Exam Title</h1>
+      <p class="subtitle" id="inst-course">Course Name</p>
+      
+      <div style="display:flex; gap:2rem; margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border)">
+        <div>
+          <span style="color:var(--muted); font-size:.85rem; text-transform:uppercase; font-weight:700; display:block; margin-bottom:.25rem">Questions</span>
+          <strong style="font-size:1.5rem" id="inst-qcount">0</strong>
+        </div>
+        <div>
+          <span style="color:var(--muted); font-size:.85rem; text-transform:uppercase; font-weight:700; display:block; margin-bottom:.25rem">Duration</span>
+          <strong style="font-size:1.5rem" id="inst-time">0 mins</strong>
+        </div>
+        <div>
+          <span style="color:var(--muted); font-size:.85rem; text-transform:uppercase; font-weight:700; display:block; margin-bottom:.25rem">Total Marks</span>
+          <strong style="font-size:1.5rem" id="inst-marks">0</strong>
+        </div>
+      </div>
+      
+      <h3 style="margin-bottom:1rem">Important Rules:</h3>
+      <ul class="inst-list">
+        <li>Once started, the timer cannot be paused.</li>
+        <li>You can change your answers anytime before submitting.</li>
+        <li>The exam will auto-submit when the timer reaches 00:00.</li>
+        <li>Make sure you have a stable internet connection.</li>
+        <li>Do not refresh the page, or your progress will be lost.</li>
+      </ul>
+      
+      <div style="text-align:center; margin-top:3rem;">
+        <button class="btn btn-primary" style="font-size:1.25rem; padding:1rem 3rem;" onclick="startExam()">I'm Ready, Start Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: ACTIVE EXAM -->
+  <div id="screen-active" class="screen">
+    <div class="exam-topbar">
+      <div>
+        <h3 id="active-title" style="margin:0">Exam Title</h3>
+        <span style="font-size:.85rem; color:var(--muted)" id="active-progress">Answered: 0 / 0</span>
+      </div>
+      <div class="timer" id="timer-display">
+        <span class="material-symbols-outlined">timer</span>
+        <span id="timer-text">00:00</span>
+      </div>
+    </div>
+    
+    <div class="q-list" id="q-list">
+      <!-- Questions injected here -->
+    </div>
+    
+    <div class="floating-submit">
+      <button class="btn btn-primary" style="padding:1rem 3rem; font-size:1.1rem" onclick="confirmSubmit()">Submit Exam</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: RESULTS -->
+  <div id="screen-results" class="screen">
+    <div class="result-card">
+      <h1 id="res-msg">Evaluating...</h1>
+      <p class="subtitle" id="res-sub">Calculating your results</p>
+      
+      <div class="score-circle" id="res-circle">
+        <div class="score-val" id="res-score">--</div>
+        <div class="score-tot" id="res-total">/ --</div>
+      </div>
+      
+      <div class="result-stats">
+        <div class="r-stat"><span>Percentage</span><strong id="res-pct">--%</strong></div>
+        <div class="r-stat"><span>Time Taken</span><strong id="res-time">--</strong></div>
+        <div class="r-stat"><span>XP Earned</span><strong id="res-xp" style="color:var(--gold)">+0 XP</strong></div>
+      </div>
+      
+      <div style="margin-top:3rem; display:flex; justify-content:center; gap:1rem;">
+        <button class="btn btn-outline" onclick="showScreen('list')">Return to Dashboard</button>
+        <button class="btn btn-primary" onclick="showScreen('review')">Review Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: REVIEW -->
+  <div id="screen-review" class="screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+      <h1>Answer Review</h1>
+      <button class="btn btn-outline" onclick="showScreen('results')">Back to Results</button>
+    </div>
+    <div id="review-list">
+      <!-- Injected -->
+    </div>
+  </div>
+
+  <!-- USTAD AI WIDGET (Minimal) -->
+  <div id="ustad-widget" style="position:fixed; bottom:20px; right:20px; z-index:1000; display:none;">
+    <div style="background:var(--card); border:1px solid var(--accent); border-radius:16px; width:300px; box-shadow:0 10px 40px rgba(0,0,0,0.5); overflow:hidden;">
+      <div style="background:linear-gradient(135deg,var(--primary),var(--accent)); padding:1rem; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:.5rem; font-weight:700;"><span class="material-symbols-outlined">smart_toy</span> Ustad AI</div>
+        <button onclick="document.getElementById('ustad-widget').style.display='none'" style="background:none;border:none;color:#fff;cursor:pointer">✕</button>
+      </div>
+      <div style="padding:1.5rem; font-size:.95rem; line-height:1.5;" id="ustad-msg">
+        Assalam o Alaikum! Maine dekha tumne exam diya. Koi question explain karwana hai?
+      </div>
+      <div style="padding:1rem; border-top:1px solid var(--border); background:var(--bg)">
+        <a href="dashboard-student.html" class="btn btn-outline" style="width:100%; font-size:.85rem; justify-content:center;">Open Full Chat</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const svc = window.AthenaeumExam;
+    
+    // State
+    let currentExam = null;
+    let currentQuestions = [];
+    let answers = {}; // { questionId: 'A'|'B'|'C'|'D' }
+    let durationSeconds = 0;
+    let timerInterval = null;
+    let startTime = null;
+
+    async function init() {
+      // 1. Check Auth & Load Profile
+      try {
+        const user = await window.supabaseClient.auth.getUser();
+        document.getElementById('nav-user-info').innerText = user.data.user.email;
+        
+        // Load Exam List
+        loadExamList();
+      } catch (e) {
+        console.error(e);
+        window.location.href = 'auth.html';
+      }
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + id).classList.add('active');
+      window.scrollTo(0,0);
+    }
+
+    async function loadExamList() {
+      const grid = document.getElementById('exam-grid');
+      try {
+        // Check trial limit
+        const canTake = await svc.canTakeExamToday();
+        if (!canTake) {
+          document.getElementById('screen-list').classList.add('overlay-blur');
+          document.getElementById('upgrade-banner').style.display = 'block';
+        }
+
+        const exams = await svc.getAvailableExams();
+        if (!exams.length) {
+          grid.innerHTML = '<div style="color:var(--muted)">No exams available right now.</div>';
+          return;
+        }
+
+        grid.innerHTML = exams.map(e => `
+          <div class="exam-card">
+            <h3>${e.title}</h3>
+            <div class="exam-meta">
+              <span><span class="material-symbols-outlined" style="font-size:1.1rem">menu_book</span> ${e.courses?.title || 'General'}</span>
+              <span><span class="material-symbols-outlined" style="font-size:1.1rem">timer</span> ${e.duration_minutes} mins · ${e.total_marks} Marks</span>
+            </div>
+            ${e.bestScore !== null ? `<div style="margin-bottom:1rem; font-size:.85rem; color:var(--green); font-weight:700;">Best Score: ${e.bestScore}%</div>` : '<div style="margin-bottom:1rem;"></div>'}
+            
+            ${e.isEnrolled ? 
+              `<button class="btn btn-primary" onclick="openInstructions('${e.id}')">Start Exam</button>` : 
+              `<button class="btn btn-outline" disabled><span class="material-symbols-outlined">lock</span> Enroll to Unlock</button>`
+            }
+          </div>
+        `).join('');
+      } catch(e) {
+        grid.innerHTML = `<div style="color:var(--red)">Error: ${e.message}</div>`;
+      }
+    }
+
+    async function openInstructions(examId) {
+      document.getElementById('inst-title').innerText = 'Loading...';
+      showScreen('instructions');
+      try {
+        const data = await svc.getExamDetails(examId);
+        currentExam = data.exam;
+        currentQuestions = data.questions;
+        
+        document.getElementById('inst-title').innerText = currentExam.title;
+        document.getElementById('inst-course').innerText = currentExam.courses?.title;
+        document.getElementById('inst-qcount').innerText = currentQuestions.length;
+        document.getElementById('inst-time').innerText = currentExam.duration_minutes + ' mins';
+        document.getElementById('inst-marks').innerText = currentExam.total_marks;
+        
+      } catch(e) {
+        alert("Failed to load exam details.");
+        showScreen('list');
+      }
+    }
+
+    function startExam() {
+      // Prevent leaving
+      window.onbeforeunload = function() { return "Exam is in progress. Are you sure you want to leave?"; }
+      
+      answers = {};
+      durationSeconds = currentExam.duration_minutes * 60;
+      startTime = new Date();
+      
+      document.getElementById('active-title').innerText = currentExam.title;
+      updateProgress();
+      renderQuestions();
+      
+      showScreen('active');
+      
+      // Start Timer
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        durationSeconds--;
+        updateTimerDisplay();
+        if (durationSeconds <= 0) {
+          clearInterval(timerInterval);
+          autoSubmit();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(durationSeconds / 60);
+      const s = durationSeconds % 60;
+      const td = document.getElementById('timer-display');
+      document.getElementById('timer-text').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      
+      if (durationSeconds <= 120) td.classList.add('urgent');
+      else td.classList.remove('urgent');
+    }
+
+    function renderQuestions() {
+      const qlist = document.getElementById('q-list');
+      qlist.innerHTML = currentQuestions.map((q, idx) => `
+        <div class="q-card" id="qcard-${q.id}">
+          <span class="q-number">Question ${idx+1} of ${currentQuestions.length} <span style="float:right">${q.marks} Marks</span></span>
+          <div class="q-text">${q.question_text}</div>
+          <div class="options-grid">
+            <button class="option-btn" id="opt-${q.id}-A" onclick="selectOption('${q.id}', 'A')"><div class="opt-label">A</div> ${q.option_a}</button>
+            <button class="option-btn" id="opt-${q.id}-B" onclick="selectOption('${q.id}', 'B')"><div class="opt-label">B</div> ${q.option_b}</button>
+            <button class="option-btn" id="opt-${q.id}-C" onclick="selectOption('${q.id}', 'C')"><div class="opt-label">C</div> ${q.option_c}</button>
+            <button class="option-btn" id="opt-${q.id}-D" onclick="selectOption('${q.id}', 'D')"><div class="opt-label">D</div> ${q.option_d}</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectOption(qId, opt) {
+      answers[qId] = opt;
+      // Remove selected class from all options for this question
+      ['A','B','C','D'].forEach(o => {
+        document.getElementById(`opt-${qId}-${o}`).classList.remove('selected');
+      });
+      // Add to clicked
+      document.getElementById(`opt-${qId}-${opt}`).classList.add('selected');
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const answered = Object.keys(answers).length;
+      document.getElementById('active-progress').innerText = `Answered: ${answered} / ${currentQuestions.length}`;
+    }
+
+    function confirmSubmit() {
+      const answered = Object.keys(answers).length;
+      const total = currentQuestions.length;
+      if (answered < total) {
+        if (!confirm(`You have ${total - answered} unanswered questions. Are you sure you want to submit?`)) return;
+      } else {
+        if (!confirm("Ready to submit your exam?")) return;
+      }
+      processSubmission();
+    }
+
+    function autoSubmit() {
+      alert("Time is up! Your exam is being automatically submitted.");
+      processSubmission();
+    }
+
+    async function processSubmission() {
+      clearInterval(timerInterval);
+      window.onbeforeunload = null; // Remove warning
+      
+      // Calculate
+      let score = 0;
+      let earnedMarks = 0;
+      let totalMarks = currentExam.total_marks || currentQuestions.reduce((sum, q) => sum + (q.marks || 1), 0);
+      let xpAwarded = 0;
+
+      currentQuestions.forEach(q => {
+        const studentAns = answers[q.id];
+        if (studentAns && studentAns === q.correct_option) {
+          earnedMarks += (q.marks || 1);
+          xpAwarded += 10;
+        }
+      });
+      score = earnedMarks;
+      const percentage = Math.round((score / totalMarks) * 100);
+      
+      const endTime = new Date();
+      const timeTakenMins = Math.ceil((endTime - startTime) / 60000);
+
+      // UI Updates
+      document.getElementById('res-score').innerText = score;
+      document.getElementById('res-total').innerText = `/ ${totalMarks}`;
+      document.getElementById('res-pct').innerText = `${percentage}%`;
+      document.getElementById('res-time').innerText = `${timeTakenMins} mins`;
+      document.getElementById('res-xp').innerText = `+${xpAwarded} XP`;
+      
+      const circ = document.getElementById('res-circle');
+      const msg = document.getElementById('res-msg');
+      const sub = document.getElementById('res-sub');
+      
+      circ.classList.remove('pass','fail');
+      if (percentage >= 50) {
+        circ.classList.add('pass');
+        if (percentage >= 80) {
+          msg.innerText = "Excellent!"; sub.innerText = "Shabaash! Kamaal kar diya! 🌟";
+          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        } else {
+          msg.innerText = "Good Job!"; sub.innerText = "Acha kiya! Thori aur mehnat karo 💪";
+        }
+      } else {
+        circ.classList.add('fail');
+        msg.innerText = "Needs Improvement"; sub.innerText = "Himmat rakho! Practice makes perfect 🎯";
+      }
+      
+      showScreen('results');
+
+      // Save to DB
+      try {
+        await svc.submitExamResult(currentExam.id, score, totalMarks, percentage, timeTakenMins, answers, xpAwarded);
+      } catch (e) {
+        console.error("Failed to save result:", e);
+      }
+
+      // Trigger Ustad AI
+      setTimeout(() => {
+        const uWidget = document.getElementById('ustad-widget');
+        document.getElementById('ustad-msg').innerText = `Assalam o Alaikum! Maine dekha tumne ${currentExam.title} diya. Koi question explain karwana hai? Main madad ke liye ready hun! 😊`;
+        uWidget.style.display = 'block';
+        uWidget.style.animation = 'fadeIn 0.5s ease';
+      }, 2000);
+      
+      prepareReview();
+    }
+
+    function prepareReview() {
+      const rlist = document.getElementById('review-list');
+      rlist.innerHTML = currentQuestions.map((q, idx) => {
+        const studentAns = answers[q.id];
+        const isCorrect = studentAns === q.correct_option;
+        
+        const optsHtml = ['A','B','C','D'].map(opt => {
+          const val = q[`option_${opt.toLowerCase()}`];
+          let cls = 'neutral';
+          let icon = '';
+          if (opt === q.correct_option) {
+            cls = 'correct'; icon = '<span class="material-symbols-outlined">check_circle</span>';
+          } else if (opt === studentAns && !isCorrect) {
+            cls = 'incorrect'; icon = '<span class="material-symbols-outlined">cancel</span>';
+          }
+          return `<div class="opt-review ${cls}"><span><strong>${opt}:</strong> ${val}</span> ${icon}</div>`;
+        }).join('');
+
+        return `
+          <div class="review-card">
+            <span class="q-number">Question ${idx+1} <span style="float:right;color:${isCorrect?'var(--green)':'var(--red)'}">${isCorrect?q.marks:'0'} / ${q.marks} Marks</span></span>
+            <div class="q-text" style="font-size:1.1rem">${q.question_text}</div>
+            <div style="margin-top:1rem;">${optsHtml}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

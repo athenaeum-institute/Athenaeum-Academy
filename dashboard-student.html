@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Student Portal | Athenaeum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="engagement.css">
+  <link rel="stylesheet" href="ustad-ai.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="supabase-student.js"></script>
+  <script src="announcements.js"></script>
+  <script src="security.js"></script>
+  
+  <style>
+    /* ── CUSTOM UI MODS FOR STUDENT DASHBOARD ── */
+    :root {
+      --primary: #005088;
+      --accent: #00D2FF;
+      --gold: #FFD700;
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #7d8590;
+    }
+    
+    /* Animations */
+    .fade-in { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    
+    /* Skeletons */
+    .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; color:transparent!important; min-height: 20px;}
+    .skeleton * { visibility: hidden; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
+    /* Custom XP Progress */
+    .xp-progress-bar { width: 100%; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
+    .xp-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 1s cubic-bezier(.175,.885,.32,1.275); width: 0%; }
+    
+    /* Badges */
+    .badge-premium { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+    .badge-trial { background: rgba(210,153,34,0.15); color: #d29922; border: 1px solid rgba(210,153,34,0.3); }
+    .badge-level { background: rgba(0,210,255,0.1); color: var(--accent); border: 1px solid rgba(0,210,255,0.2); }
+    
+    /* Grid Layouts */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.5rem; transition: transform 0.2s; }
+    .stat-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,210,255,0.05); }
+    .stat-val { font-size: 2rem; font-weight: 800; font-family: 'Merriweather', serif; }
+    .stat-label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    
+    /* Trial Banner */
+    .trial-banner { background: linear-gradient(135deg, rgba(210,153,34,0.1), rgba(210,153,34,0.05)); border: 1px solid #d29922; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+    
+    /* Continue Learning Hero */
+    .hero-resume { background: linear-gradient(135deg, var(--primary), #003355); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; color: white; position: relative; overflow: hidden; }
+    .hero-resume::after { content: ''; position: absolute; right: -50px; bottom: -50px; width: 200px; height: 200px; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); opacity: 0.2; border-radius: 50%; }
+    
+    /* Leaderboard & Results Layout */
+    .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+    
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .panel-title { font-size: 1.1rem; font-weight: 800; }
+    
+    /* Lists */
+    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border); }
+    .list-item:last-child { border-bottom: none; }
+    .list-item:hover { background: rgba(255,255,255,0.02); }
+    
+    .rank-num { font-size: 1.2rem; font-weight: 800; color: var(--muted); width: 30px; text-align: center; }
+    .rank-1 { color: var(--gold); } .rank-2 { color: silver; } .rank-3 { color: #cd7f32; }
+    .lb-highlight { background: rgba(0,210,255,0.1); border: 1px solid rgba(0,210,255,0.2); border-radius: 8px; }
+
+    /* Courses Row */
+    .course-row { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; }
+    .course-card { min-width: 250px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: .2s; }
+    .course-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .course-img { width: 100%; height: 120px; object-fit: cover; background: var(--bg); }
+    .course-body { padding: 1rem; }
+    
+    /* Announcements */
+    .ann-card { background: rgba(0,210,255,0.05); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 4px 8px 8px 4px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .ann-close { background: none; border: none; color: var(--muted); cursor: pointer; }
+    .ann-close:hover { color: var(--text); }
+    
+    /* Quick Actions */
+    .qa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .qa-btn { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem 1rem; color: var(--text); text-decoration: none; transition: .2s; font-weight: 700; }
+    .qa-btn:hover { background: var(--card2); border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .qa-btn .material-symbols-outlined { font-size: 2rem; color: var(--accent); }
+
+  </style>
+</head>
+<body>
+
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-brand" style="font-family:'Merriweather',serif">🎓 Athenaeum</a>
+    </div>
+    <div class="sidebar-nav">
+      <a href="dashboard-student.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span> Overview</a>
+      <a href="courses.html" class="nav-item"><span class="material-symbols-outlined">menu_book</span> My Courses</a>
+      <a href="live-class.html" class="nav-item"><span class="material-symbols-outlined">videocam</span> Live Classes</a>
+      <a href="mock-exam.html" class="nav-item"><span class="material-symbols-outlined">quiz</span> Mock Exams</a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sb-initials" style="background:var(--primary); color:#fff;">..</div>
+        <div class="user-info">
+          <p id="sb-name">Loading...</p>
+          <span id="sb-level">Lvl --</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ─────────────────────────────────────── -->
+  <main class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="icon-btn mobile-toggle" id="mobile-toggle"><span class="material-symbols-outlined">menu</span></button>
+        <h1>Student Portal</h1>
+      </div>
+      <div class="header-actions" style="display:flex; align-items:center; gap:1rem;">
+        <!-- Streak -->
+        <div id="streak-badge" class="badge" style="display:none; border:1px solid rgba(255,87,34,0.3); background:rgba(255,87,34,0.1); color:#ff5722; font-size:.9rem">
+          🔥 <span id="streak-val">1 Day</span>
+        </div>
+        <!-- Plan Badge -->
+        <div id="plan-badge" class="badge">Loading...</div>
+        
+        <div id="notification-bell"></div>
+        
+        <button class="icon-btn" title="Setup Fingerprint/Passkey" onclick="registerPasskey()" style="color: var(--accent);">
+          <span class="material-symbols-outlined">fingerprint</span>
+        </button>
+
+        <button class="icon-btn" title="Logout" onclick="logout()">
+          <span class="material-symbols-outlined">logout</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      
+      <!-- HEADER / GREETING -->
+      <div style="margin-bottom: 2rem;" class="fade-in">
+        <h1 id="greeting" class="skeleton" style="font-family:'Merriweather',serif; font-size:2.5rem; margin-bottom:0.5rem">Loading Greeting...</h1>
+        <p style="color:var(--muted); font-size:1.1rem;">Ready to learn something new today?</p>
+      </div>
+
+      <!-- ANNOUNCEMENTS -->
+      <div id="global-announcements" style="margin-bottom: 2rem;"></div>
+
+      <!-- FREE TRIAL BANNER -->
+      <div id="trial-banner" class="trial-banner fade-in" style="display:none;">
+        <div>
+          <h3 style="color:#d29922; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem">
+            <span class="material-symbols-outlined">hourglass_empty</span> Free Trial Active
+          </h3>
+          <p style="color:var(--text); font-size:0.9rem">You are experiencing limited access. Upgrade to unlock Unlimited Exams, AI, and Live Classes!</p>
+        </div>
+        <button class="btn btn-primary" onclick="window.location.href='pricing.html'" style="white-space:nowrap; background:#d29922; color:#000">Upgrade to Premium</button>
+      </div>
+
+      <!-- CONTINUE LEARNING HERO -->
+      <div id="hero-resume" class="hero-resume fade-in" style="display:none;">
+        <div style="z-index:2">
+          <span style="text-transform:uppercase; font-size:0.8rem; font-weight:800; letter-spacing:1px; color:var(--accent); margin-bottom:0.5rem; display:block;">Continue Learning</span>
+          <h2 id="hero-lesson-title" style="font-family:'Merriweather',serif; margin-bottom:0.5rem; font-size:2rem;">Lesson Title</h2>
+          <p id="hero-course-title" style="color:rgba(255,255,255,0.7); margin-bottom:1.5rem">Course Title</p>
+          <a href="video-player.html" class="btn" style="background:#fff; color:var(--primary)">
+            <span class="material-symbols-outlined">play_arrow</span> Resume Lesson
+          </a>
+        </div>
+      </div>
+
+      <!-- STATS GRID -->
+      <div class="stats-grid fade-in">
+        <div class="stat-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div class="stat-label">Total XP</div>
+            <div id="xp-badge" class="badge badge-level skeleton">Level --</div>
+          </div>
+          <div class="stat-val skeleton" id="stat-xp">0</div>
+          <div class="xp-progress-bar"><div class="xp-progress-fill" id="xp-fill"></div></div>
+          <div style="text-align:right; font-size:0.75rem; color:var(--muted); margin-top:0.25rem" id="xp-next">-- to next level</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Courses Enrolled</div>
+          <div class="stat-val skeleton" id="stat-courses">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Lessons Completed</div>
+          <div class="stat-val skeleton" id="stat-lessons">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Exam Score</div>
+          <div class="stat-val skeleton" id="stat-exams">0%</div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <h3 style="margin-bottom:1rem; font-size:1.1rem">Quick Actions</h3>
+      <div class="qa-grid fade-in">
+        <a href="courses.html" class="qa-btn"><span class="material-symbols-outlined">library_books</span> Browse Courses</a>
+        <a href="mock-exam.html" class="qa-btn"><span class="material-symbols-outlined">quiz</span> Take Mock Exam</a>
+        <a href="live-class.html" class="qa-btn"><span class="material-symbols-outlined">co_present</span> Live Classes</a>
+        <a href="#" class="qa-btn" onclick="openUstadAI(true)"><span class="material-symbols-outlined">smart_toy</span> Ask Ustad AI</a>
+      </div>
+
+      <!-- COURSES ROW -->
+      <div class="panel fade-in" style="margin-bottom:2rem;">
+        <div class="panel-header">
+          <div class="panel-title">My Courses</div>
+          <a href="courses.html" style="color:var(--accent); text-decoration:none; font-size:0.9rem; font-weight:700">View All →</a>
+        </div>
+        <div class="course-row" id="courses-row">
+          <div class="skeleton" style="width:250px; height:200px; border-radius:12px"></div>
+          <div class="skeleton" style="width:250px; height:200px; border-radius:12px"></div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD & RECENT EXAMS -->
+      <div class="two-col fade-in">
+        
+        <!-- Leaderboard -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" style="display:flex; align-items:center; gap:0.5rem">
+              <span class="material-symbols-outlined" style="color:var(--gold)">emoji_events</span> Leaderboard
+            </div>
+            <span style="font-size:0.8rem; color:var(--muted)">Top XP Earners</span>
+          </div>
+          <div id="leaderboard-list">
+            <div class="skeleton" style="height:40px; margin-bottom:10px"></div>
+            <div class="skeleton" style="height:40px; margin-bottom:10px"></div>
+            <div class="skeleton" style="height:40px; margin-bottom:10px"></div>
+          </div>
+          <div id="lb-own-rank" style="margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--border); text-align:center; font-weight:800; color:var(--accent); display:none;">
+            Your Rank: #--
+          </div>
+        </div>
+
+        <!-- Recent Exams -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Recent Exams</div>
+          </div>
+          <div id="recent-exams-list">
+             <div class="skeleton" style="height:50px; margin-bottom:10px"></div>
+             <div class="skeleton" style="height:50px; margin-bottom:10px"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- USTAD AI WIDGET -->
+  <div id="ustad-widget" style="position:fixed; bottom:20px; right:20px; z-index:1000; display:none;">
+    <div style="background:var(--card); border:1px solid var(--accent); border-radius:16px; width:320px; box-shadow:0 10px 40px rgba(0,0,0,0.5); overflow:hidden;">
+      <div style="background:linear-gradient(135deg,var(--primary),var(--accent)); padding:1rem; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:.5rem; font-weight:700;"><span class="material-symbols-outlined">smart_toy</span> Ustad AI</div>
+        <button onclick="document.getElementById('ustad-widget').style.display='none'" style="background:none;border:none;color:#fff;cursor:pointer">✕</button>
+      </div>
+      <div style="padding:1.5rem; font-size:.95rem; line-height:1.5;" id="ustad-msg">
+        <!-- Message -->
+      </div>
+      <div style="padding:1rem; border-top:1px solid var(--border); background:var(--bg)">
+        <input type="text" placeholder="Type your question..." style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--card); color:white; outline:none; font-family:'Urbanist'; margin-bottom:0.5rem;">
+        <button class="btn btn-primary" style="width:100%; justify-content:center">Ask Ustad</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const svc = window.AthenaeumStudent;
+
+    // Levels Logic
+    const LEVELS = [
+      { xp: 0, name: 'Beginner 🌱' },
+      { xp: 501, name: 'Explorer 🔍' },
+      { xp: 1501, name: 'Scholar 📚' },
+      { xp: 3001, name: 'Expert 🎯' },
+      { xp: 5001, name: 'Master 🏆' }
+    ];
+
+    function getLevelInfo(xp) {
+      let lvl = 1;
+      let name = LEVELS[0].name;
+      let nextXp = LEVELS[1].xp;
+      for (let i = 0; i < LEVELS.length; i++) {
+        if (xp >= LEVELS[i].xp) {
+          lvl = i + 1;
+          name = LEVELS[i].name;
+          nextXp = LEVELS[i+1] ? LEVELS[i+1].xp : null;
+        }
+      }
+      return { lvl, name, nextXp };
+    }
+
+    async function init() {
+      try {
+        // 1. Update Streak
+        const streakData = await svc.updateStreak();
+        if (streakData && streakData.streak > 0) {
+          document.getElementById('streak-badge').style.display = 'inline-flex';
+          document.getElementById('streak-val').innerText = `${streakData.streak} Day${streakData.streak>1?'s':''}`;
+          if (streakData.is_milestone) {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            alert(`🎉 Milestone reached! ${streakData.streak} Day Streak. You earned +${streakData.bonus} XP!`);
+          }
+        }
+
+        // 2. Fetch Data
+        const data = await svc.getDashboardData();
+        renderProfile(data.profile);
+        renderStats(data.profile.xp, data.stats);
+        renderCourses(data.courses);
+        if (data.lastLesson) renderHero(data.lastLesson);
+        // renderAnnouncements(data.announcements); // Removed because announcements.js handles this now
+
+        // Auto Launch AI for new users (created today)
+        const joinedDate = new Date(data.profile.created_at).toDateString();
+        const todayStr = new Date().toDateString();
+        if (joinedDate === todayStr && !sessionStorage.getItem('ai_welcomed')) {
+          setTimeout(() => {
+            openUstadAI(false, `Assalam o Alaikum ${data.profile.full_name.split(' ')[0]}!\nAthenaeum mein khush aamdeed! 🎉\nMain hun Ustad AI, tumhara personal teacher. Koi bhi sawal poochho, main hamesha ready hun! 😊`);
+            sessionStorage.setItem('ai_welcomed', 'true');
+          }, 2000);
+        }
+
+        // 3. Fetch Leaderboard
+        const lb = await svc.getLeaderboard();
+        renderLeaderboard(lb);
+
+        // Remove skeleton classes
+        document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function getGreeting(name) {
+      const hour = new Date().getHours();
+      const firstName = name.split(' ')[0];
+      if (hour >= 5 && hour < 12) return `Subah Bakhair, ${firstName}! 🌅`;
+      if (hour >= 12 && hour < 17) return `Assalam o Alaikum, ${firstName}! ☀️`;
+      if (hour >= 17 && hour < 21) return `Shaam Bakhair, ${firstName}! 🌙`;
+      return `Good Night, ${firstName}! ⭐`;
+    }
+
+    function renderProfile(profile) {
+      document.getElementById('greeting').innerText = getGreeting(profile.full_name || 'Student');
+      
+      const initials = (profile.full_name || 'S').substring(0,2).toUpperCase();
+      document.getElementById('sb-initials').innerText = initials;
+      document.getElementById('sb-name').innerText = profile.full_name || 'Student';
+
+      const planBadge = document.getElementById('plan-badge');
+      if (profile.plan_type === 'paid') {
+        planBadge.className = 'badge badge-premium';
+        planBadge.innerHTML = '✨ PREMIUM';
+      } else {
+        planBadge.className = 'badge badge-trial';
+        planBadge.innerHTML = 'FREE TRIAL';
+        document.getElementById('trial-banner').style.display = 'flex';
+      }
+    }
+
+    function animateValue(obj, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start) + (obj.id==='stat-exams'?'%':'');
+        if (progress < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    function renderStats(xp, stats) {
+      // Numbers
+      animateValue(document.getElementById('stat-xp'), 0, xp, 1000);
+      animateValue(document.getElementById('stat-courses'), 0, stats.totalCourses, 1000);
+      animateValue(document.getElementById('stat-lessons'), 0, stats.lessonsCompleted, 1000);
+      animateValue(document.getElementById('stat-exams'), 0, stats.avgExamScore, 1000);
+
+      // Level Logic
+      const lInfo = getLevelInfo(xp);
+      document.getElementById('sb-level').innerText = `Lvl ${lInfo.lvl} · ${xp} XP`;
+      document.getElementById('xp-badge').innerText = `Lvl ${lInfo.lvl}: ${lInfo.name}`;
+      
+      if (lInfo.nextXp) {
+        const prevXp = LEVELS[lInfo.lvl - 1].xp;
+        const totalReq = lInfo.nextXp - prevXp;
+        const currentProg = xp - prevXp;
+        const pct = Math.round((currentProg / totalReq) * 100);
+        
+        setTimeout(() => { document.getElementById('xp-fill').style.width = pct + '%'; }, 100);
+        document.getElementById('xp-next').innerText = `${lInfo.nextXp - xp} XP to Level ${lInfo.lvl + 1}`;
+      } else {
+        document.getElementById('xp-fill').style.width = '100%';
+        document.getElementById('xp-next').innerText = `Max Level Reached!`;
+      }
+    }
+
+    function renderHero(lesson) {
+      if (lesson) {
+        document.getElementById('hero-resume').style.display = 'flex';
+        document.getElementById('hero-lesson-title').innerText = lesson.title;
+        document.getElementById('hero-course-title').innerText = lesson.courseName;
+      }
+    }
+
+    function renderCourses(courses) {
+      const container = document.getElementById('courses-row');
+      if (!courses.length) {
+        container.innerHTML = '<div style="color:var(--muted); padding:1rem;">You are not enrolled in any courses yet. <a href="courses.html" style="color:var(--accent)">Browse Courses</a></div>';
+        return;
+      }
+      container.innerHTML = courses.map(c => `
+        <div class="course-card">
+          <img src="${c.thumbnail_url || 'https://via.placeholder.com/250x120'}" class="course-img">
+          <div class="course-body">
+            <div style="font-size:0.75rem; color:var(--accent); font-weight:800; text-transform:uppercase; margin-bottom:0.25rem">${c.subject || c.category}</div>
+            <h4 style="margin-bottom:1rem; font-size:1.1rem">${c.title}</h4>
+            <a href="video-player.html?course=${c.id}" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.5rem; font-size:0.85rem">Continue</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRecentExams(exams) {
+      const container = document.getElementById('recent-exams-list');
+      if (!exams.length) {
+        container.innerHTML = '<div style="color:var(--muted)">No exams taken yet.</div>';
+        return;
+      }
+      container.innerHTML = exams.map(e => `
+        <div class="list-item" style="padding:0.75rem 0">
+          <div>
+            <div style="font-weight:700">${e.exams?.title || 'Mock Exam'}</div>
+            <div style="font-size:0.8rem; color:var(--muted)">${new Date(e.completed_at).toLocaleDateString()}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:800; color:${e.percentage>=50?'var(--green)':'var(--red)'}">${e.percentage}%</div>
+            <div style="font-size:0.75rem; color:var(--muted)">${e.score}/${e.total_marks}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderLeaderboard(lb) {
+      const container = document.getElementById('leaderboard-list');
+      if (!lb.top10.length) {
+        container.innerHTML = '<div style="color:var(--muted)">No data available.</div>';
+        return;
+      }
+      container.innerHTML = lb.top10.map((p, idx) => {
+        const isMe = p.id === lb.studentId;
+        const lInfo = getLevelInfo(p.xp);
+        return `
+          <div class="list-item ${isMe?'lb-highlight':''}">
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <div class="rank-num rank-${idx+1}">${idx+1}</div>
+              <div>
+                <div style="font-weight:700">${isMe ? 'You' : p.full_name.split(' ')[0]}</div>
+                <div style="font-size:0.75rem; color:var(--muted)">${lInfo.name}</div>
+              </div>
+            </div>
+            <div style="font-weight:800; color:var(--gold)">${p.xp} XP</div>
+          </div>
+        `;
+      }).join('');
+
+      if (lb.ownRank > 10) {
+        const rankDiv = document.getElementById('lb-own-rank');
+        rankDiv.style.display = 'block';
+        rankDiv.innerText = `Your Rank: #${lb.ownRank}`;
+      }
+    }
+
+    function renderAnnouncements(ann) {
+      const container = document.getElementById('ann-section');
+      const dismissed = JSON.parse(localStorage.getItem('dismissed_ann') || '[]');
+      const visible = ann.filter(a => !dismissed.includes(a.id));
+      
+      container.innerHTML = visible.map(a => `
+        <div class="ann-card" id="ann-${a.id}">
+          <div>
+            <strong style="display:block; margin-bottom:0.25rem">${a.title}</strong>
+            <span style="font-size:0.9rem">${a.message}</span>
+          </div>
+          <button class="ann-close" onclick="dismissAnn('${a.id}')"><span class="material-symbols-outlined">close</span></button>
+        </div>
+      `).join('');
+    }
+
+    function dismissAnn(id) {
+      document.getElementById('ann-' + id).style.display = 'none';
+      const d = JSON.parse(localStorage.getItem('dismissed_ann') || '[]');
+      d.push(id);
+      localStorage.setItem('dismissed_ann', JSON.stringify(d));
+    }
+
+    function openUstadAI(defaultMsg=true, customMsg=null) {
+      const w = document.getElementById('ustad-widget');
+      if (customMsg) {
+        document.getElementById('ustad-msg').innerText = customMsg;
+      } else if (defaultMsg) {
+        document.getElementById('ustad-msg').innerText = "Assalam o Alaikum! Koi concept samajh nahi aa raha ya practice karni hai? Main hazir hun! 😊";
+      }
+      w.style.display = 'block';
+      w.style.animation = 'fadeIn 0.5s ease';
+    }
+
+    async function registerPasskey() {
+      try {
+        const { data, error } = await window.supabaseClient.auth.registerPasskey();
+        if (error) throw error;
+        alert('Passkey (Fingerprint/FaceID) registered successfully! You can now use it to login.');
+      } catch (err) {
+        console.error("Passkey Registration Error:", err);
+        alert(err.message || 'Failed to register Passkey.');
+      }
+    }
+
+    async function logout() {
+      await window.supabaseClient.auth.signOut();
+      window.location.href = 'auth.html';
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

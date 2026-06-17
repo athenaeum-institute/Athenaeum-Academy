@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Checkout | Athenaeum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,700;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="checkout.css">
+  <style>
+    body { background: #f1f5f9; }
+  </style>
+</head>
+<body>
+<div class="global-wrapper">
+
+  <!-- ── Nav ─────────────────────────────────────────────── -->
+  <nav class="page-nav">
+    <a href="index.html" class="brand">🎓 Athenaeum Checkout</a>
+    <a href="pricing.html" style="color:rgba(255,255,255,.8); font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:.25rem;">
+      <span class="material-symbols-outlined" style="font-size:1.1rem;">arrow_back</span> Cancel
+    </a>
+  </nav>
+
+  <!-- ── Progress Bar ────────────────────────────────────── -->
+  <div class="checkout-progress">
+    <div class="progress-steps">
+      <div class="p-step done">
+        <div class="p-step-circle"><span class="material-symbols-outlined">check</span></div>
+        <div class="p-step-label">Account</div>
+      </div>
+      <div class="p-step active">
+        <div class="p-step-circle">2</div>
+        <div class="p-step-label">Payment</div>
+      </div>
+      <div class="p-step">
+        <div class="p-step-circle">3</div>
+        <div class="p-step-label">Confirmation</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="checkout-page" id="checkout-main">
+    <div class="checkout-body">
+
+      <!-- ── Left: Form Panel ──────────────────────────────── -->
+      <div class="checkout-panel">
+
+        <div class="panel-header">
+          <h2>Payment Details</h2>
+          <p>Complete your purchase securely. We don't store your full card details.</p>
+        </div>
+
+        <div class="panel-body">
+          <form id="checkout-form" onsubmit="processPayment(event)">
+
+            <div class="form-row">
+              <div class="field-group">
+                <label class="field-label">Email Address for Receipt</label>
+                <div class="field-input-icon">
+                  <span class="f-ico"><span class="material-symbols-outlined">mail</span></span>
+                  <input type="email" class="field-input" value="fatima.anwar@student.academypro.com" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row cols-2" style="margin-bottom:2rem;">
+              <div class="field-group">
+                <label class="field-label">First Name</label>
+                <input type="text" class="field-input" value="Fatima" required>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Last Name</label>
+                <input type="text" class="field-input" value="Anwar" required>
+              </div>
+            </div>
+
+            <!-- Payment Tabs -->
+            <div class="payment-tabs">
+              <button type="button" class="pay-tab active" onclick="switchPayTab('card')">
+                <span class="material-symbols-outlined">credit_card</span> Credit/Debit Card
+              </button>
+              <button type="button" class="pay-tab" onclick="switchPayTab('local')">
+                <span class="material-symbols-outlined">account_balance_wallet</span> Local Payment
+              </button>
+            </div>
+
+            <!-- Card Payment Section -->
+            <div id="pay-card">
+              <!-- 3D Card Preview -->
+              <div class="card-preview-wrap">
+                <div class="card-preview" id="card-preview">
+                  <!-- Front -->
+                  <div style="position:relative; z-index:1; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+                    <div class="card-glow"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                      <div class="card-chip"></div>
+                      <div class="card-network" id="card-network">🌐</div>
+                    </div>
+                    <div class="card-number-display" id="card-number-disp">•••• •••• •••• ••••</div>
+                    <div class="card-bottom">
+                      <div class="card-holder-display">
+                        <div class="card-holder-label">Card Holder</div>
+                        <div class="card-holder-name" id="card-name-disp">FATIMA ANWAR</div>
+                      </div>
+                      <div class="card-expiry-display" style="text-align:right;">
+                        <div class="card-expiry-label">Expires</div>
+                        <div class="card-expiry-val" id="card-exp-disp">MM/YY</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Back -->
+                  <div class="card-back">
+                    <div class="card-stripe"></div>
+                    <div class="card-cvc-wrap">
+                      <span class="cvc-label">CVC</span>
+                      <div class="card-cvc-box" id="card-cvc-disp">•••</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stripe-like inputs -->
+              <div class="stripe-field-wrap" style="margin-bottom:.75rem;">
+                <label class="stripe-field-label">Card Number</label>
+                <input type="text" class="stripe-field-input" id="cc-num" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCard()" onfocus="flipCard(false)" required>
+              </div>
+              <div class="stripe-row">
+                <div class="stripe-field-wrap">
+                  <label class="stripe-field-label">Expiry</label>
+                  <input type="text" class="stripe-field-input" id="cc-exp" placeholder="MM / YY" maxlength="7" oninput="formatExp()" onfocus="flipCard(false)" required>
+                </div>
+                <div class="stripe-field-wrap">
+                  <label class="stripe-field-label">CVC</label>
+                  <input type="password" class="stripe-field-input" id="cc-cvc" placeholder="123" maxlength="4" oninput="updateCVC()" onfocus="flipCard(true)" required>
+                </div>
+              </div>
+              <div class="stripe-field-wrap" style="margin-top:.75rem;">
+                <label class="stripe-field-label">Name on Card</label>
+                <input type="text" class="stripe-field-input name-field" id="cc-name" value="Fatima Anwar" oninput="updateName()" onfocus="flipCard(false)" required>
+              </div>
+
+              <div class="stripe-lock-row">
+                <span class="material-symbols-outlined">lock</span>
+                Payments are securely processed and encrypted.
+              </div>
+            </div><!-- /#pay-card -->
+
+            <!-- Local Payment Section -->
+            <div id="pay-local" style="display:none;">
+              <div class="local-payment-panel">
+
+                <div class="local-pay-option" onclick="selectLocalPay(this, 'easypaisa')">
+                  <div class="local-pay-icon" style="background:#006A4E; color:#fff; font-weight:900; font-family:'Urbanist'; font-size:1.1rem;">ep</div>
+                  <div class="local-pay-info">
+                    <h4>Easypaisa</h4>
+                    <p>Pay instantly via the Easypaisa app.</p>
+                  </div>
+                  <div class="local-pay-radio"></div>
+                </div>
+                <div class="local-pay-details" id="details-easypaisa">
+                  <div class="account-row"><span class="acc-label">Easypaisa Account:</span> <span class="acc-val">0300-1234567</span></div>
+                  <div class="account-row"><span class="acc-label">Account Title:</span> <span class="acc-val">Athenaeum EdTech</span></div>
+                  <button type="button" class="copy-btn" onclick="copyText('03001234567', this)">
+                    <span class="material-symbols-outlined">content_copy</span> Copy Number
+                  </button>
+                  <p style="margin-top:.75rem; font-size:.78rem; opacity:.8;">After payment, please enter your Transaction ID (TID) below to verify automatically.</p>
+                </div>
+
+                <div class="local-pay-option" onclick="selectLocalPay(this, 'jazzcash')">
+                  <div class="local-pay-icon" style="background:#ED1C24; color:#fff; font-weight:900; font-family:'Urbanist'; font-size:1.1rem;">JC</div>
+                  <div class="local-pay-info">
+                    <h4>JazzCash</h4>
+                    <p>Transfer via JazzCash mobile account.</p>
+                  </div>
+                  <div class="local-pay-radio"></div>
+                </div>
+                <div class="local-pay-details" id="details-jazzcash">
+                  <div class="account-row"><span class="acc-label">JazzCash Till ID:</span> <span class="acc-val">00112233</span></div>
+                  <button type="button" class="copy-btn" onclick="copyText('00112233', this)">
+                    <span class="material-symbols-outlined">content_copy</span> Copy Till ID
+                  </button>
+                </div>
+
+                <div class="local-pay-option" onclick="selectLocalPay(this, 'bank')">
+                  <div class="local-pay-icon" style="background:#005088; color:#fff;"><span class="material-symbols-outlined">account_balance</span></div>
+                  <div class="local-pay-info">
+                    <h4>Bank Transfer (IBFT)</h4>
+                    <p>Direct transfer from any Pakistani bank.</p>
+                  </div>
+                  <div class="local-pay-radio"></div>
+                </div>
+                <div class="local-pay-details" id="details-bank">
+                  <div class="account-row"><span class="acc-label">Bank Name:</span> <span class="acc-val">Meezan Bank Ltd.</span></div>
+                  <div class="account-row"><span class="acc-label">IBAN:</span> <span class="acc-val">PK12 MEZN 0123 4567 8901 23</span></div>
+                  <div class="account-row"><span class="acc-label">Account Title:</span> <span class="acc-val">Athenaeum (SMC-Private) Limited</span></div>
+                  <button type="button" class="copy-btn" onclick="copyText('PK12MEZN01234567890123', this)">
+                    <span class="material-symbols-outlined">content_copy</span> Copy IBAN
+                  </button>
+                </div>
+
+                <!-- Transaction ID Input (appears for local methods) -->
+                <div class="form-row" style="margin-top:1rem;" id="tid-row">
+                  <div class="field-group">
+                    <label class="field-label">Transaction ID (TID) / Ref Number <span style="color:#ef4444;">*</span></label>
+                    <input type="text" class="field-input" placeholder="e.g. 12345678901" id="local-tid">
+                    <div class="field-hint">You will receive this via SMS after completing the transfer.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- /#pay-local -->
+
+            <hr style="border:none; border-top:1px solid var(--clr-border); margin:2rem 0;">
+
+            <button type="submit" class="pay-btn" id="pay-submit-btn">
+              <span class="material-symbols-outlined">lock</span> Pay Rs. 2,499
+            </button>
+            <p style="text-align:center; font-size:.75rem; color:var(--clr-muted);">
+              By clicking "Pay", you agree to our <a href="terms.html" target="_blank" style="text-decoration:underline;">Terms of Service</a> and <a href="privacy.html" target="_blank" style="text-decoration:underline;">Refund Policy</a>.
+            </p>
+
+          </form>
+        </div>
+      </div><!-- /.checkout-panel -->
+
+      <!-- ── Right: Order Summary ──────────────────────────── -->
+      <aside class="order-summary">
+        <div class="order-header">
+          <h3>Order Summary</h3>
+          <a href="pricing.html" class="order-edit">Change</a>
+        </div>
+        <div class="order-body">
+
+          <div class="order-plan-card">
+            <div class="order-plan-icon">🎓</div>
+            <div>
+              <div class="order-plan-name">
+                Scholar Plan <span class="order-plan-badge">Most Popular</span>
+              </div>
+              <div class="order-plan-desc">Monthly Subscription</div>
+            </div>
+          </div>
+
+          <div class="order-features">
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Up to 3 Subjects</div>
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Unlimited Mock Exams</div>
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Live Classes</div>
+          </div>
+
+          <!-- Promo Input -->
+          <div class="promo-row">
+            <input type="text" class="promo-input" id="promo-code" placeholder="Gift or promo code">
+            <button class="promo-apply" onclick="applyPromo()">Apply</button>
+          </div>
+
+          <div class="order-line-items">
+            <div class="order-line">
+              <span class="o-label">Subtotal</span>
+              <span class="o-val">Rs. 2,499</span>
+            </div>
+            <div class="order-line" id="discount-line" style="display:none;">
+              <span class="o-label">Discount (FINAID40)</span>
+              <span class="o-val discount">- Rs. 1,000</span>
+            </div>
+            <div class="order-line">
+              <span class="o-label">Tax (0%)</span>
+              <span class="o-val">Rs. 0</span>
+            </div>
+          </div>
+
+          <div class="order-total">
+            <span class="t-label">Total due today</span>
+            <div style="text-align:right;">
+              <span class="t-val" id="total-price">Rs. 2,499</span>
+              <div class="t-period" id="total-period">then Rs. 2,499/mo</div>
+            </div>
+          </div>
+
+          <div class="security-badges">
+            <div class="sec-badge"><span class="material-symbols-outlined">verified_user</span> 256-bit SSL</div>
+            <div class="sec-divider"></div>
+            <div class="sec-badge"><span class="material-symbols-outlined">security</span> PCI DSS Compliant</div>
+          </div>
+
+        </div>
+      </aside>
+
+    </div><!-- /.checkout-body -->
+  </main>
+
+  <!-- ── Confirmation Screen ─────────────────────────────── -->
+  <div id="confirmation-screen">
+    <div class="confirm-card">
+      <div class="confirm-icon-ring">
+        <span class="material-symbols-outlined" style="color:var(--clr-secondary); font-size:4rem;">check_circle</span>
+      </div>
+      <h2>Payment Successful!</h2>
+      <p>
+        Welcome aboard, Fatima! Your Scholar Plan is now active. We've sent a receipt to <strong>fatima.anwar@student.academypro.com</strong>.
+      </p>
+
+      <div class="receipt-grid">
+        <div class="receipt-row">
+          <span class="r-lbl">Amount Paid</span>
+          <span class="r-val" id="receipt-amount">Rs. 2,499</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-lbl">Date</span>
+          <span class="r-val" id="receipt-date">Oct 24, 2024</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-lbl">Transaction ID</span>
+          <span class="r-val" id="receipt-tid">ac_ch_8f92j10x</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-lbl">Payment Method</span>
+          <span class="r-val" id="receipt-method">Visa ending in 4242</span>
+        </div>
+      </div>
+
+      <div class="confirm-actions">
+        <a href="auth.html" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
+          <span class="material-symbols-outlined">dashboard</span> Create Account & Proceed
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+  <script>
+    let isTrialMode = false;
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('mode') === 'trial') {
+        isTrialMode = true;
+        // Hide payment sections
+        const payCard = document.getElementById('pay-card');
+        const payLocal = document.getElementById('pay-local');
+        const payTabs = document.querySelector('.payment-tabs');
+        if(payCard) payCard.style.display = 'none';
+        if(payLocal) payLocal.style.display = 'none';
+        if(payTabs) payTabs.style.display = 'none';
+        
+        // Remove required constraints from hidden inputs
+        ['cc-num', 'cc-exp', 'cc-cvc', 'cc-name', 'local-tid'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.required = false;
+        });
+
+        // Update button text
+        const submitBtn = document.getElementById('pay-submit-btn');
+        if (submitBtn) {
+          submitBtn.innerHTML = '<span class="material-symbols-outlined">bolt</span> Activate Free Trial';
+        }
+
+        // Update Order Summary to reflect Trial mode
+        const totalPrice = document.getElementById('total-price');
+        const totalPeriod = document.getElementById('total-period');
+        if(totalPrice) totalPrice.textContent = 'Rs. 0 (Trial)';
+        if(totalPeriod) totalPeriod.textContent = 'then Rs. 2,499/mo after 3 days';
+      }
+    });
+
+    // ── Payment Tabs ────────────────────────────────────────
+    let currentMethod = 'card';
+
+    function switchPayTab(type) {
+      currentMethod = type;
+      const tabs = document.querySelectorAll('.pay-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+
+      if (type === 'card') {
+        tabs[0].classList.add('active');
+        document.getElementById('pay-card').style.display = 'block';
+        document.getElementById('pay-local').style.display = 'none';
+        // Enable card required attributes
+        document.getElementById('cc-num').required = true;
+        document.getElementById('local-tid').required = false;
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('pay-card').style.display = 'none';
+        document.getElementById('pay-local').style.display = 'block';
+        // Enable local required attributes
+        document.getElementById('cc-num').required = false;
+        document.getElementById('local-tid').required = true;
+        // Select first local option automatically if none selected
+        if(!document.querySelector('.local-pay-option.selected')) {
+          selectLocalPay(document.querySelector('.local-pay-option'), 'easypaisa');
+        }
+      }
+    }
+
+    // ── Local Payments ──────────────────────────────────────
+    let selectedLocalId = 'easypaisa';
+
+    function selectLocalPay(el, id) {
+      selectedLocalId = id;
+      document.querySelectorAll('.local-pay-option').forEach(opt => opt.classList.remove('selected'));
+      document.querySelectorAll('.local-pay-details').forEach(det => det.classList.remove('show'));
+
+      el.classList.add('selected');
+      document.getElementById('details-' + id).classList.add('show');
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text);
+      const original = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined">check</span> Copied!';
+      btn.style.background = 'var(--clr-success)';
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.style.background = '';
+      }, 2000);
+    }
+
+    // ── Card Interaction ────────────────────────────────────
+    const cardEl = document.getElementById('card-preview');
+
+    function flipCard(flip) {
+      if (flip) cardEl.classList.add('flipped');
+      else      cardEl.classList.remove('flipped');
+    }
+
+    function formatCard() {
+      let input = document.getElementById('cc-num');
+      let val = input.value.replace(/\D/g, '');
+
+      // Detect network
+      let network = '🌐';
+      if (val.startsWith('4')) network = 'VISA';
+      else if (/^5[1-5]/.test(val)) network = 'MASTERCARD';
+      document.getElementById('card-network').textContent = network;
+
+      // Add spaces
+      let formatted = val.match(/.{1,4}/g);
+      input.value = formatted ? formatted.join(' ') : val;
+
+      // Update display
+      document.getElementById('card-number-disp').textContent = input.value || '•••• •••• •••• ••••';
+    }
+
+    function formatExp() {
+      let input = document.getElementById('cc-exp');
+      let val = input.value.replace(/\D/g, '');
+      if (val.length >= 2) {
+        val = val.substring(0,2) + ' / ' + val.substring(2,4);
+      }
+      input.value = val;
+      document.getElementById('card-exp-disp').textContent = val || 'MM/YY';
+    }
+
+    function updateCVC() {
+      let val = document.getElementById('cc-cvc').value;
+      document.getElementById('card-cvc-disp').textContent = val || '•••';
+    }
+
+    function updateName() {
+      let val = document.getElementById('cc-name').value;
+      document.getElementById('card-name-disp').textContent = (val || 'YOUR NAME').toUpperCase();
+    }
+
+    // ── Promo Code ──────────────────────────────────────────
+    let isDiscountApplied = false;
+
+    function applyPromo() {
+      const input = document.getElementById('promo-code');
+      const val = input.value.trim().toUpperCase();
+
+      if (val === 'FINAID40') {
+        isDiscountApplied = true;
+        document.getElementById('discount-line').style.display = 'flex';
+        document.getElementById('total-price').textContent = 'Rs. 1,499';
+        document.getElementById('total-period').textContent = 'then Rs. 1,499/mo';
+        document.getElementById('pay-submit-btn').innerHTML = '<span class="material-symbols-outlined">lock</span> Pay Rs. 1,499';
+        input.value = '';
+        input.placeholder = 'Code Applied!';
+        input.disabled = true;
+      } else {
+        alert('Invalid promo code');
+      }
+    }
+
+    // ── Process Payment ─────────────────────────────────────
+    function processPayment(e) {
+      e.preventDefault();
+      const btn = document.getElementById('pay-submit-btn');
+      btn.innerHTML = '<span class="material-symbols-outlined rotate">sync</span> Processing securely...';
+      btn.disabled = true;
+      document.body.style.cursor = 'wait';
+
+      // Set receipt data
+      document.getElementById('receipt-amount').textContent = isDiscountApplied ? 'Rs. 1,499' : 'Rs. 2,499';
+      const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      document.getElementById('receipt-date').textContent = today;
+
+      let methodStr = '';
+      if (currentMethod === 'card') {
+        const num = document.getElementById('cc-num').value;
+        const last4 = num.length >= 4 ? num.slice(-4) : '4242';
+        methodStr = `Card ending in ${last4}`;
+      } else {
+        const tid = document.getElementById('local-tid').value;
+        const methodNames = { easypaisa: 'Easypaisa', jazzcash: 'JazzCash', bank: 'Bank Transfer' };
+        methodStr = `${methodNames[selectedLocalId]} (TID: ${tid || 'Verified'})`;
+        document.getElementById('receipt-tid').textContent = tid || ('tx_' + Math.floor(Math.random()*1000000));
+      }
+      document.getElementById('receipt-method').textContent = methodStr;
+
+      if (isTrialMode) {
+        document.getElementById('receipt-amount').textContent = 'Rs. 0 (Free Trial)';
+        document.getElementById('receipt-method').textContent = 'No Payment Required';
+      }
+
+      // Simulate API call
+      setTimeout(() => {
+        document.body.style.cursor = '';
+        document.getElementById('checkout-main').style.display = 'none';
+        document.querySelector('.checkout-progress').style.display = 'none';
+
+        const screen = document.getElementById('confirmation-screen');
+        screen.classList.add('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 2500);
+    }
+  </script>
+
+<!-- Floating Glass Back Button -->
+<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+</button>
+</body>
+</html>

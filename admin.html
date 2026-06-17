@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Athenaeum</title>
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="supabase-admin.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --sidebar-bg: #161b22;
+      --card: #1c2128;
+      --card2: #21262d;
+      --border: #30363d;
+      --primary: #005088;
+      --accent: #00D2FF;
+      --gold: #FFD700;
+      --green: #3fb950;
+      --red: #f85149;
+      --orange: #d29922;
+      --purple: #a371f7;
+      --text: #e6edf3;
+      --muted: #7d8590;
+      --radius: 10px;
+      --sidebar-w: 240px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Urbanist',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      position:fixed; inset:0; z-index:1000;
+      background: linear-gradient(135deg,#0d1117,#161b22,#0d1117);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .login-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:16px; padding:3rem 2.5rem; width:420px;
+      box-shadow:0 24px 48px rgba(0,0,0,0.5);
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes popIn { from{opacity:0;transform:scale(.9) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    .login-logo { text-align:center; font-size:2rem; font-weight:800; color:var(--accent); margin-bottom:.25rem; }
+    .login-sub { text-align:center; color:var(--muted); font-size:.85rem; margin-bottom:2rem; }
+    .login-badge { display:inline-flex; align-items:center; gap:.4rem; background:rgba(163,113,247,.15); color:var(--purple); border:1px solid rgba(163,113,247,.3); border-radius:20px; padding:.25rem .75rem; font-size:.75rem; font-weight:700; margin-bottom:1.5rem; }
+    .l-group { margin-bottom:1.25rem; }
+    .l-group label { display:block; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:.5rem; }
+    .l-input { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:.85rem 1rem; color:var(--text); font-family:'Urbanist',sans-serif; font-size:.95rem; transition:.2s; outline:none; }
+    .l-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,210,255,.15); }
+    .l-btn { width:100%; padding:.9rem; background:linear-gradient(135deg,var(--primary),#0077cc); color:#fff; border:none; border-radius:var(--radius); font-size:1rem; font-weight:800; cursor:pointer; transition:.2s; margin-top:.5rem; }
+    .l-btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,80,136,.4); }
+    .l-error { color:var(--red); font-size:.85rem; margin-top:.75rem; text-align:center; display:none; }
+
+    /* ── MAIN LAYOUT ── */
+    #admin-app { display:none; }
+
+    /* SIDEBAR */
+    .sidebar {
+      position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh;
+      background:var(--sidebar-bg); border-right:1px solid var(--border);
+      display:flex; flex-direction:column; z-index:100; overflow-y:auto;
+    }
+    .sidebar-logo { padding:1.5rem 1.25rem; border-bottom:1px solid var(--border); }
+    .sidebar-logo .brand { font-size:1.25rem; font-weight:800; color:var(--accent); }
+    .sidebar-logo .role-tag { font-size:.7rem; background:rgba(163,113,247,.2); color:var(--purple); border-radius:20px; padding:.15rem .6rem; font-weight:700; }
+    .nav-section { padding:.75rem .75rem .25rem; font-size:.65rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+    .nav-item {
+      display:flex; align-items:center; gap:.75rem;
+      padding:.7rem 1rem; border-radius:var(--radius); margin:.1rem .5rem;
+      cursor:pointer; font-size:.9rem; font-weight:600; color:var(--muted);
+      transition:.2s; text-decoration:none;
+    }
+    .nav-item:hover { background:var(--card2); color:var(--text); }
+    .nav-item.active { background:rgba(0,210,255,.1); color:var(--accent); }
+    .nav-item .material-symbols-outlined { font-size:1.2rem; }
+    .nav-badge { margin-left:auto; background:var(--red); color:#fff; border-radius:10px; padding:.1rem .45rem; font-size:.65rem; font-weight:800; }
+    .sidebar-footer { margin-top:auto; padding:1rem; border-top:1px solid var(--border); }
+    .admin-user { display:flex; align-items:center; gap:.75rem; }
+    .admin-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--accent)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.85rem; }
+    .admin-name { font-size:.85rem; font-weight:700; }
+    .admin-email { font-size:.7rem; color:var(--muted); }
+    .logout-btn { display:flex; align-items:center; gap:.5rem; margin-top:.75rem; padding:.5rem .75rem; border-radius:var(--radius); color:var(--red); font-size:.8rem; font-weight:600; cursor:pointer; border:1px solid rgba(248,81,73,.2); background:transparent; width:100%; transition:.2s; }
+    .logout-btn:hover { background:rgba(248,81,73,.1); }
+
+    /* MAIN CONTENT */
+    .main { margin-left:var(--sidebar-w); min-height:100vh; }
+    .topbar { padding:1rem 1.75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--sidebar-bg); position:sticky; top:0; z-index:50; }
+    .topbar-title { font-size:1.25rem; font-weight:800; }
+    .topbar-actions { display:flex; gap:.75rem; align-items:center; }
+    .page-content { padding:1.75rem; }
+
+    /* PANELS */
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* STAT CARDS */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.75rem; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; right:0; width:80px; height:80px; border-radius:50%; opacity:.06; }
+    .stat-card.blue::before { background:var(--accent); }
+    .stat-card.green::before { background:var(--green); }
+    .stat-card.gold::before { background:var(--gold); }
+    .stat-card.purple::before { background:var(--purple); }
+    .stat-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:.75rem; font-size:1.2rem; }
+    .stat-icon.blue { background:rgba(0,210,255,.1); color:var(--accent); }
+    .stat-icon.green { background:rgba(63,185,80,.1); color:var(--green); }
+    .stat-icon.gold { background:rgba(255,215,0,.1); color:var(--gold); }
+    .stat-icon.purple { background:rgba(163,113,247,.1); color:var(--purple); }
+    .stat-val { font-size:2rem; font-weight:800; line-height:1; margin-bottom:.25rem; }
+    .stat-label { font-size:.8rem; color:var(--muted); font-weight:600; }
+    .stat-change { font-size:.75rem; margin-top:.5rem; font-weight:700; }
+    .stat-change.up { color:var(--green); }
+    .stat-change.down { color:var(--red); }
+
+    /* SECTION HEADER */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+    .section-title { font-size:1.1rem; font-weight:800; }
+
+    /* BUTTONS */
+    .btn { display:inline-flex; align-items:center; gap:.4rem; padding:.6rem 1.1rem; border-radius:var(--radius); font-weight:700; font-size:.85rem; cursor:pointer; border:none; transition:.2s; font-family:'Urbanist',sans-serif; }
+    .btn-primary { background:var(--accent); color:#000; }
+    .btn-primary:hover { background:#00b8e0; }
+    .btn-danger { background:rgba(248,81,73,.1); color:var(--red); border:1px solid rgba(248,81,73,.2); }
+    .btn-danger:hover { background:rgba(248,81,73,.2); }
+    .btn-ghost { background:var(--card2); color:var(--text); border:1px solid var(--border); }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+    .btn-sm { padding:.4rem .8rem; font-size:.78rem; }
+    .btn-success { background:rgba(63,185,80,.1); color:var(--green); border:1px solid rgba(63,185,80,.2); }
+    .btn-success:hover { background:rgba(63,185,80,.2); }
+
+    /* TABLE */
+    .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    th { padding:.85rem 1rem; text-align:left; font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); background:var(--card2); border-bottom:1px solid var(--border); }
+    td { padding:.9rem 1rem; font-size:.88rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(255,255,255,.02); }
+
+    /* BADGE */
+    .badge { display:inline-block; padding:.2rem .6rem; border-radius:20px; font-size:.72rem; font-weight:800; }
+    .badge-green { background:rgba(63,185,80,.15); color:var(--green); }
+    .badge-red { background:rgba(248,81,73,.15); color:var(--red); }
+    .badge-gold { background:rgba(255,215,0,.15); color:var(--gold); }
+    .badge-blue { background:rgba(0,210,255,.15); color:var(--accent); }
+    .badge-purple { background:rgba(163,113,247,.15); color:var(--purple); }
+    .badge-gray { background:rgba(125,133,144,.15); color:var(--muted); }
+
+    /* MODAL */
+    .modal-overlay { display:none; position:fixed; inset:0; z-index:500; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:620px; max-width:95vw; max-height:90vh; overflow-y:auto; animation:popIn .3s ease; }
+    .modal-header { padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--card); z-index:10; }
+    .modal-title { font-size:1.1rem; font-weight:800; }
+    .modal-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.25rem; display:flex; padding:.25rem; border-radius:6px; transition:.2s; }
+    .modal-close:hover { color:var(--text); background:var(--card2); }
+    .modal-body { padding:1.5rem; }
+    .modal-footer { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:.75rem; }
+
+    /* FORM */
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-group { display:flex; flex-direction:column; gap:.4rem; }
+    .form-group.full { grid-column:1/-1; }
+    .form-label { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+    .form-input, .form-select, .form-textarea {
+      background:var(--card2); border:1px solid var(--border); border-radius:var(--radius);
+      color:var(--text); font-family:'Urbanist',sans-serif; font-size:.9rem;
+      padding:.75rem; outline:none; transition:.2s; width:100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,210,255,.1); }
+    .form-textarea { resize:vertical; min-height:100px; }
+
+    /* COURSE CARD */
+    .courses-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; }
+    .course-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:.2s; }
+    .course-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+    .course-thumb { width:100%; height:140px; object-fit:cover; background:var(--card2); }
+    .course-thumb-placeholder { width:100%; height:140px; background:linear-gradient(135deg,var(--card2),var(--sidebar-bg)); display:flex; align-items:center; justify-content:center; font-size:3rem; }
+    .course-body { padding:1rem; }
+    .course-cat { font-size:.7rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:.5px; margin-bottom:.4rem; }
+    .course-title { font-size:.95rem; font-weight:800; margin-bottom:.5rem; line-height:1.3; }
+    .course-meta { display:flex; gap:.75rem; font-size:.75rem; color:var(--muted); margin-bottom:.75rem; }
+    .course-meta span { display:flex; align-items:center; gap:.25rem; }
+    .course-price { font-size:1rem; font-weight:800; color:var(--green); margin-bottom:.75rem; }
+    .course-actions { display:flex; gap:.5rem; }
+
+    /* USTAD AI SETTINGS */
+    .ai-settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .ai-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; }
+    .ai-card h3 { font-size:.95rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:.6rem 0; border-bottom:1px solid var(--border); }
+    .toggle-row:last-child { border-bottom:none; }
+    .toggle-label { font-size:.88rem; font-weight:600; }
+    .toggle-sub { font-size:.75rem; color:var(--muted); }
+    .toggle { position:relative; width:44px; height:24px; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:var(--border); border-radius:24px; cursor:pointer; transition:.3s; }
+    .toggle-slider:before { content:''; position:absolute; width:18px; height:18px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
+    .toggle input:checked + .toggle-slider { background:var(--accent); }
+    .toggle input:checked + .toggle-slider:before { transform:translateX(20px); }
+
+    /* PREVIEW LINK */
+    .preview-bar { background:rgba(0,210,255,.05); border:1px solid rgba(0,210,255,.2); border-radius:var(--radius); padding:1rem 1.25rem; display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
+    .preview-bar a { color:var(--accent); text-decoration:none; font-weight:700; font-size:.9rem; display:flex; align-items:center; gap:.4rem; }
+    .preview-bar a:hover { text-decoration:underline; }
+
+    /* TOAST */
+    #toast { position:fixed; bottom:2rem; right:2rem; z-index:9999; display:flex; flex-direction:column; gap:.5rem; }
+    .toast-item { background:var(--card2); border:1px solid var(--border); border-radius:var(--radius); padding:.75rem 1.25rem; display:flex; align-items:center; gap:.75rem; font-size:.88rem; font-weight:600; animation:slideUp .3s ease; box-shadow:0 8px 24px rgba(0,0,0,.4); min-width:280px; }
+    .toast-item.success { border-left:3px solid var(--green); }
+    .toast-item.error { border-left:3px solid var(--red); }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      .sidebar { width:60px; }
+      .sidebar .brand, .nav-item span:not(.material-symbols-outlined), .admin-name, .admin-email, .nav-section, .logout-btn span { display:none; }
+      .main { margin-left:60px; }
+      .stats-grid { grid-template-columns:1fr 1fr; }
+    }
+    .search-input { background:var(--card2); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-family:'Urbanist',sans-serif; font-size:.88rem; padding:.55rem 1rem; outline:none; transition:.2s; width:240px; }
+    .search-input:focus { border-color:var(--accent); }
+    .empty-state { text-align:center; padding:3rem; color:var(--muted); }
+    .empty-state .material-symbols-outlined { font-size:3rem; display:block; margin-bottom:1rem; opacity:.3; }
+    .ai-stat-row { display:flex; gap:.75rem; margin-bottom:1rem; }
+    .ai-mini-stat { flex:1; background:var(--card2); border-radius:var(--radius); padding:.85rem; text-align:center; }
+    .ai-mini-val { font-size:1.5rem; font-weight:800; }
+    .ai-mini-lbl { font-size:.72rem; color:var(--muted); font-weight:600; }
+    .users-filter { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+    .filter-chip { padding:.35rem .85rem; border-radius:20px; font-size:.78rem; font-weight:700; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:.2s; }
+    .filter-chip.active { background:rgba(0,210,255,.1); border-color:var(--accent); color:var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN SCREEN ═══════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🎓 Athenaeum</div>
+    <div class="login-sub">Admin Control Panel</div>
+    <div style="text-align:center; margin-bottom:1.5rem;">
+      <span class="login-badge">
+        <span class="material-symbols-outlined" style="font-size:.9rem">shield</span>
+        Admin Access Only
+      </span>
+    </div>
+    <div class="l-group">
+      <label>Admin Email</label>
+      <input type="email" class="l-input" id="admin-email" value="athenaeum.institute@gmail.com" placeholder="admin@email.com">
+    </div>
+    <div class="l-group">
+      <label>Password</label>
+      <input type="password" class="l-input" id="admin-password" value="Punjab1212@@@" placeholder="••••••••">
+    </div>
+    <button class="l-btn" onclick="adminLogin()" id="login-btn">
+      <span id="login-btn-text">Login to Admin Panel</span>
+    </button>
+    <div class="l-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN ADMIN APP ═══════════ -->
+<div id="admin-app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">🎓 Athenaeum</div>
+      <div style="margin-top:.25rem;"><span class="role-tag">Admin Panel</span></div>
+    </div>
+
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPanel('dashboard')">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>Dashboard</span>
+    </div>
+
+    <div class="nav-section">Content</div>
+    <div class="nav-item" onclick="showPanel('courses')">
+      <span class="material-symbols-outlined">menu_book</span>
+      <span>Courses</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('announcements')">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>Announcements</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('ai-settings')">
+      <span class="material-symbols-outlined">smart_toy</span>
+      <span>Ustad AI</span>
+    </div>
+
+    <div class="nav-section">Users</div>
+    <div class="nav-item" onclick="showPanel('students')">
+      <span class="material-symbols-outlined">school</span>
+      <span>Students</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('teachers')">
+      <span class="material-symbols-outlined">badge</span>
+      <span>Teachers</span>
+    </div>
+
+    <div class="nav-section">Website</div>
+    <div class="nav-item" onclick="window.open('index.html','_blank')">
+      <span class="material-symbols-outlined">open_in_new</span>
+      <span>View Website</span>
+    </div>
+    <div class="nav-item" onclick="window.open('dashboard-student.html','_blank')">
+      <span class="material-symbols-outlined">person</span>
+      <span>Student Dashboard</span>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-user">
+        <div class="admin-avatar">A</div>
+        <div>
+          <div class="admin-name">Admin</div>
+          <div class="admin-email" id="sidebar-email"></div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="adminLogout()">
+        <span class="material-symbols-outlined" style="font-size:1rem">logout</span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" onclick="window.open('index.html','_blank')">
+          <span class="material-symbols-outlined" style="font-size:1rem">open_in_new</span>
+          View Site
+        </button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ── DASHBOARD PANEL ── -->
+      <div id="panel-dashboard" class="panel active">
+        <div class="preview-bar">
+          <span class="material-symbols-outlined" style="color:var(--accent)">link</span>
+          <a href="index.html" target="_blank">🌐 Open Main Website <span class="material-symbols-outlined" style="font-size:.9rem">open_in_new</span></a>
+          <span style="color:var(--muted);font-size:.85rem">|</span>
+          <a href="auth.html" target="_blank">🔐 Login Page <span class="material-symbols-outlined" style="font-size:.9rem">open_in_new</span></a>
+          <span style="color:var(--muted);font-size:.85rem">|</span>
+          <a href="dashboard-student.html" target="_blank">🎓 Student Dashboard <span class="material-symbols-outlined" style="font-size:.9rem">open_in_new</span></a>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-icon blue"><span class="material-symbols-outlined">school</span></div>
+            <div class="stat-val" id="stat-students">—</div>
+            <div class="stat-label">Total Students</div>
+            <div class="stat-change up">↑ From Supabase Auth</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon green"><span class="material-symbols-outlined">menu_book</span></div>
+            <div class="stat-val" id="stat-courses">8</div>
+            <div class="stat-label">Total Courses</div>
+            <div class="stat-change up">↑ Active</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-icon gold"><span class="material-symbols-outlined">smart_toy</span></div>
+            <div class="stat-val" id="stat-ai-questions">—</div>
+            <div class="stat-label">AI Questions Today</div>
+            <div class="stat-change up">↑ Ustad AI Usage</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-icon purple"><span class="material-symbols-outlined">quiz</span></div>
+            <div class="stat-val" id="stat-ai-quizzes">—</div>
+            <div class="stat-label">AI Quizzes Today</div>
+            <div class="stat-change up">↑ Today's Count</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">📋 Quick Actions</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:2rem;">
+          <button class="btn btn-ghost" onclick="showPanel('courses')" style="justify-content:flex-start;padding:1rem">
+            <span class="material-symbols-outlined">add_circle</span> Add New Course
+          </button>
+          <button class="btn btn-ghost" onclick="showPanel('ai-settings')" style="justify-content:flex-start;padding:1rem">
+            <span class="material-symbols-outlined">tune</span> Configure Ustad AI
+          </button>
+          <button class="btn btn-ghost" onclick="showPanel('students')" style="justify-content:flex-start;padding:1rem">
+            <span class="material-symbols-outlined">manage_accounts</span> Manage Students
+          </button>
+          <button class="btn btn-ghost" onclick="window.open('video-player.html','_blank')" style="justify-content:flex-start;padding:1rem">
+            <span class="material-symbols-outlined">play_circle</span> Video Player
+          </button>
+          <button class="btn btn-ghost" onclick="window.open('mock-exam.html','_blank')" style="justify-content:flex-start;padding:1rem">
+            <span class="material-symbols-outlined">quiz</span> Mock Exam
+          </button>
+          <button class="btn btn-ghost" onclick="window.open('live-class.html','_blank')" style="justify-content:flex-start;padding:1rem">
+            <span class="material-symbols-outlined">videocam</span> Live Class
+          </button>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">🕒 Recent Students (Supabase)</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name / Email</th>
+                <th>Plan</th>
+                <th>Joined</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recent-students-body">
+              <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading students from Supabase...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── COURSES PANEL ── -->
+      <div id="panel-courses" class="panel">
+        <div class="section-header">
+          <div class="section-title">📚 Course Management</div>
+          <button class="btn btn-primary" onclick="openCourseModal()">
+            <span class="material-symbols-outlined">add</span> Add New Course
+          </button>
+        </div>
+
+        <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+          <input class="search-input" type="text" placeholder="🔍 Search courses..." id="course-search" oninput="renderCourses()">
+          <select class="form-select" style="width:160px" id="cat-filter" onchange="renderCourses()">
+            <option value="">All Categories</option>
+            <option value="A-Level">A-Level</option>
+            <option value="O-Level">O-Level</option>
+            <option value="Matric">Matric</option>
+            <option value="Inter">Inter/FSc</option>
+          </select>
+        </div>
+
+        <div class="courses-grid" id="courses-grid"></div>
+      </div>
+
+      <!-- ── USTAD AI SETTINGS PANEL ── -->
+      <div id="panel-ai-settings" class="panel">
+        <div class="section-header">
+          <div class="section-title">🤖 Ustad AI — Settings & Testing</div>
+        </div>
+
+        <div class="ai-stat-row">
+          <div class="ai-mini-stat">
+            <div class="ai-mini-val" id="ai-total-q">—</div>
+            <div class="ai-mini-lbl">Total Questions Today</div>
+          </div>
+          <div class="ai-mini-stat">
+            <div class="ai-mini-val" id="ai-total-quiz">—</div>
+            <div class="ai-mini-lbl">Total Quizzes Today</div>
+          </div>
+          <div class="ai-mini-stat">
+            <div class="ai-mini-val" id="ai-active-users">—</div>
+            <div class="ai-mini-lbl">Active Users Today</div>
+          </div>
+        </div>
+
+        <div class="ai-settings-grid">
+          <div class="ai-card" style="grid-column:1/-1">
+            <h3>🔑 Gemini API Key</h3>
+            <div class="form-group">
+              <label class="form-label">API Key (stored in ustad-ai.js)</label>
+              <div style="display:flex;gap:.5rem">
+                <input type="password" class="form-input" id="gemini-key-input" placeholder="AIzaSy..." style="flex:1">
+                <button class="btn btn-ghost" onclick="toggleKeyVisibility()">👁️ Show</button>
+                <button class="btn btn-primary" onclick="saveApiKey()">Save & Update</button>
+              </div>
+              <small style="color:var(--muted);font-size:.75rem;margin-top:.4rem;display:block">Get free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com</a></small>
+            </div>
+          </div>
+
+          <div class="ai-card">
+            <h3>⚙️ AI Feature Toggles</h3>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Ustad AI Chatbot</div>
+                <div class="toggle-sub">Show/hide AI widget on website</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggle-ai-enabled" checked onchange="saveAiSettings()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Practice Quiz Feature</div>
+                <div class="toggle-sub">Allow students to generate quizzes</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggle-quiz-enabled" checked onchange="saveAiSettings()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Bilingual Mode</div>
+                <div class="toggle-sub">Auto-detect English / Roman Urdu</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggle-bilingual" checked onchange="saveAiSettings()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="ai-card">
+            <h3>🚦 Usage Limits</h3>
+            <div class="form-group" style="margin-bottom:.75rem">
+              <label class="form-label">Free Trial — Questions per Day</label>
+              <input type="number" class="form-input" id="limit-questions" value="5" min="1" max="50">
+            </div>
+            <div class="form-group" style="margin-bottom:.75rem">
+              <label class="form-label">Free Trial — Quizzes per Day</label>
+              <input type="number" class="form-input" id="limit-quizzes" value="2" min="1" max="10">
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="saveLimits()">
+              <span class="material-symbols-outlined">save</span> Save Limits
+            </button>
+          </div>
+
+          <!-- LIVE TEST -->
+          <div class="ai-card" style="grid-column:1/-1">
+            <h3>🧪 Live Test Ustad AI</h3>
+            <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+              <select class="form-select" style="width:160px" id="test-subject">
+                <option value="general">General</option>
+                <option value="math">Math</option>
+                <option value="science">Science</option>
+                <option value="english">English</option>
+              </select>
+              <input class="form-input" type="text" id="test-student-name" value="Admin" placeholder="Student name..." style="width:200px">
+              <input class="form-input" type="text" id="test-api-key-inline" placeholder="Paste API Key here..." style="flex:1">
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);height:280px;overflow-y:auto;padding:1rem;margin-bottom:.75rem;" id="test-chat"></div>
+            <div style="display:flex;gap:.5rem">
+              <input class="form-input" type="text" id="test-message" placeholder="Ask a question..." style="flex:1" onkeydown="if(event.key==='Enter') sendTestMessage()">
+              <button class="btn btn-primary" onclick="sendTestMessage()">
+                <span class="material-symbols-outlined">send</span>
+              </button>
+              <button class="btn btn-ghost" onclick="clearTestChat()">Clear</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--muted);margin-top:.5rem">⚠️ Type your Gemini API key above to test. This calls the real Gemini API.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STUDENTS PANEL ── -->
+      <div id="panel-students" class="panel">
+        <div class="section-header">
+          <div class="section-title">👨‍🎓 Student Management</div>
+          <button class="btn btn-ghost" onclick="loadStudents()">
+            <span class="material-symbols-outlined">refresh</span> Refresh
+          </button>
+        </div>
+
+        <div class="users-filter">
+          <button class="filter-chip active" onclick="filterStudents('all',this)">All</button>
+          <button class="filter-chip" onclick="filterStudents('trial',this)">Trial</button>
+          <button class="filter-chip" onclick="filterStudents('paid',this)">Paid</button>
+          <input class="search-input" type="text" placeholder="🔍 Search by name/email..." id="student-search" oninput="filterStudents('search',null)" style="margin-left:auto">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>AI Usage Today</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="students-body">
+              <tr><td colspan="7" class="empty-state">
+                <span class="material-symbols-outlined">sync</span>
+                Loading from Supabase...
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TEACHERS PANEL ── -->
+      <div id="panel-teachers" class="panel">
+        <div class="section-header">
+          <div class="section-title">🧑‍🏫 Teacher Management</div>
+          <div>
+            <button class="btn btn-ghost" onclick="loadTeachers()">
+              <span class="material-symbols-outlined">refresh</span> Refresh
+            </button>
+            <button class="btn btn-primary" onclick="openAddTeacherModal()">
+              <span class="material-symbols-outlined">add</span> Add Teacher Role
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="teachers-body">
+              <tr><td colspan="5" class="empty-state">Loading from Supabase...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── ANNOUNCEMENTS PANEL ── -->
+      <div id="panel-announcements" class="panel">
+        <div class="section-header">
+          <div class="section-title">📢 Announcements</div>
+          <div>
+            <button class="btn btn-ghost" onclick="loadAnnouncements()">
+              <span class="material-symbols-outlined">refresh</span> Refresh
+            </button>
+            <button class="btn btn-primary" onclick="openAddAnnouncementModal()">
+              <span class="material-symbols-outlined">add</span> New Announcement
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Title & Message</th>
+                <th>Target</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="announcements-body">
+              <tr><td colspan="5" class="empty-state">Loading from Supabase...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main -->
+</div><!-- /admin-app -->
+
+<!-- COURSE MODAL -->
+<div class="modal-overlay" id="course-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="course-modal-title">Add New Course</div>
+      <button class="modal-close" onclick="closeCourseModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">Course Title *</label>
+          <input class="form-input" type="text" id="c-title" placeholder="e.g. A-Level Biology Full Course">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Instructor Name *</label>
+          <input class="form-input" type="text" id="c-instructor" placeholder="Prof. Name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-select" id="c-category">
+            <option value="A-Level">A-Level</option>
+            <option value="O-Level">O-Level</option>
+            <option value="Matric">Matric</option>
+            <option value="Inter">Inter/FSc</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price</label>
+          <input class="form-input" type="text" id="c-price" placeholder="Rs. 2,499 or FREE">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duration</label>
+          <input class="form-input" type="text" id="c-duration" placeholder="08 WEEKS">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Level</label>
+          <select class="form-select" id="c-level">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rating (1-5)</label>
+          <input class="form-input" type="number" id="c-rating" placeholder="4.8" min="1" max="5" step="0.1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Students Enrolled</label>
+          <input class="form-input" type="text" id="c-students" placeholder="120+">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Thumbnail URL</label>
+          <input class="form-input" type="url" id="c-thumbnail" placeholder="https://...">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Full Description *</label>
+          <textarea class="form-textarea" id="c-description" placeholder="Describe the course..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Features (one per line)</label>
+          <textarea class="form-textarea" id="c-features" placeholder="24+ hours of recorded lectures&#10;Past paper solutions&#10;Live Q&A sessions"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCourseModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCourse()">
+        <span class="material-symbols-outlined">save</span>
+        <span id="save-course-btn-text">Save Course</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE STUDENT MODAL -->
+<div class="modal-overlay" id="upgrade-modal">
+  <div class="modal" style="width:400px">
+    <div class="modal-header">
+      <div class="modal-title">Update Student Plan</div>
+      <button class="modal-close" onclick="document.getElementById('upgrade-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Student</label>
+        <input class="form-input" id="upgrade-name" disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Plan Type</label>
+        <select class="form-select" id="upgrade-plan">
+          <option value="trial">Free Trial</option>
+          <option value="paid">Paid (Unlimited)</option>
+          <option value="free">Free (No AI)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('upgrade-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="applyUpgrade()">Update Plan</button>
+    </div>
+  </div>
+</div>
+<!-- ADD TEACHER MODAL -->
+<div class="modal-overlay" id="teacher-modal">
+  <div class="modal" style="width:400px">
+    <div class="modal-header">
+      <div class="modal-title">Assign Teacher Role</div>
+      <button class="modal-close" onclick="document.getElementById('teacher-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem;">Select an existing student/user to elevate to a Teacher role.</p>
+      <div class="form-group">
+        <label class="form-label">Select User</label>
+        <select class="form-select" id="t-user-select">
+          <option value="">Loading users...</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('teacher-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="assignTeacherRole()">Assign Role</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ANNOUNCEMENT MODAL -->
+<div class="modal-overlay" id="announcement-modal">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">
+      <div class="modal-title">New Announcement</div>
+      <button class="modal-close" onclick="document.getElementById('announcement-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input class="form-input" type="text" id="a-title" placeholder="e.g. Server Maintenance">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" id="a-message" placeholder="Type your announcement here..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Target Audience</label>
+        <select class="form-select" id="a-target">
+          <option value="all">All Users</option>
+          <option value="paid">Paid Students Only</option>
+          <option value="trial">Trial Students Only</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('announcement-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="publishAnnouncement()">Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+//  ADMIN PANEL JAVASCRIPT
+// ─────────────────────────────────────────────────────────────
+
+const ADMIN_EMAIL = 'athenaeum.institute@gmail.com';
+let coursesData_local = [];
+let studentsData = [];
+let upgradeTargetId = null;
+let editingCourseId = null;
+let currentStudentFilter = 'all';
+
+// ── Init ──
+(function initAdmin() {
+  if (!window.supabaseClient) {
+    console.error("Supabase not loaded");
+  }
+})();
+
+// ── LOGIN ──
+async function adminLogin() {
+  const email = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-password').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-error');
+
+  err.style.display = 'none';
+  btn.innerHTML = '<span id="login-btn-text">Logging in...</span>';
+  btn.disabled = true;
+
+  try {
+    const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+
+    if (data.user.email !== ADMIN_EMAIL) {
+      await window.supabaseClient.auth.signOut();
+      throw new Error('Access denied. Admin only.');
+    }
+
+    document.getElementById('sidebar-email').textContent = data.user.email;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    
+    // Load all data
+    await loadDashboardStats();
+    await loadStudents();
+    await loadAdminCourses();
+    await loadTeachers();
+    await loadAnnouncements();
+    
+    showToast('Welcome back, Admin! 👋', 'success');
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = 'block';
+    btn.innerHTML = '<span id="login-btn-text">Login to Admin Panel</span>';
+    btn.disabled = false;
+  }
+}
+
+// Allow Enter key on login
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+    adminLogin();
+  }
+});
+
+async function adminLogout() {
+  await window.supabaseClient.auth.signOut();
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-app').style.display = 'none';
+  showToast('Logged out successfully.', 'success');
+}
+
+// ── PANEL NAVIGATION ──
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll(`.nav-item`).forEach(n => {
+    if (n.getAttribute('onclick')?.includes(name)) n.classList.add('active');
+  });
+
+  const titles = {
+    dashboard: 'Dashboard',
+    courses: 'Course Management',
+    'ai-settings': 'Ustad AI Settings',
+    students: 'Student Management',
+    teachers: 'Teacher Management',
+    announcements: 'Announcements',
+  };
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+}
+
+// ── DASHBOARD STATS ──
+async function loadDashboardStats() {
+  try {
+    if (!window.AthenaeumAdmin) return;
+    
+    // Load top stats
+    const stats = await window.AthenaeumAdmin.getDashboardStats();
+    if (stats) {
+      document.getElementById('stat-students').textContent = stats.totalStudents;
+      document.getElementById('stat-courses').textContent = stats.totalCourses;
+      document.getElementById('stat-ai-questions').textContent = stats.aiQuestionsToday;
+      document.getElementById('stat-ai-quizzes').textContent = stats.aiQuizzesToday;
+      document.getElementById('ai-total-q').textContent = stats.aiQuestionsToday;
+      document.getElementById('ai-total-quiz').textContent = stats.aiQuizzesToday;
+      document.getElementById('ai-active-users').textContent = stats.activeAiUsers;
+    }
+
+    // Load recent students
+    const profiles = await window.AthenaeumAdmin.fetchStudents('all', '');
+    if (profiles && profiles.length > 0) {
+      const recent = profiles.slice(0, 5);
+      const tbody = document.getElementById('recent-students-body');
+      tbody.innerHTML = recent.map(p => `
+        <tr>
+          <td>
+            <strong>${p.full_name || 'Unnamed'}</strong><br/>
+            <span style="font-size:0.75rem; color:var(--muted);">${p.email || ''}</span>
+          </td>
+          <td><span class="badge ${p.plan_type === 'paid' ? 'badge-green' : 'badge-gold'}">${(p.plan_type || 'trial').toUpperCase()}</span></td>
+          <td style="color:var(--muted);font-size:.8rem">${new Date(p.created_at).toLocaleDateString()}</td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openUpgradeModal('${p.id}','${(p.full_name || 'Student').replace(/'/g, "\\'")}','${p.plan_type}')">Manage</button></td>
+        </tr>
+      `).join('');
+    } else {
+      document.getElementById('recent-students-body').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem">No students found.</td></tr>';
+    }
+  } catch(e) {
+    console.error('Stats load error:', e);
+  }
+}
+
+// ── COURSES ──
+let adminCoursesList = [];
+
+async function loadAdminCourses() {
+  const grid = document.getElementById('courses-grid');
+  grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span class="material-symbols-outlined">sync</span>Loading...</div>';
+  
+  adminCoursesList = await window.AthenaeumAdmin.fetchAllCourses();
+  renderCourses();
+}
+
+function renderCourses() {
+  const q = (document.getElementById('course-search')?.value || '').toLowerCase();
+  const cat = document.getElementById('cat-filter')?.value || '';
+  const grid = document.getElementById('courses-grid');
+
+  let filtered = adminCoursesList.filter(c => {
+    const matchQ = !q || c.title.toLowerCase().includes(q) || (c.instructorName||'').toLowerCase().includes(q);
+    const matchCat = !cat || c.category === cat;
+    return matchQ && matchCat;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <span class="material-symbols-outlined">search_off</span>
+      No courses found.
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="course-card">
+      ${c.thumbnail ? `<img class="course-thumb" src="${c.thumbnail}" onerror="this.style.display='none'" alt="">` : `<div class="course-thumb-placeholder">📚</div>`}
+      <div class="course-body">
+        <div class="course-cat">${c.category} · ${c.level}</div>
+        <div class="course-title">${c.title}</div>
+        <div class="course-meta">
+          <span>👤 ${c.instructorName}</span>
+          <span>⭐ ${c.rating || 4.5}</span>
+          <span>${c.is_published ? '<span style="color:var(--green)">Published</span>' : '<span style="color:var(--muted)">Draft</span>'}</span>
+        </div>
+        <div class="course-price">${parseFloat(c.price) === 0 ? 'FREE' : 'Rs. '+c.price}</div>
+        <div class="course-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editCourse('${c.id}')">
+            <span class="material-symbols-outlined" style="font-size:.9rem">edit</span> Edit
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c.id}')">
+            <span class="material-symbols-outlined" style="font-size:.9rem">delete</span>
+          </button>
+          <button class="btn btn-success btn-sm" onclick="window.open('course-details.html?id=${c.id}','_blank')">
+            <span class="material-symbols-outlined" style="font-size:.9rem">open_in_new</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openCourseModal(id = null) {
+  editingCourseId = id;
+  const modal = document.getElementById('course-modal');
+  const title = document.getElementById('course-modal-title');
+
+  ['c-title','c-instructor','c-category','c-price','c-duration','c-level','c-rating','c-students','c-thumbnail','c-description','c-features'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  if (id) {
+    const c = adminCoursesList.find(x => x.id === id);
+    if (c) {
+      title.textContent = 'Edit Course';
+      document.getElementById('c-title').value = c.title || '';
+      document.getElementById('c-instructor').value = c.instructorName || '';
+      document.getElementById('c-category').value = c.category || 'A-Level';
+      document.getElementById('c-price').value = c.price || '0';
+      document.getElementById('c-thumbnail').value = c.thumbnail_url || '';
+      document.getElementById('c-description').value = c.description || '';
+      document.getElementById('save-course-btn-text').textContent = 'Update Course';
+    }
+  } else {
+    title.textContent = 'Add New Course';
+    document.getElementById('save-course-btn-text').textContent = 'Save Course';
+  }
+  modal.classList.add('open');
+}
+
+function closeCourseModal() { document.getElementById('course-modal').classList.remove('open'); }
+
+function editCourse(id) { openCourseModal(id); }
+
+async function deleteCourse(id) {
+  if (!confirm('Delete this course? This cannot be undone.')) return;
+  try {
+    const res = await window.AthenaeumAdmin.deleteCourse(id);
+    if (res.status === 'error') throw new Error(res.message);
+    showToast('Course deleted.', 'success');
+    await loadAdminCourses();
+    await loadDashboardStats();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function saveCourse() {
+  const title = document.getElementById('c-title').value.trim();
+  if (!title) { showToast('Course title is required!', 'error'); return; }
+
+  const courseData = {
+    title,
+    category: document.getElementById('c-category').value,
+    price: parseFloat(document.getElementById('c-price').value.replace('Rs.', '').trim()) || 0,
+    subject: document.getElementById('c-level').value, // Used as level/subject mapping for now
+    thumbnail_url: document.getElementById('c-thumbnail').value.trim(),
+    description: document.getElementById('c-description').value.trim(),
+    is_published: true // By default we publish it.
+  };
+
+  if (editingCourseId) {
+    courseData.id = editingCourseId;
+  }
+
+  try {
+    const res = await window.AthenaeumAdmin.saveCourse(courseData);
+    if (res.status === 'error') throw new Error(res.message);
+    
+    showToast(editingCourseId ? 'Course updated! ✅' : 'Course added! ✅', 'success');
+    closeCourseModal();
+    await loadAdminCourses();
+    await loadDashboardStats();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ── STUDENTS ──
+async function loadStudents() {
+  const tbody = document.getElementById('students-body');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><span class="material-symbols-outlined">sync</span>Loading...</td></tr>';
+
+  try {
+    if (!window.AthenaeumAdmin) throw new Error("Admin logic not loaded");
+    
+    // We get query/filter
+    const q = document.getElementById('student-search')?.value.toLowerCase() || '';
+    
+    studentsData = await window.AthenaeumAdmin.fetchStudents(currentStudentFilter, q);
+    
+    // Filter out deleted if we are just looking at active
+    // For now we'll just show them but badge them as 'deleted'
+    document.getElementById('stat-students').textContent = studentsData.filter(s => s.status !== 'deleted').length;
+    renderStudentsTable(studentsData);
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><span class="material-symbols-outlined">error</span>${e.message}</td></tr>`;
+  }
+}
+
+function renderStudentsTable(data) {
+  const tbody = document.getElementById('students-body');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><span class="material-symbols-outlined">person_off</span>No students found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map((s, i) => {
+    const isBlocked = s.status === 'blocked';
+    const isDeleted = s.status === 'deleted';
+    
+    return `
+    <tr style="${isDeleted ? 'opacity:0.5' : ''}">
+      <td style="color:var(--muted)">${i+1}</td>
+      <td>
+        <strong>${s.full_name || 'Unnamed'}</strong>
+        ${isBlocked ? '<span class="badge badge-red" style="margin-left:5px">Blocked</span>' : ''}
+        ${isDeleted ? '<span class="badge badge-gray" style="margin-left:5px">Deleted</span>' : ''}
+        <br><small style="color:var(--muted)">${s.email || ''}</small>
+      </td>
+      <td style="color:var(--muted);font-size:.82rem">${s.id.slice(0,8)}...</td>
+      <td><span class="badge ${s.plan_type === 'paid' ? 'badge-green' : s.plan_type === 'free' ? 'badge-gray' : 'badge-gold'}">${(s.plan_type || 'trial').toUpperCase()}</span></td>
+      <td style="font-size:.82rem">❓ ${s.usage?.questions_used || 0} &nbsp;📝 ${s.usage?.quizzes_used || 0}</td>
+      <td style="color:var(--muted);font-size:.8rem">${new Date(s.created_at).toLocaleDateString()}</td>
+      <td>
+        <div style="display:flex;gap:0.5rem">
+          <button class="btn btn-ghost btn-sm" onclick="openUpgradeModal('${s.id}','${(s.full_name||'Student').replace(/'/g,"\\'")}','${s.plan_type}')" title="Change Plan" ${isDeleted?'disabled':''}>✏️</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleStudentStatus('${s.id}', ${!isBlocked})" title="${isBlocked ? 'Unblock' : 'Block'}" ${isDeleted?'disabled':''}>${isBlocked ? '🔓' : '🚫'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')" title="Delete" ${isDeleted?'disabled':''}>🗑️</button>
+        </div>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+async function filterStudents(type, btn) {
+  if (btn) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    currentStudentFilter = type;
+  }
+  await loadStudents();
+}
+
+function openUpgradeModal(id, name, plan) {
+  upgradeTargetId = id;
+  document.getElementById('upgrade-name').value = name;
+  document.getElementById('upgrade-plan').value = plan || 'trial';
+  document.getElementById('upgrade-modal').classList.add('open');
+}
+
+async function applyUpgrade() {
+  const plan = document.getElementById('upgrade-plan').value;
+  try {
+    const res = await window.AthenaeumAdmin.updateStudentPlan(upgradeTargetId, plan);
+    if (res.status === 'error') throw new Error(res.message);
+    
+    showToast(`Plan updated to "${plan}" ✅`, 'success');
+    document.getElementById('upgrade-modal').classList.remove('open');
+    await loadStudents();
+    await loadDashboardStats();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function toggleStudentStatus(id, block) {
+  if (!confirm(`Are you sure you want to ${block ? 'block' : 'unblock'} this student?`)) return;
+  try {
+    const res = await window.AthenaeumAdmin.toggleStudentStatus(id, block);
+    if (res.status === 'error') throw new Error(res.message);
+    showToast(`Student ${block ? 'blocked' : 'unblocked'} ✅`, 'success');
+    await loadStudents();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function deleteStudent(id) {
+  if (!confirm('Are you sure you want to completely DELETE this student account? This will lock them out.')) return;
+  try {
+    const res = await window.AthenaeumAdmin.toggleStudentStatus(id, 'delete'); // We will adapt RPC to handle 'deleted'
+    if (res.status === 'error') throw new Error(res.message);
+    showToast(`Student account deleted ✅`, 'success');
+    await loadStudents();
+    await loadDashboardStats();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ── TEACHERS ──
+async function loadTeachers() {
+  const tbody = document.getElementById('teachers-body');
+  tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><span class="material-symbols-outlined">sync</span>Loading...</td></tr>';
+  try {
+    const data = await window.AthenaeumAdmin.fetchTeachers();
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No teachers found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map((t, i) => `
+      <tr>
+        <td style="color:var(--muted)">${i+1}</td>
+        <td><strong>${t.full_name || 'Unnamed'}</strong></td>
+        <td>${t.email || ''}</td>
+        <td style="color:var(--muted);font-size:.8rem">${new Date(t.created_at).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="removeTeacher('${t.id}')">Remove Role</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><span class="material-symbols-outlined">error</span>${e.message}</td></tr>`;
+  }
+}
+
+async function openAddTeacherModal() {
+  document.getElementById('t-user-select').innerHTML = '<option value="">Loading...</option>';
+  document.getElementById('teacher-modal').classList.add('open');
+  try {
+    const students = await window.AthenaeumAdmin.fetchStudents('all', '');
+    const select = document.getElementById('t-user-select');
+    select.innerHTML = '<option value="">-- Select a User --</option>' + 
+      students.map(s => `<option value="${s.id}">${s.full_name || s.email}</option>`).join('');
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+async function assignTeacherRole() {
+  const uid = document.getElementById('t-user-select').value;
+  if (!uid) { showToast('Please select a user', 'error'); return; }
+  try {
+    // Add logic to supabase-admin to assign teacher
+    const res = await window.AthenaeumAdmin.updateTeacherRole(uid, true);
+    if (res.status === 'error') throw new Error(res.message);
+    showToast('Teacher role assigned ✅', 'success');
+    document.getElementById('teacher-modal').classList.remove('open');
+    await loadTeachers();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function removeTeacher(uid) {
+  if (!confirm('Remove teacher role from this user? They will become a student.')) return;
+  try {
+    const res = await window.AthenaeumAdmin.updateTeacherRole(uid, false);
+    if (res.status === 'error') throw new Error(res.message);
+    showToast('Teacher role removed ✅', 'success');
+    await loadTeachers();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ── ANNOUNCEMENTS ──
+async function loadAnnouncements() {
+  const tbody = document.getElementById('announcements-body');
+  tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><span class="material-symbols-outlined">sync</span>Loading...</td></tr>';
+  try {
+    const data = await window.AthenaeumAdmin.fetchAnnouncements();
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No announcements found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(a => `
+      <tr style="${!a.is_active ? 'opacity:0.5' : ''}">
+        <td>
+          <span class="badge ${a.is_active ? 'badge-green' : 'badge-gray'}">${a.is_active ? 'Active' : 'Inactive'}</span>
+        </td>
+        <td>
+          <strong>${a.title}</strong>
+          <p style="font-size:0.8rem; color:var(--muted); margin:4px 0 0;">${a.message}</p>
+        </td>
+        <td><span class="badge badge-gold">${(a.target || 'all').toUpperCase()}</span></td>
+        <td style="color:var(--muted);font-size:.8rem">${new Date(a.created_at).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="toggleAnnouncement('${a.id}', ${!a.is_active})">
+            ${a.is_active ? 'Deactivate' : 'Activate'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><span class="material-symbols-outlined">error</span>${e.message}</td></tr>`;
+  }
+}
+
+function openAnnModal() {
+  document.getElementById('ann-title').value = '';
+  document.getElementById('ann-msg').value = '';
+  document.getElementById('ann-target').value = 'all';
+  document.getElementById('ann-type').value = 'info';
+  document.getElementById('ann-pinned').checked = false;
+  document.getElementById('modal-announcement').classList.add('open');
+}
+
+async function saveAnnouncement(e) {
+  e.preventDefault();
+  const title = document.getElementById('ann-title').value.trim();
+  const msg = document.getElementById('ann-msg').value.trim();
+  const target = document.getElementById('ann-target').value;
+  const type = document.getElementById('ann-type').value;
+  const isPinned = document.getElementById('ann-pinned').checked;
+  const btn = document.getElementById('ann-submit-btn');
+  
+  if (!title || !msg) { showToast('Title and message are required', 'error'); return; }
+  
+  btn.innerText = 'Publishing...'; btn.disabled = true;
+  try {
+    const res = await window.AthenaeumAdmin.saveAnnouncement(title, msg, target, type, isPinned);
+    if (res.status === 'error') throw new Error(res.message);
+    showToast('Announcement published! 📢', 'success');
+    document.getElementById('modal-announcement').classList.remove('open');
+    await loadAnnouncements();
+  } catch(err) {
+    showToast('Error: ' + err.message, 'error');
+  } finally {
+    btn.innerText = 'Publish'; btn.disabled = false;
+  }
+}
+
+async function toggleAnnouncement(id, isActive) {
+  try {
+    const res = await window.AthenaeumAdmin.toggleAnnouncementStatus(id, isActive);
+    if (res.status === 'error') throw new Error(res.message);
+    showToast(`Announcement ${isActive ? 'activated' : 'deactivated'}`, 'success');
+    await loadAnnouncements();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ── USTAD AI SETTINGS ──
+function toggleKeyVisibility() {
+  const inp = document.getElementById('gemini-key-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function saveApiKey() {
+  const key = document.getElementById('gemini-key-input').value.trim();
+  if (!key || !key.startsWith('AIza')) {
+    showToast('Please enter a valid Gemini API key (starts with AIza...)', 'error');
+    return;
+  }
+  // Store in localStorage for reference
+  localStorage.setItem('admin_gemini_key', key);
+  showToast('API Key saved locally! Update ustad-ai.js line 15 with this key.', 'success');
+  console.log('Update ustad-ai.js line 15:\nconst GEMINI_API_KEY = \'' + key + '\';');
+}
+
+function saveAiSettings() {
+  const settings = {
+    aiEnabled: document.getElementById('toggle-ai-enabled').checked,
+    quizEnabled: document.getElementById('toggle-quiz-enabled').checked,
+    bilingual: document.getElementById('toggle-bilingual').checked,
+  };
+  localStorage.setItem('admin_ai_settings', JSON.stringify(settings));
+  showToast('AI settings saved ✅', 'success');
+}
+
+function saveLimits() {
+  const q = document.getElementById('limit-questions').value;
+  const qz = document.getElementById('limit-quizzes').value;
+  localStorage.setItem('admin_limits', JSON.stringify({ questions: +q, quizzes: +qz }));
+  showToast(`Limits saved: ${q} questions / ${qz} quizzes per day ✅`, 'success');
+}
+
+// ── LIVE AI TEST ──
+let testHistory = [];
+
+async function sendTestMessage() {
+  const msg = document.getElementById('test-message').value.trim();
+  const apiKey = document.getElementById('test-api-key-inline').value.trim() ||
+                 localStorage.getItem('admin_gemini_key') || '';
+  const subject = document.getElementById('test-subject').value;
+  const studentName = document.getElementById('test-student-name').value || 'Admin';
+
+  if (!msg) return;
+  if (!apiKey || !apiKey.startsWith('AIza')) {
+    showToast('Please paste your Gemini API key in the field above!', 'error');
+    return;
+  }
+
+  const chat = document.getElementById('test-chat');
+  appendTestMsg('user', msg);
+  document.getElementById('test-message').value = '';
+
+  const loadingId = 'loading-' + Date.now();
+  chat.insertAdjacentHTML('beforeend', `<div id="${loadingId}" style="color:var(--muted);font-size:.85rem;padding:.5rem 0">⏳ Ustad AI is typing...</div>`);
+  chat.scrollTop = chat.scrollHeight;
+
+  const systemPrompt = `You are Ustad AI, a warm Pakistani personal teacher for Athenaeum Academy. Student name: ${studentName}. Subject: ${subject}. Be encouraging, helpful, and end with a motivating line.`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [...testHistory, { role: 'user', parts: [{ text: msg }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
+      })
+    });
+    const data = await res.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+    testHistory.push({ role: 'user', parts: [{ text: msg }] });
+    testHistory.push({ role: 'model', parts: [{ text: reply }] });
+    if (testHistory.length > 20) testHistory = testHistory.slice(-20);
+    document.getElementById(loadingId)?.remove();
+    appendTestMsg('ai', reply);
+  } catch(e) {
+    document.getElementById(loadingId)?.remove();
+    appendTestMsg('ai', '❌ Error: ' + e.message);
+  }
+}
+
+function appendTestMsg(role, text) {
+  const chat = document.getElementById('test-chat');
+  const div = document.createElement('div');
+  div.style.cssText = `margin-bottom:.75rem;padding:.6rem .85rem;border-radius:10px;font-size:.85rem;line-height:1.5;max-width:90%;${role==='user'?'background:rgba(0,210,255,.1);margin-left:auto;text-align:right;':'background:var(--card2);'}`;
+  div.innerHTML = (role === 'ai' ? '🎓 <strong>Ustad AI:</strong> ' : '👤 <strong>You:</strong> ') + text.replace(/\n/g, '<br>');
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function clearTestChat() {
+  document.getElementById('test-chat').innerHTML = '';
+  testHistory = [];
+  showToast('Chat cleared!', 'success');
+}
+
+// ── TOAST ──
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toast');
+  const item = document.createElement('div');
+  item.className = `toast-item ${type}`;
+  item.innerHTML = (type === 'success' ? '✅' : '❌') + ' ' + msg;
+  container.appendChild(item);
+  setTimeout(() => item.remove(), 4000);
+}
+
+// ── AUTO-DETECT SESSION ──
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await window.supabaseClient.auth.getSession();
+  if (session?.user?.email === ADMIN_EMAIL) {
+    document.getElementById('sidebar-email').textContent = session.user.email;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    loadDashboardStats();
+    loadStudents();
+    showToast('Auto-logged in as Admin 👋', 'success');
+  }
+});
+</script>
+</body>
+</html>

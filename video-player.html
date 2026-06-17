@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Video Lesson | Athenaeum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&family=Merriweather:ital,wght@0,700;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="lms.css">
+  <link rel="stylesheet" href="engagement.css">
+  <link rel="stylesheet" href="ustad-ai.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="supabase-courses.js"></script>
+  <script src="announcements.js"></script>
+  <script src="security.js"></script>
+</head>
+<body>
+
+  <!-- ── Top Nav ──────────────────────────────────────────── -->
+  <nav class="lms-nav">
+    <a href="index.html" class="brand">🎓 Athenaeum</a>
+    <div class="nav-center">
+      <span class="badge badge-primary">
+        <span class="material-symbols-outlined" style="font-size:.85rem;">play_circle</span> Recorded Lesson
+      </span>
+      <span style="font-weight:700; color:#fff;">A-Level Biology</span>
+      <div class="nav-actions">
+        <div class="header-actions">
+          <div id="notification-bell"></div>
+          <button class="icon-btn" aria-label="Search" id="btn-search"><span class="material-symbols-outlined">search</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" title="Bookmark">
+        <span class="material-symbols-outlined">bookmark_add</span>
+      </button>
+      <button class="icon-btn" title="Download Notes">
+        <span class="material-symbols-outlined">download</span>
+      </button>
+      <a href="dashboard-student.html" class="btn btn-ghost btn-sm">
+        <span class="material-symbols-outlined">arrow_back</span> Back
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── Player Layout ───────────────────────────────────── -->
+  <div class="player-layout container">
+    <div id="global-announcements" style="grid-column: 1 / -1; margin-bottom: 1rem;"></div>
+
+    <!-- Main Player Column -->
+    <div class="player-main">
+
+      <!-- Video Wrapper -->
+      <div class="video-wrapper" id="video-wrapper">
+
+        <!-- Placeholder background (replaces actual <video> tag) -->
+        <div class="video-placeholder-bg" id="video-bg">
+          <div class="play-overlay">
+            <div class="play-circle" id="play-circle" onclick="startPlaying()">
+              <span class="material-symbols-outlined">play_arrow</span>
+            </div>
+            <p style="color:rgba(255,255,255,.7); font-size:.875rem; margin-top:.5rem;">Click to play this lesson</p>
+          </div>
+        </div>
+
+        <!-- === DYNAMIC WATERMARK LAYER === -->
+        <!-- The watermark is generated via JS so the email is injected dynamically -->
+        <div class="watermark-layer" id="watermark-layer">
+          <!-- Watermark elements are injected by JS below -->
+        </div>
+
+        <!-- Watermark badge (shows protection is active) -->
+        <div class="wm-badge">
+          <span class="material-symbols-outlined">shield</span>
+          Watermark Protected
+        </div>
+
+        <!-- Fake "playing" indicator overlay -->
+        <div id="playing-indicator" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; z-index:4;">
+          <div style="text-align:center; color:#fff;">
+            <div style="font-size:4rem; opacity:.15; font-weight:900; font-family:var(--font-heading); letter-spacing:-.02em; line-height:1;">
+              Cell Biology<br><span style="color:var(--clr-secondary);">Chapter 5</span>
+            </div>
+            <p style="opacity:.4; font-size:.8rem; margin-top:1rem;">Simulated Video Content</p>
+          </div>
+        </div>
+
+        <!-- Video Controls Overlay -->
+        <div class="video-controls" id="video-controls">
+          <!-- Seek Bar -->
+          <div class="seek-bar-wrap" id="seek-bar" onclick="scrub(event, this)">
+            <div class="seek-track">
+              <div class="seek-buffered"></div>
+              <div class="seek-progress" id="seek-progress"></div>
+            </div>
+            <div class="seek-thumb" id="seek-thumb"></div>
+          </div>
+
+          <!-- Controls Row -->
+          <div class="controls-row">
+            <div class="controls-left">
+              <button class="v-btn" id="play-btn" onclick="togglePlay()" title="Play/Pause">
+                <span class="material-symbols-outlined" id="play-icon">play_arrow</span>
+              </button>
+              <button class="v-btn" onclick="skip(-10)" title="Rewind 10s">
+                <span class="material-symbols-outlined">replay_10</span>
+              </button>
+              <button class="v-btn" onclick="skip(10)" title="Forward 10s">
+                <span class="material-symbols-outlined">forward_10</span>
+              </button>
+              <button class="v-btn" id="vol-btn" onclick="toggleMute()" title="Mute">
+                <span class="material-symbols-outlined" id="vol-icon">volume_up</span>
+              </button>
+              <span class="time-display" id="time-display">04:32 / 18:45</span>
+            </div>
+            <div class="controls-right">
+              <button class="v-btn" title="Subtitles">
+                <span class="material-symbols-outlined">subtitles</span>
+              </button>
+              <select class="speed-select" title="Playback Speed" onchange="changeSpeed(this.value)">
+                <option value="0.75">0.75×</option>
+                <option value="1" selected>1×</option>
+                <option value="1.25">1.25×</option>
+                <option value="1.5">1.5×</option>
+                <option value="2">2×</option>
+              </select>
+              <button class="v-btn" title="Picture in Picture">
+                <span class="material-symbols-outlined">picture_in_picture</span>
+              </button>
+              <button class="v-btn" id="fs-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                <span class="material-symbols-outlined">fullscreen</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.video-wrapper -->
+
+      <!-- Player Info Bar -->
+      <div class="player-info-bar">
+        <h2>Chapter 5: Cell Division &amp; Mitosis — A-Level Biology (Cambridge)</h2>
+        <div class="player-info-meta">
+          <span>
+            <span class="material-symbols-outlined">person</span> Prof. Maria Khan
+          </span>
+          <span>
+            <span class="material-symbols-outlined">schedule</span> 18:45 min
+          </span>
+          <span>
+            <span class="material-symbols-outlined">visibility</span> 1,240 views
+          </span>
+          <span>
+            <span class="material-symbols-outlined">grade</span> A-Level · Cambridge
+          </span>
+          <span class="badge badge-success">
+            <span class="material-symbols-outlined" style="font-size:.85rem;">shield</span>
+            DRM Protected
+          </span>
+        </div>
+      </div>
+
+    </div><!-- /.player-main -->
+
+    <!-- Lesson Sidebar -->
+    <aside class="lesson-sidebar">
+      <div class="lesson-sidebar-header">
+        <h3>A-Level Biology</h3>
+        <p>12 lessons · 75% complete</p>
+        <div style="margin-top:.75rem;">
+          <div style="height:5px; background:var(--clr-border); border-radius:3px; overflow:hidden;">
+            <div style="width:75%; height:100%; background:var(--clr-secondary); border-radius:3px;"></div>
+          </div>
+        </div>
+        <a href="live-class.html" class="btn" style="width: 100%; margin-top: 1rem; background: #ef4444; color: white; justify-content: center; font-weight: bold; border: none; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); text-decoration: none;">
+          🔴 Join Live Class Now
+        </a>
+      </div>
+
+      <div class="lesson-list" id="lesson-list-container">
+        <!-- Lessons will be dynamically injected here via JS -->
+      </div>
+      </div>
+    </aside>
+
+  </div><!-- /.player-layout -->
+
+  <!-- ══════════════════════════════════════════════════════
+       DOUBT-SOLVING FORUM
+  ══════════════════════════════════════════════════════ -->
+  <div class="forum-wrapper">
+    <div class="forum-section">
+
+      <!-- Forum Header -->
+      <div class="forum-header">
+        <div class="forum-header-left">
+          <div class="forum-header-icon">💬</div>
+          <div>
+            <h3>Doubt-Solving Forum</h3>
+            <p>Chapter 5: Cell Division &amp; Mitosis · Ask your doubts, get answers from instructors</p>
+          </div>
+        </div>
+        <div class="forum-stats-pills">
+          <div class="forum-pill">
+            <span class="material-symbols-outlined">forum</span> 14 Discussions
+          </div>
+          <div class="forum-pill">
+            <span class="material-symbols-outlined">verified</span> 9 Answered
+          </div>
+        </div>
+      </div>
+
+      <!-- Ask a Doubt Form -->
+      <div class="forum-ask-bar">
+        <div class="ask-bar-form">
+          <div class="ask-bar-avatar">FA</div>
+          <textarea class="ask-bar-input" id="ask-input" rows="1"
+            placeholder="Ask a doubt about this chapter… e.g. What is the difference between mitosis and meiosis?"
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+          <button class="ask-post-btn" onclick="postDoubt()">
+            <span class="material-symbols-outlined">send</span> Post
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="forum-tabs">
+        <button class="forum-tab active" id="tab-all" onclick="filterTab('all')">
+          All <span class="forum-tab-count">14</span>
+        </button>
+        <button class="forum-tab" id="tab-unanswered" onclick="filterTab('unanswered')">
+          Unanswered <span class="forum-tab-count">5</span>
+        </button>
+        <button class="forum-tab" id="tab-answered" onclick="filterTab('answered')">
+          Answered <span class="forum-tab-count">9</span>
+        </button>
+        <button class="forum-tab" id="tab-mine" onclick="filterTab('mine')">
+          My Posts <span class="forum-tab-count">2</span>
+        </button>
+      </div>
+
+      <!-- Thread List -->
+      <div class="forum-threads" id="forum-threads">
+
+        <!-- ── Thread 1: Answered by Instructor ──────────── -->
+        <div class="forum-post">
+          <div class="post-top">
+            <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-primary),var(--clr-secondary));">FA</div>
+            <div>
+              <div class="post-meta-row">
+                <span class="post-author">Fatima Anwar</span>
+                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                <span class="post-time">2 hours ago</span>
+                <span class="answered-badge"><span class="material-symbols-outlined">check_circle</span> Answered</span>
+              </div>
+            </div>
+          </div>
+          <div class="post-tags">
+            <span class="post-tag">Mitosis</span>
+            <span class="post-tag">Chromosome</span>
+          </div>
+          <div class="post-text">
+            During which phase do chromosomes first become visible? My textbook says prophase but I'm not sure if that means they're actually forming or just becoming visible under a microscope. Can someone clarify?
+          </div>
+          <div class="post-actions">
+            <button class="post-action-btn" onclick="likePost(this)">
+              <span class="material-symbols-outlined">thumb_up</span>
+              <span class="post-votes">12</span> Helpful
+            </button>
+            <button class="post-action-btn" onclick="toggleReplyBox(this)">
+              <span class="material-symbols-outlined">reply</span> Reply
+            </button>
+          </div>
+          <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+
+          <!-- Replies -->
+          <button class="replies-toggle" onclick="toggleReplies(this)">
+            <span class="material-symbols-outlined">unfold_more</span> Show 2 replies
+          </button>
+          <div class="replies-list" style="display:none;">
+
+            <!-- Instructor reply -->
+            <div class="forum-reply instructor-reply">
+              <div class="post-top">
+                <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-secondary),#0da882);width:34px;height:34px;">MK</div>
+                <div>
+                  <div class="post-meta-row">
+                    <span class="post-author">Prof. Maria Khan</span>
+                    <span class="role-badge role-badge-instructor">
+                      <span class="material-symbols-outlined">verified</span> Instructor
+                    </span>
+                    <span class="post-time">1 hour ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="post-text" style="margin-left:0;margin-top:.75rem;">
+                Great question Fatima! Chromosomes are present in the nucleus throughout the cell cycle — during Interphase they appear as chromatin (long, thin threads). In <strong>Prophase</strong>, the chromatin condenses and coils tightly, making the chromosomes visible under a microscope. So they don't "form" in prophase — they become <em>visible</em>. This distinction is important for Cambridge marking schemes! 📌
+              </div>
+              <div class="post-actions" style="margin-left:0;margin-top:.5rem;">
+                <button class="post-action-btn" onclick="likePost(this)">
+                  <span class="material-symbols-outlined">thumb_up</span>
+                  <span class="post-votes">28</span> Helpful
+                </button>
+              </div>
+            </div>
+
+            <!-- Student reply -->
+            <div class="forum-reply">
+              <div class="post-top">
+                <div class="post-avatar" style="background:linear-gradient(135deg,#FFD700,#005088);width:34px;height:34px;">AR</div>
+                <div>
+                  <div class="post-meta-row">
+                    <span class="post-author">Ali Raza</span>
+                    <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                    <span class="post-time">45 min ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="post-text" style="margin-left:0;margin-top:.75rem;">
+                Thank you Professor, that really cleared it up! So the chromosomes are always there, they just become <em>distinguishable</em> in prophase. Makes so much sense now.
+              </div>
+            </div>
+
+          </div><!-- /.replies-list -->
+        </div><!-- /.forum-post -->
+
+        <!-- ── Thread 2: Unanswered ───────────────────────── -->
+        <div class="forum-post">
+          <div class="post-top">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#11CAA0,#FFD700);">ZK</div>
+            <div>
+              <div class="post-meta-row">
+                <span class="post-author">Zara Khan</span>
+                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                <span class="post-time">3 hours ago</span>
+              </div>
+            </div>
+          </div>
+          <div class="post-tags">
+            <span class="post-tag">Meiosis</span>
+            <span class="post-tag">Exam Tip</span>
+          </div>
+          <div class="post-text">
+            Can someone explain the difference between crossing over in Meiosis I and Meiosis II? I always get confused about which stage the genetic variation actually occurs in the past papers.
+          </div>
+          <div class="post-actions">
+            <button class="post-action-btn" onclick="likePost(this)">
+              <span class="material-symbols-outlined">thumb_up</span>
+              <span class="post-votes">7</span> Helpful
+            </button>
+            <button class="post-action-btn" onclick="toggleReplyBox(this)">
+              <span class="material-symbols-outlined">reply</span> Reply
+            </button>
+            <button class="post-action-btn">
+              <span class="material-symbols-outlined">share</span> Share
+            </button>
+          </div>
+          <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+
+          <button class="replies-toggle" onclick="toggleReplies(this)">
+            <span class="material-symbols-outlined">unfold_more</span> Show 1 reply
+          </button>
+          <div class="replies-list" style="display:none;">
+            <div class="forum-reply">
+              <div class="post-top">
+                <div class="post-avatar" style="background:linear-gradient(135deg,#005088,#11CAA0);width:34px;height:34px;">HS</div>
+                <div><div class="post-meta-row">
+                  <span class="post-author">Hamza Siddiqui</span>
+                  <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                  <span class="post-time">2 hours ago</span>
+                </div></div>
+              </div>
+              <div class="post-text" style="margin-left:0;margin-top:.75rem;">
+                From what I remember, crossing over (chiasmata formation) happens during Prophase I of Meiosis I. Meiosis II is more similar to mitosis — it just separates the sister chromatids. But Prof. can confirm!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Thread 3: Answered ─────────────────────────── -->
+        <div class="forum-post">
+          <div class="post-top">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">NK</div>
+            <div>
+              <div class="post-meta-row">
+                <span class="post-author">Nadia Khan</span>
+                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                <span class="post-time">5 hours ago</span>
+                <span class="answered-badge"><span class="material-symbols-outlined">check_circle</span> Answered</span>
+              </div>
+            </div>
+          </div>
+          <div class="post-tags">
+            <span class="post-tag">Spindle Fibres</span>
+            <span class="post-tag">Anaphase</span>
+          </div>
+          <div class="post-text">
+            What exactly causes the spindle fibres to shorten during anaphase? Is it an active or passive process? I need this for a 6-mark answer.
+          </div>
+          <div class="post-actions">
+            <button class="post-action-btn" onclick="likePost(this)">
+              <span class="material-symbols-outlined">thumb_up</span>
+              <span class="post-votes">19</span> Helpful
+            </button>
+            <button class="post-action-btn" onclick="toggleReplyBox(this)">
+              <span class="material-symbols-outlined">reply</span> Reply
+            </button>
+          </div>
+          <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+
+          <button class="replies-toggle" onclick="toggleReplies(this)">
+            <span class="material-symbols-outlined">unfold_more</span> Show 1 reply
+          </button>
+          <div class="replies-list" style="display:none;">
+            <div class="forum-reply instructor-reply">
+              <div class="post-top">
+                <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-secondary),#0da882);width:34px;height:34px;">MK</div>
+                <div><div class="post-meta-row">
+                  <span class="post-author">Prof. Maria Khan</span>
+                  <span class="role-badge role-badge-instructor">
+                    <span class="material-symbols-outlined">verified</span> Instructor
+                  </span>
+                  <span class="post-time">4 hours ago</span>
+                </div></div>
+              </div>
+              <div class="post-text" style="margin-left:0;margin-top:.75rem;">
+                Excellent question for a 6-marker! Spindle fibre shortening is an <strong>active process</strong> driven by motor proteins (dynein and kinesin) that "walk" along microtubules. The kinetochore fibres depolymerise (lose tubulin subunits) at the kinetochore end, pulling the chromatids poleward. For full marks, mention: (1) motor proteins, (2) ATP hydrolysis, (3) depolymerisation of microtubules, (4) movement toward opposite poles. 📚
+              </div>
+              <div class="post-actions" style="margin-left:0;margin-top:.5rem;">
+                <button class="post-action-btn" onclick="likePost(this)">
+                  <span class="material-symbols-outlined">thumb_up</span>
+                  <span class="post-votes">41</span> Helpful
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /#forum-threads -->
+    </div><!-- /.forum-section -->
+  </div><!-- /.forum-wrapper -->
+
+  <script>
+    // ── Forum Interactions ───────────────────────────────────
+    function likePost(btn) {
+      const votesEl = btn.querySelector('.post-votes');
+      const liked   = btn.classList.toggle('liked');
+      votesEl.textContent = parseInt(votesEl.textContent) + (liked ? 1 : -1);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      icon.textContent = liked ? 'thumb_up' : 'thumb_up';
+    }
+
+    function toggleReplyBox(btn) {
+      const post = btn.closest('.forum-post');
+      const box  = post.querySelector('.reply-input-row');
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) box.querySelector('input').focus();
+    }
+
+    function submitReply(btn) {
+      const row   = btn.closest('.reply-input-row');
+      const input = row.querySelector('input');
+      const text  = input.value.trim();
+      if (!text) return;
+
+      const post    = btn.closest('.forum-post');
+      const replies = post.querySelector('.replies-list');
+
+      // Show replies list if hidden
+      if (replies) replies.style.display = 'flex';
+
+      const replyEl = document.createElement('div');
+      replyEl.className = 'forum-reply';
+      replyEl.innerHTML = `
+        <div class="post-top">
+          <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-primary),var(--clr-secondary));width:34px;height:34px;font-size:.65rem;">FA</div>
+          <div><div class="post-meta-row">
+            <span class="post-author">Fatima Anwar</span>
+            <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+            <span class="post-time">Just now</span>
+          </div></div>
+        </div>
+        <div class="post-text" style="margin-left:0;margin-top:.75rem;">${text}</div>
+      `;
+      if (replies) replies.appendChild(replyEl);
+      input.value = '';
+      row.classList.remove('open');
+    }
+
+    function toggleReplies(btn) {
+      const list = btn.nextElementSibling;
+      const open = list.style.display !== 'none' && list.style.display !== '';
+      list.style.display = open ? 'none' : 'flex';
+      list.style.flexDirection = 'column';
+      list.style.gap = '.625rem';
+      const icon = btn.querySelector('.material-symbols-outlined');
+      icon.textContent = open ? 'unfold_more' : 'unfold_less';
+      btn.childNodes[2].textContent = open
+        ? ` Show ${list.children.length} ${list.children.length === 1 ? 'reply' : 'replies'}`
+        : ' Hide replies';
+    }
+
+    function postDoubt() {
+      const input = document.getElementById('ask-input');
+      const text  = input.value.trim();
+      if (!text) return;
+
+      const threads = document.getElementById('forum-threads');
+      const post = document.createElement('div');
+      post.className = 'forum-post';
+      post.style.background = '#fafcff';
+      post.innerHTML = `
+        <div class="post-top">
+          <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-primary),var(--clr-secondary));">FA</div>
+          <div>
+            <div class="post-meta-row">
+              <span class="post-author">Fatima Anwar</span>
+              <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+              <span class="post-time">Just now</span>
+            </div>
+          </div>
+        </div>
+        <div class="post-text">${text}</div>
+        <div class="post-actions">
+          <button class="post-action-btn" onclick="likePost(this)">
+            <span class="material-symbols-outlined">thumb_up</span>
+            <span class="post-votes">0</span> Helpful
+          </button>
+          <button class="post-action-btn" onclick="toggleReplyBox(this)">
+            <span class="material-symbols-outlined">reply</span> Reply
+          </button>
+        </div>
+        <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+      `;
+      threads.insertBefore(post, threads.firstChild);
+      input.value = '';
+      input.style.height = 'auto';
+    }
+
+    function filterTab(tab) {
+      document.querySelectorAll('.forum-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+  </script>
+
+  <script>
+    // ── Dynamic Watermark ─────────────────────────────────────
+    const USER_EMAIL = 'fatima.anwar@student.academypro.com'; // In production: from session/JWT
+    const wmLayer = document.getElementById('watermark-layer');
+
+    const positions = [
+      { top: '18%', animDelay: '0s' },
+      { top: '52%', animDelay: '-9s' },
+      { top: '78%', animDelay: '-18s' },
+    ];
+
+    positions.forEach(pos => {
+      const wm = document.createElement('span');
+      wm.className = 'watermark-text';
+      wm.textContent = `Athenaeum · ${USER_EMAIL} · Protected Content`;
+      wm.style.top = pos.top;
+      wm.style.animationDelay = pos.animDelay;
+      wmLayer.appendChild(wm);
+    });
+
+    // ── Fake Player State ─────────────────────────────────────
+    let isPlaying = false;
+    let isMuted   = false;
+    let progress  = 24; // fake start at 24%
+    let timer;
+
+    function startPlaying() {
+      document.getElementById('video-bg').style.display = 'none';
+      document.getElementById('playing-indicator').style.display = 'flex';
+      isPlaying = true;
+      document.getElementById('play-icon').textContent = 'pause';
+      startProgressTick();
+    }
+
+    function togglePlay() {
+      if (!isPlaying) {
+        startPlaying();
+      } else {
+        isPlaying = false;
+        document.getElementById('play-icon').textContent = 'play_arrow';
+        clearInterval(timer);
+      }
+    }
+
+    function startProgressTick() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (progress < 100) {
+          progress += 0.05; // Note: increased speed for testing
+          updateSeek();
+          updateTime();
+        } else {
+          clearInterval(timer);
+          document.getElementById('play-icon').textContent = 'replay';
+          isPlaying = false;
+          triggerLessonComplete();
+        }
+      }, 50);
+    }
+
+    function updateSeek() {
+      document.getElementById('seek-progress').style.width = progress + '%';
+      document.getElementById('seek-thumb').style.left   = progress + '%';
+    }
+
+    function updateTime() {
+      const total   = 1125; // 18:45 in seconds
+      const current = Math.floor((progress / 100) * total);
+      const m = Math.floor(current / 60).toString().padStart(2,'0');
+      const s = (current % 60).toString().padStart(2,'0');
+      document.getElementById('time-display').textContent = `${m}:${s} / 18:45`;
+    }
+
+    function scrub(e, el) {
+      const rect = el.getBoundingClientRect();
+      progress = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      updateSeek();
+      updateTime();
+      if (isPlaying) startProgressTick();
+    }
+
+    function skip(sec) {
+      const total = 1125;
+      const delta = (sec / total) * 100;
+      progress = Math.max(0, Math.min(100, progress + delta));
+      updateSeek();
+      updateTime();
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('vol-icon').textContent = isMuted ? 'volume_off' : 'volume_up';
+    }
+
+    function changeSpeed(val) {
+      console.log('Speed changed to', val + 'x');
+    }
+
+    function toggleFullscreen() {
+      const wrapper = document.getElementById('video-wrapper');
+      if (!document.fullscreenElement) {
+        wrapper.requestFullscreen?.();
+        document.getElementById('fs-btn').querySelector('span').textContent = 'fullscreen_exit';
+      } else {
+        document.exitFullscreen?.();
+        document.getElementById('fs-btn').querySelector('span').textContent = 'fullscreen';
+      }
+    }
+
+    // Initialise seek bar display
+    updateSeek();
+    updateTime();
+
+    // ── Supabase Integration ──────────────────────────────────
+    let currentLessonId = null;
+    let completedLessonsIds = [];
+
+    async function loadCourseData() {
+      if (!window.supabaseClient || !window.AthenaeumCourses) return;
+      const { data: { session } } = await window.supabaseClient.auth.getSession();
+      if (!session) return;
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseId = urlParams.get('courseId');
+      currentLessonId = urlParams.get('lessonId');
+      
+      if (!courseId) return; // Fallback to mockup if no ID
+      
+      try {
+        const course = await window.AthenaeumCourses.fetchCourseById(courseId);
+        completedLessonsIds = await window.AthenaeumCourses.fetchCompletedLessons(session.user.id);
+        
+        // Render sidebar
+        const listContainer = document.getElementById('lesson-list-container');
+        listContainer.innerHTML = '';
+        
+        let totalLessons = 0;
+        let completedCount = 0;
+        
+        course.modules?.forEach((mod, mIdx) => {
+          mod.lessons?.forEach((lesson, lIdx) => {
+            totalLessons++;
+            const isCompleted = completedLessonsIds.includes(lesson.id);
+            if (isCompleted) completedCount++;
+            
+            const isCurrent = lesson.id === currentLessonId;
+            const iconHtml = isCompleted 
+              ? `<span class="material-symbols-outlined" style="font-size:.9rem; color: #10b981;">check</span>`
+              : `${lIdx + 1}`;
+              
+            listContainer.innerHTML += `
+              <a href="?courseId=${course.id}&lessonId=${lesson.id}" class="lesson-item ${isCompleted ? 'done' : ''} ${isCurrent ? 'active' : ''}" style="text-decoration:none; color:inherit; display:flex;">
+                <div class="l-num">${iconHtml}</div>
+                <div class="l-info">
+                  <div class="l-title">${lesson.title}</div>
+                  <div class="l-duration"><span class="material-symbols-outlined">schedule</span> ${lesson.duration_minutes}:00</div>
+                </div>
+              </a>
+            `;
+          });
+        });
+        
+        // Default to first lesson if none selected
+        if (!currentLessonId && course.modules?.[0]?.lessons?.[0]) {
+          currentLessonId = course.modules[0].lessons[0].id;
+        }
+        
+      } catch (err) {
+        console.error('Error loading course data:', err);
+      }
+    }
+
+    async function triggerLessonComplete() {
+      if (!currentLessonId || !window.supabaseClient) return;
+      const { data: { session } } = await window.supabaseClient.auth.getSession();
+      if (!session) return;
+
+      try {
+        const result = await window.AthenaeumCourses.markLessonComplete(session.user.id, currentLessonId);
+        if (result.status === 'success') {
+          alert(`Lesson Complete! +${result.xpAdded} XP Added!`);
+          loadCourseData(); // Reload sidebar to show green check
+        }
+      } catch (err) {
+        console.error('Failed to mark complete:', err);
+      }
+    }
+
+    // Load data on start
+    loadCourseData();
+  </script>
+
+<!-- Ustad AI Widget -->
+<script src="ustad-ai.js" defer></script>
+
+<!-- Floating Glass Back Button -->
+<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+</button>
+</body>
+</html>
