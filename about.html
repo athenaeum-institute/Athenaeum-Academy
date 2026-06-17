@@ -16,12 +16,17 @@
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
+
+  <!-- Optimize DNS Resolution for External APIs & Assets -->
+  <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
   <header id="navbar" class="navbar">
     <nav class="container nav-inner">
       <a href="index.html" class="logo" id="nav-logo">
-        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" />
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" / loading="lazy" decoding="async">
         <span class="logo-text">Athenaeum</span>
       </a>
       <ul class="nav-links" id="nav-links">
@@ -106,25 +111,25 @@
         <div style="display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;">
           <!-- Profile 1 -->
           <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Maria Khan" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Maria Khan" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
             <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Maria Khan</h5>
             <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">Sciences</p>
           </div>
           <!-- Profile 2 -->
           <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Ali Raza" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Ali Raza" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
             <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Sir Ali Raza</h5>
             <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">Mathematics</p>
           </div>
           <!-- Profile 3 -->
           <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Usman Farooq" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Usman Farooq" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
             <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Dr. Usman</h5>
             <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">Physics</p>
           </div>
           <!-- Profile 4 -->
           <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Zara Malik" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Zara Malik" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
             <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Zara Malik</h5>
             <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">English</p>
           </div>

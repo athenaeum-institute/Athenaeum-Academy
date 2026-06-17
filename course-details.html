@@ -186,6 +186,11 @@
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
+
+  <!-- Optimize DNS Resolution for External APIs & Assets -->
+  <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 
 <body>
@@ -193,7 +198,7 @@
   <header id="navbar" class="navbar">
     <nav class="container nav-inner">
       <a href="index.html" class="logo">
-        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" />
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" / loading="lazy" decoding="async">
         <span class="logo-text">Athenaeum</span>
       </a>
       <ul class="nav-links" id="nav-links">
@@ -262,7 +267,7 @@
       </div>
 
       <aside class="cd-sidebar">
-        <img id="cd-image" src="" alt="Course Image" />
+        <img id="cd-image" src="" alt="Course Image" / loading="lazy" decoding="async">
         <div class="cd-price" id="cd-price">Rs. 2,499</div>
         <a href="checkout.html" class="btn btn-primary">Enroll Now</a>
         <a href="auth.html?source=trial" class="btn btn-outline"
@@ -275,7 +280,7 @@
 
         <div style="display: flex; align-items: center; gap: 1rem;">
           <img id="cd-instructor-img" src=""
-            style="width: 50px; height: 50px; border-radius: 50%; margin: 0; aspect-ratio: 1;" />
+            style="width: 50px; height: 50px; border-radius: 50%; margin: 0; aspect-ratio: 1;" / loading="lazy" decoding="async">
           <div>
             <div style="font-weight: 700; color: var(--clr-text);">Instructor</div>
             <div id="cd-instructor-name" style="color: var(--clr-text-muted); font-size: 0.95rem;">Prof. Name</div>
@@ -296,7 +301,7 @@
       <div class="footer-brand">
         <a href="index.html" class="logo footer-logo">
           <img src="logo_transparent.png" alt="Athenaeum Logo"
-            style="height: 50px; width: auto; object-fit: contain;" />
+            style="height: 50px; width: auto; object-fit: contain;" / loading="lazy" decoding="async">
           <span class="logo-text">Athenaeum</span>
         </a>
       </div>

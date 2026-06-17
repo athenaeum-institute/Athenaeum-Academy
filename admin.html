@@ -242,6 +242,11 @@
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
+
+  <!-- Optimize DNS Resolution for External APIs & Assets -->
+  <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
 
@@ -971,7 +976,7 @@ function renderCourses() {
 
   grid.innerHTML = filtered.map(c => `
     <div class="course-card">
-      ${c.thumbnail ? `<img class="course-thumb" src="${c.thumbnail}" onerror="this.style.display='none'" alt="">` : `<div class="course-thumb-placeholder">📚</div>`}
+      ${c.thumbnail ? `<img class="course-thumb" src="${c.thumbnail}" onerror="this.style.display='none'" alt="" loading="lazy" decoding="async">` : `<div class="course-thumb-placeholder">📚</div>`}
       <div class="course-body">
         <div class="course-cat">${c.category} · ${c.level}</div>
         <div class="course-title">${c.title}</div>
