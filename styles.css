@@ -1150,10 +1150,8 @@ body {
   overflow-x: auto;
   overflow-y: hidden;
   flex-wrap: nowrap;
-  scroll-snap-type: x mandatory;
   margin-bottom: var(--sp-12);
   padding-bottom: 1rem;
-  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--primary) transparent;
 }
@@ -1174,7 +1172,6 @@ body {
 
 .courses-grid .course-card {
   flex: 0 0 320px; /* Fixed width for better swiping */
-  scroll-snap-align: start;
 }
 
 
