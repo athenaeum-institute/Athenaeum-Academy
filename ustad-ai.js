@@ -617,7 +617,14 @@ Rules:
     }
 
     messagesEl.insertBefore(msgEl, typing);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    
+    // Auto-Scroll to Bottom
+    setTimeout(() => {
+      const chatBody = document.getElementById('ustad-messages');
+      if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    }, 50);
   }
 
   /* ──────────────────────────────────────────────────────────

@@ -353,13 +353,15 @@
 /* Messages Area */
 #ustad-messages {
   flex: 1;
-  overflow-y: auto;
+  height: calc(100% - 120px);
+  overflow-y: auto !important;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  }
+}
 
 #ustad-messages::-webkit-scrollbar { width: 4px; }
 #ustad-messages::-webkit-scrollbar-track { background: transparent; }
