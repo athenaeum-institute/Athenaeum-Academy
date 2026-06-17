@@ -418,8 +418,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+
 // ============================================================
-// PREMIUM DESKTOP DRAG-TO-SCROLL (COURSES GRID)
+// NATURAL DESKTOP DRAG-TO-SCROLL & WHEEL (COURSES GRID)
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   const grids = document.querySelectorAll(".courses-grid");
@@ -454,8 +457,22 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!isDown) return;
       e.preventDefault();
       const x = e.pageX - grid.offsetLeft;
-      const walk = (x - startX) * 2; // Scroll multiplier for effortless feel
+      const walk = (x - startX); // Exact 1:1 movement for natural feel
       grid.scrollLeft = scrollLeft - walk;
+    });
+
+    grid.addEventListener("wheel", (e) => {
+      // Allow vertical scroll wheel to scroll horizontal if hovering
+      if (Math.abs(e.deltaY) > 0 && e.deltaX === 0) {
+        // Prevent default only if we haven reached the edge
+        const atStart = grid.scrollLeft === 0 && e.deltaY < 0;
+        const atEnd = grid.scrollLeft >= (grid.scrollWidth - grid.clientWidth) && e.deltaY > 0;
+        
+        if (!atStart && !atEnd) {
+          e.preventDefault();
+          grid.scrollLeft += e.deltaY;
+        }
+      }
     });
     
     // Disable drag on images/links to prevent dragging ghosts
