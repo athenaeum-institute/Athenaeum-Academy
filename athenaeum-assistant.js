@@ -600,25 +600,32 @@ Rules:
     const typing = document.getElementById('ustad-typing');
 
     const welcomeText = isIndex 
-      ? `I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help! 😊`
-      : `Need help about this page? I am your <strong>Athenaeum Assistant</strong>, here to help you on every page! 😊`;
+      ? `Hello <strong>${name}</strong>! 👋<br><br>I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help you learn and grow! 😊`
+      : `Hello <strong>${name}</strong>! 👋<br><br>Need help about this page? I am your <strong>Athenaeum Assistant</strong>, here to help you on every page! 😊`;
 
-    const welcomeEl = document.createElement('div');
-    welcomeEl.classList.add('ustad-welcome-card');
-    welcomeEl.innerHTML = `
-      <div class="welcome-emoji"><img src="logo_transparent.png" alt="Athenaeum" style="width:40px; height:40px; object-fit:contain;"></div>
-      <h4>Hello, ${name}!</h4>
-      <p>${welcomeText}</p>
-      <div class="ustad-suggestions">
+    const msgEl = document.createElement('div');
+    msgEl.classList.add('ustad-msg', 'ai-msg');
+    msgEl.innerHTML = `
+      <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
+      <div class="ustad-msg-content">
+        <div class="ustad-msg-bubble" style="border-top-left-radius: 4px; border-bottom-left-radius: 20px;">${welcomeText}</div>
+        <div class="ustad-msg-time">${getTimeStr()}</div>
+      </div>
+    `;
+
+    const suggestionsEl = document.createElement('div');
+    suggestionsEl.classList.add('ustad-suggestions');
+    suggestionsEl.style.marginTop = '10px';
+    suggestionsEl.style.marginBottom = '10px';
+    suggestionsEl.innerHTML = `
         <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
         <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>
         <button class="ustad-suggestion-chip" data-msg="How to use past perfect tense with examples?">📝 Past Perfect</button>
         <button class="ustad-suggestion-chip" data-msg="Help me understand Newton's laws">🔬 Newton's Laws</button>
-      </div>
     `;
 
-    // Insert before typing indicator
-    messagesEl.insertBefore(welcomeEl, typing);
+    messagesEl.insertBefore(msgEl, typing);
+    messagesEl.insertBefore(suggestionsEl, typing);
   }
 
   /* ──────────────────────────────────────────────────────────
