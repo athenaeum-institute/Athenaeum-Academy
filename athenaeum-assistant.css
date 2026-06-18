@@ -1236,9 +1236,10 @@
 .ustad-suggestions {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   margin-top: 10px;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-left: 42px;
 }
 
 .ustad-suggestion-chip {

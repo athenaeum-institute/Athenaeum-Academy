@@ -603,29 +603,37 @@ Rules:
       ? `Hello <strong>${name}</strong>! 👋<br><br>I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help you learn and grow! 😊`
       : `Hello <strong>${name}</strong>! 👋<br><br>Need help about this page? I am your <strong>Athenaeum Assistant</strong>, here to help you on every page! 😊`;
 
-    const msgEl = document.createElement('div');
-    msgEl.classList.add('ustad-msg', 'ai-msg');
-    msgEl.innerHTML = `
-      <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
-      <div class="ustad-msg-content">
-        <div class="ustad-msg-bubble" style="border-top-left-radius: 4px; border-bottom-left-radius: 20px;">${welcomeText}</div>
-        <div class="ustad-msg-time">${getTimeStr()}</div>
-      </div>
-    `;
+    // Show typing indicator
+    typing.classList.add('visible');
+    
+    setTimeout(() => {
+      typing.classList.remove('visible');
+      
+      const msgEl = document.createElement('div');
+      msgEl.classList.add('ustad-msg', 'ai-msg');
+      msgEl.innerHTML = `
+        <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
+        <div class="ustad-msg-content">
+          <div class="ustad-msg-bubble" style="border-top-left-radius: 4px; border-bottom-left-radius: 20px;">${welcomeText}</div>
+          <div class="ustad-msg-time">${getTimeStr()}</div>
+        </div>
+      `;
 
-    const suggestionsEl = document.createElement('div');
-    suggestionsEl.classList.add('ustad-suggestions');
-    suggestionsEl.style.marginTop = '10px';
-    suggestionsEl.style.marginBottom = '10px';
-    suggestionsEl.innerHTML = `
-        <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
-        <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>
-        <button class="ustad-suggestion-chip" data-msg="How to use past perfect tense with examples?">📝 Past Perfect</button>
-        <button class="ustad-suggestion-chip" data-msg="Help me understand Newton's laws">🔬 Newton's Laws</button>
-    `;
+      const suggestionsEl = document.createElement('div');
+      suggestionsEl.classList.add('ustad-suggestions');
+      suggestionsEl.style.marginTop = '10px';
+      suggestionsEl.style.marginBottom = '10px';
+      suggestionsEl.innerHTML = `
+          <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
+          <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>
+          <button class="ustad-suggestion-chip" data-msg="How to use past perfect tense with examples?">📝 Past Perfect</button>
+          <button class="ustad-suggestion-chip" data-msg="Help me understand Newton's laws">🔬 Newton's Laws</button>
+      `;
 
-    messagesEl.insertBefore(msgEl, typing);
-    messagesEl.insertBefore(suggestionsEl, typing);
+      messagesEl.insertBefore(msgEl, typing);
+      messagesEl.insertBefore(suggestionsEl, typing);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }, 1500);
   }
 
   /* ──────────────────────────────────────────────────────────
