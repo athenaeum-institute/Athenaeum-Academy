@@ -1144,9 +1144,10 @@ body {
   margin-bottom: var(--sp-4);
 }
 
+
 /* ── 13. COURSE CARDS ────────────────────────────────────── */
 
-.courses-grid {
+.courses-scroll-container {
   display: flex;
   gap: 1.5rem;
   overflow-x: auto;
@@ -1155,121 +1156,95 @@ body {
   margin-bottom: var(--sp-12);
   padding-bottom: 1rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--primary) transparent;
+  scrollbar-color: var(--clr-primary) transparent;
 }
 
-.courses-grid::-webkit-scrollbar {
-  height: 8px;
+.courses-scroll-container::-webkit-scrollbar {
+  height: 6px;
 }
-.courses-grid::-webkit-scrollbar-track {
+.courses-scroll-container::-webkit-scrollbar-track {
   background: transparent;
 }
-.courses-grid::-webkit-scrollbar-thumb {
-  background: var(--primary);
+.courses-scroll-container::-webkit-scrollbar-thumb {
+  background: var(--clr-primary);
   border-radius: 10px;
 }
-.courses-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+
+.courses-scroll-container .course-card {
+  flex: 0 0 280px; 
 }
 
-.courses-grid .course-card {
-  flex: 0 0 320px; /* Fixed width for better swiping */
+/* For courses.html Catalog Grid */
+.courses-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: var(--sp-12);
 }
-
-
 
 .course-card {
   background: var(--clr-white);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--clr-surface-high);
-  transition: opacity var(--transition), transform var(--transition), background-color var(--transition), border-color var(--transition), color var(--transition);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .course-card:hover {
-  box-shadow: 0 20px 40px rgba(0, 80, 136, .12);
-  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 80, 136, 0.15);
+  transform: translateY(-4px);
+  border-color: rgba(0, 80, 136, 0.1);
 }
 
 .course-thumb {
   position: relative;
   overflow: hidden;
+  height: 150px;
 }
 
 .course-thumb img {
   width: 100%;
-  height: 112px;
+  height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform 0.5s ease;
 }
 
 .course-card:hover .course-thumb img {
-  transform: scale(1.04);
-}
-
-.duration-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: var(--clr-accent);
-  color: #4a3500;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-full);
-  letter-spacing: 0.04em;
+  transform: scale(1.05);
 }
 
 .board-badge {
   position: absolute;
-  bottom: 12px;
+  top: 12px;
   left: 12px;
-  background: var(--clr-secondary);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 800;
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--radius-sm);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.board-badge--inter {
   background: var(--clr-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
 }
 
 .course-body {
-  padding: 16px;
-}
-
-/* Stars */
-.stars {
-  color: var(--clr-accent);
-  font-size: var(--fs-sm);
-  margin-bottom: var(--sp-3);
+  padding: 1.2rem;
   display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.half-star {
-  font-size: 0.6em;
-  line-height: 1.5;
-}
-
-.rating-text {
-  color: var(--clr-on-surface-var);
-  font-size: var(--fs-xs);
-  margin-left: var(--sp-1);
+  flex-direction: column;
+  flex: 1;
 }
 
 .course-title {
-  font-size: var(--fs-md);
-  color: var(--clr-primary);
-  margin-bottom: var(--sp-4);
-  line-height: 1.45;
-  min-height: 3.2em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1278,57 +1253,69 @@ body {
 
 .course-meta {
   display: flex;
-  justify-content: space-between;
-  font-size: var(--fs-xs);
-  color: var(--clr-on-surface-var);
-  margin-bottom: var(--sp-6);
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+  margin-bottom: auto;
 }
 
 .course-meta span {
   display: flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: 4px;
 }
 
 .course-meta .material-symbols-outlined {
-  font-size: 1rem;
+  font-size: 16px;
+  color: var(--clr-primary);
 }
 
 .course-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--sp-4);
-  border-top: 1px solid var(--clr-surface-high);
-}
-
-.instructor {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  color: var(--clr-on-surface);
-}
-
-.instructor-avatar {
-  width: 22px;
-  height: 22px;
-  border-radius: var(--radius-full);
-  border: 2px solid rgba(17, 202, 160, .3);
-  object-fit: cover;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
 }
 
 .course-price {
   font-family: var(--font-heading);
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--clr-secondary);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--clr-primary);
 }
 
-.courses-cta {
+.course-card-btn {
+  margin: 0 1.2rem 1.2rem 1.2rem;
+  padding: 0.7rem;
+  border-radius: 8px;
   text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: var(--clr-primary);
+  color: white;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
+
+.course-card-btn:hover {
+  background: var(--clr-primary-dark);
+  transform: scale(1.02);
+}
+
+.course-card-btn.outline {
+  background: transparent;
+  color: var(--clr-primary);
+  border: 1px solid var(--clr-primary);
+}
+
+.course-card-btn.outline:hover {
+  background: rgba(0, 80, 136, 0.05);
+}
+
+/* Hide the old grid scrollbar code to avoid conflicts */
+
 
 /* ── 14. STATS BANNER ────────────────────────────────────── */
 .stats-banner {

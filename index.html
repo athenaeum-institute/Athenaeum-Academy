@@ -434,7 +434,7 @@
         </div>
 
                 <!-- Cards grid -->
-        <div class="courses-grid" id="home-featured-courses">
+        <div class="courses-scroll-container" id="home-featured-courses">
           <!-- Skeletons while loading -->
           <div class="course-skeleton"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="height:24px;margin:12px 0;"></div><div class="skeleton-line" style="width:60%"></div></div></div>
           <div class="course-skeleton"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="height:24px;margin:12px 0;"></div><div class="skeleton-line" style="width:60%"></div></div></div>
@@ -514,26 +514,24 @@
                 }
 
                 html += `
-                  <article class="course-card" style="display: flex; flex-direction: column;">
+                  <article class="course-card" >
                     <a href="course-details.html?id=${course.id}" style="text-decoration: none; color: inherit; display: block; flex: 1;">
                       <div class="course-thumb">
                         <img src="${course.thumbnail_url || 'https://via.placeholder.com/400x250'}" alt="${course.title}" loading="lazy" />
                         <span class="board-badge" style="${badgeStyle}">${badgeLabel}</span>
                       </div>
-                      <div class="course-body" style="flex: 1; display: flex; flex-direction: column;">
-                        <h3 class="course-title" style="margin-top:0.5rem; margin-bottom: 0.5rem; font-size: 1.2rem;">${course.title}</h3>
-                        <div class="course-meta" style="margin-bottom: auto;">
+                      <div class="course-body" >
+                        <h3 class="course-title" >${course.title}</h3>
+                        <div class="course-meta" >
                           <span><span class="material-symbols-outlined" style="font-size:18px;">book</span> ${course.subject || 'General'}</span>
                         </div>
-                        <div class="course-footer" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                          <span class="course-price" style="color: var(--clr-primary); font-weight: 800; font-size: 1.2rem;">${priceDisplay}</span>
+                        <div class="course-footer" >
+                          <span class="course-price" >${priceDisplay}</span>
                           ${course.is_free_preview ? '<span style="font-size:0.8rem; background:#f0f9ff; color:#0284c7; padding:4px 8px; border-radius:12px; font-weight:600;">Free Preview</span>' : ''}
                         </div>
                       </div>
                     </a>
-                    <div style="padding: 0 1.5rem 1.5rem;">
-                      <a href="${targetUrl}" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">${btnText}</a>
-                    </div>
+                    <a href="${targetUrl}" class="course-card-btn ${course.is_free_preview && window.currentUser ? \'outline\' : \'\'}">${btnText}</a>
                   </article>
                 `;
               });
