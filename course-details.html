@@ -383,24 +383,18 @@
         // Button logic
         const actionsContainer = document.getElementById('cd-action-btns');
         window.currentUser = await getCurrentUser();
-        let targetPreviewUrl = 'auth.html?mode=register';
-        let targetCheckoutUrl = 'auth.html?mode=register';
+        let targetPreviewUrl = `auth.html?mode=register&redirect=trial-schedule.html?course=${course.id}`;
+        let targetCheckoutUrl = `auth.html?mode=register&redirect=checkout.html?course=${course.id}`;
 
         if (window.currentUser) {
-            targetPreviewUrl = `video-player.html?course=${course.id}`;
+            targetPreviewUrl = `trial-schedule.html?course=${course.id}`;
             targetCheckoutUrl = `checkout.html?course=${course.id}`;
         }
         
-        if (course.is_free_preview) {
-           actionsContainer.innerHTML = `
-             <a href="${targetPreviewUrl}" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem; border: 2px solid var(--clr-primary); color: var(--clr-primary); text-decoration: none;">Start Free Trial</a>
-             <a href="${targetCheckoutUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Full Course</a>
-           `;
-        } else {
-           actionsContainer.innerHTML = `
-             <a href="${targetCheckoutUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Now</a>
-           `;
-        }
+        actionsContainer.innerHTML = `
+          <a href="${targetPreviewUrl}" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem; border: 2px solid var(--clr-primary); color: var(--clr-primary); text-decoration: none;">Start Free Trial</a>
+          <a href="${targetCheckoutUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Full Course</a>
+        `;
 
         // Populate dynamic features
         let featuresHtml = '';

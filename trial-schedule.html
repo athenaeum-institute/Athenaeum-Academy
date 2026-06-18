@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+  <title>Start Free Trial | Athenaeum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,700;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="checkout.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
+  
+  <style>
+    body { background: #f8fafc; font-family: 'Urbanist', sans-serif; color: #1e293b; }
+    
+    .trial-hero {
+      background: linear-gradient(135deg, #005088, #00D2FF);
+      color: white;
+      text-align: center;
+      padding: 4rem 1rem 3rem 1rem;
+      border-radius: 0 0 30px 30px;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .trial-hero::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .trial-hero h1 { font-family: 'Merriweather', serif; font-size: 2.5rem; margin-bottom: 1rem; }
+    .trial-hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .schedule-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      transition: transform 0.3s;
+    }
+
+    .schedule-card:hover { transform: translateY(-4px); border-color: #00D2FF; box-shadow: 0 8px 24px rgba(0, 210, 255, 0.1); }
+    .card-badge { display: inline-block; padding: 4px 10px; background: #eff6ff; color: #005088; border-radius: 12px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem; }
+    .schedule-time { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
+    .schedule-days { color: #64748b; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .expect-list { list-style: none; padding: 0; margin-top: 2rem; display: grid; gap: 1rem; }
+    .expect-list li { display: flex; align-items: center; gap: 1rem; font-size: 1.1rem; font-weight: 600; }
+    .expect-list .icon { background: #e0f2fe; color: #0ea5e9; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; }
+
+    .trial-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #FF9800, #FF5722);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 87, 34, 0.3);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      margin-top: 2rem;
+    }
+    
+    .trial-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255, 87, 34, 0.4); color: white;}
+
+    /* Simple Loader */
+    #loader { display: none; text-align: center; margin-top: 1rem; color: #005088; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="global-wrapper" style="min-height: 100vh; display:flex; flex-direction:column;">
+
+  <!-- Nav -->
+  <nav class="page-nav" style="background:#005088;">
+    <a href="index.html" class="brand" style="font-family:'Merriweather',serif;">🎓 Athenaeum</a>
+    <a href="courses.html" style="color:rgba(255,255,255,.8); font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:.25rem; text-decoration:none;">
+      <span class="material-symbols-outlined" style="font-size:1.1rem;">arrow_back</span> Cancel
+    </a>
+  </nav>
+
+  <div class="trial-hero">
+    <h1>Experience Live Interactive Classes for Free</h1>
+    <p>Join our upcoming live batches as a guest. Experience our expert tutors, real-time doubt clearing, and structured curriculum before you decide to enroll.</p>
+  </div>
+
+  <div class="container" style="max-width: 900px; margin: 0 auto; flex:1; padding: 0 1rem;">
+    
+    <div style="text-align:center; margin-bottom: 2rem;">
+      <span style="font-weight:800; color:#005088; letter-spacing:1px; text-transform:uppercase;">Live Batch Timings</span>
+      <h2 style="font-size:2rem; margin-top:0.5rem;">Find a batch that fits your schedule</h2>
+    </div>
+
+    <div class="schedule-grid">
+      <div class="schedule-card">
+        <span class="card-badge">O/A Levels</span>
+        <div class="schedule-time">5:00 PM - 7:00 PM</div>
+        <div class="schedule-days"><span class="material-symbols-outlined" style="font-size:1.2rem;">calendar_month</span> Monday, Wed, Friday</div>
+        <p style="color:#64748b; font-size:0.95rem;">Perfect for Cambridge students covering Physics, Chem, Math & Bio.</p>
+      </div>
+
+      <div class="schedule-card">
+        <span class="card-badge">Matric / Inter</span>
+        <div class="schedule-time">6:00 PM - 8:30 PM</div>
+        <div class="schedule-days"><span class="material-symbols-outlined" style="font-size:1.2rem;">calendar_month</span> Tuesday, Thurs, Saturday</div>
+        <p style="color:#64748b; font-size:0.95rem;">Extensive board preparation following the local syllabus guidelines.</p>
+      </div>
+    </div>
+
+    <div style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 3rem;">
+      <h3 style="font-size:1.5rem; border-bottom:1px solid #e2e8f0; padding-bottom:1rem; margin-bottom:1.5rem;">What you get in the Free Trial</h3>
+      <ul class="expect-list">
+        <li><div class="icon"><span class="material-symbols-outlined">live_tv</span></div> Access to the Live Class broadcast room</li>
+        <li><div class="icon"><span class="material-symbols-outlined">forum</span></div> Ability to ask questions in real-time</li>
+        <li><div class="icon"><span class="material-symbols-outlined">smart_toy</span></div> 3 days access to Ustad AI Tutor</li>
+        <li><div class="icon"><span class="material-symbols-outlined">video_library</span></div> View class recordings if you miss the live session</li>
+      </ul>
+
+      <div style="text-align: center;">
+        <button id="book-trial-btn" class="trial-btn" onclick="bookTrial()">
+          Book Your Free Slot Now <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+        <div id="loader">Processing... Please wait.</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  let courseId = null;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    courseId = urlParams.get('course');
+  });
+
+  async function bookTrial() {
+    const btn = document.getElementById('book-trial-btn');
+    const loader = document.getElementById('loader');
+    
+    btn.style.display = 'none';
+    loader.style.display = 'block';
+
+    try {
+      // Check if user is logged in
+      const user = await getCurrentUser();
+      
+      if (!user) {
+        // Not logged in -> Redirect to auth and pass redirect param
+        // For trial, we just append &trial=true to let them know.
+        let redirectUrl = `auth.html?mode=register&redirect=dashboard-student.html`;
+        window.location.href = redirectUrl;
+        return;
+      }
+
+      // If logged in, maybe simulate a trial enrollment or just send to dashboard
+      // Since the system handles "Free Trial" status by default for unpaid users (in auth-state.js),
+      // we can simply redirect them to the student dashboard!
+      
+      setTimeout(() => {
+        window.location.href = 'dashboard-student.html';
+      }, 1000);
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+      btn.style.display = 'inline-flex';
+      loader.style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>

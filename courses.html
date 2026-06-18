@@ -189,17 +189,11 @@
         const badgeStyle = getCategoryBadgeStyle(course.category);
         const badgeLabel = getCategoryLabel(course.category);
         
-        let targetUrl = `auth.html?mode=register`;
-        let btnText = "Enroll Now";
+        let checkoutUrl = `auth.html?mode=register&redirect=checkout.html?course=${course.id}`;
+        let trialUrl = `trial-schedule.html?course=${course.id}`;
+
         if (window.currentUser) {
-          if (course.is_free_preview) {
-             targetUrl = `video-player.html?course=${course.id}`;
-             targetUrl = `video-player.html?course=${course.id}`;
-             btnText = "Watch Demo Class";
-          } else {
-             targetUrl = `checkout.html?course=${course.id}`;
-             btnText = "Enroll Now";
-          }
+           checkoutUrl = `checkout.html?course=${course.id}`;
         }
 
         html += `
@@ -220,7 +214,10 @@
                 </div>
               </div>
             </a>
-            <a href="${targetUrl}" class="course-card-btn ${course.is_free_preview && window.currentUser ? 'outline' : ''}">${btnText}</a>
+            <div style="display: flex; border-top: 1px solid var(--clr-border);">
+              <a href="${trialUrl}" class="course-card-btn outline" style="flex:1; border:none; border-right: 1px solid var(--clr-border); border-radius: 0 0 0 16px;">Free Trial</a>
+              <a href="${checkoutUrl}" class="course-card-btn" style="flex:1; border-radius: 0 0 16px 0;">Enroll Now</a>
+            </div>
           </article>
         `;
       });
