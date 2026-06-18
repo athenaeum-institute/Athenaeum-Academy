@@ -362,6 +362,7 @@ Rules:
           </div>
           <div class="ustad-header-actions">
             <button class="ustad-header-btn" id="ustad-clear-btn" title="Clear chat">🗑️</button>
+            <button class="ustad-header-btn" id="ustad-minimize-btn" title="Minimize" style="font-size: 14px; margin-left: 6px; font-weight: bold; color: rgba(255,255,255,0.8);">✕</button>
           </div>
         </div>
 
@@ -955,6 +956,10 @@ Rules:
     // FAB toggle
     const fab = document.getElementById('ustad-fab');
     if (fab) fab.addEventListener('click', toggleChat);
+
+    // Minimize button toggle
+    const minBtn = document.getElementById('ustad-minimize-btn');
+    if (minBtn) minBtn.addEventListener('click', toggleChat);
 
     // Send button
     const sendBtn = document.getElementById('ustad-send-btn');
