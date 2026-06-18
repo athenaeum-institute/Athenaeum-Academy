@@ -603,14 +603,14 @@ Rules:
     if (role === 'ai') {
       msgEl.innerHTML = `
         <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
-        <div>
+        <div class="ustad-msg-content">
           <div class="ustad-msg-bubble">${bubbleContent}</div>
           <div class="ustad-msg-time">${getTimeStr()}</div>
         </div>
       `;
     } else {
       msgEl.innerHTML = `
-        <div>
+        <div class="ustad-msg-content">
           <div class="ustad-msg-bubble">${bubbleContent}</div>
           <div class="ustad-msg-time">${getTimeStr()}</div>
         </div>
