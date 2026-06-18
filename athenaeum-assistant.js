@@ -135,7 +135,25 @@
       general: `- Help with any academic subject. Ask the student what subject they need help with if unclear.`,
     };
 
+    const currentUrl = window.location.href;
+    const currentTitle = document.title;
+    
+    let activeErrors = [];
+    document.querySelectorAll('.error, .error-msg, .alert, [role="alert"]').forEach(el => {
+      if(el.offsetParent !== null && el.innerText.trim()) {
+        activeErrors.push(el.innerText.trim());
+      }
+    });
+    const errorContext = activeErrors.length > 0 
+      ? `\n\nVISIBLE ERRORS ON PAGE:\n- ${activeErrors.join('\n- ')}\nIf the student is confused about an error, refer to these.` 
+      : '';
+
     return `You are Athenaeum Assistant, a personal AI teacher and website guide for students at Athenaeum Online Academy.
+
+CURRENT PAGE CONTEXT (CRITICAL):
+- The student is currently on page: ${currentUrl}
+- Page Title: ${currentTitle}
+- If the student says "I don't understand this" or asks a vague question, assume they are asking about the contents of this specific page.${errorContext}
 
 PERSONA:
 - Your name is "Athenaeum Assistant" — a warm, encouraging personal tutor and platform guide.
