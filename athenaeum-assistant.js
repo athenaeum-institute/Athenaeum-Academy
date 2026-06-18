@@ -264,7 +264,8 @@ Rules:
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error?.message || `API Error ${response.status}`);
+      const errMsg = typeof errData.error === 'string' ? errData.error : errData.error?.message;
+      throw new Error(errMsg || `API Error ${response.status}`);
     }
 
     const data = await response.json();
@@ -307,7 +308,8 @@ Rules:
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error?.message || `API Error ${response.status}`);
+      const errMsg = typeof errData.error === 'string' ? errData.error : errData.error?.message;
+      throw new Error(errMsg || `API Error ${response.status}`);
     }
 
     const data = await response.json();
@@ -731,10 +733,14 @@ Rules:
 
       let errorMsg = 'I apologize! I am having trouble connecting to my AI core right now. Please try again in a moment. 🙏';
 
-      if (err.message && err.message.includes('API key')) {
-        errorMsg = '⚠️ API key is not configured. Please check the athenaeum-assistant.js configuration.';
-      } else if (err.message && err.message.includes('quota')) {
-        errorMsg = '⚠️ API quota has been exceeded. Please try again later.';
+      if (err.message) {
+        if (err.message.includes('API key') || err.message.includes('GEMINI_API_KEY')) {
+          errorMsg = '⚠️ API key is not configured in Vercel. Please check environment variables.';
+        } else if (err.message.includes('quota')) {
+          errorMsg = '⚠️ API quota has been exceeded. Please try again later.';
+        } else if (!err.message.includes('Unexpected token')) {
+          errorMsg = `⚠️ Error: ${err.message}`;
+        }
       }
 
       appendMessage('ai', errorMsg, true);
