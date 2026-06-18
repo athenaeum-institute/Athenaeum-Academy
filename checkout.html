@@ -28,6 +28,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth-state.js"></script>
+  <script src="supabase-courses.js"></script>
 </head>
 <body>
 <div class="global-wrapper">
@@ -346,8 +347,8 @@
       </div>
 
       <div class="confirm-actions">
-        <a href="auth.html" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
-          <span class="material-symbols-outlined">dashboard</span> Create Account & Proceed
+        <a href="dashboard-student.html" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
+          <span class="material-symbols-outlined">dashboard</span> Go to Dashboard
         </a>
       </div>
     </div>
@@ -551,6 +552,8 @@
           
           if (user && courseId && window.AthenaeumCourses) {
              await window.AthenaeumCourses.enrollStudent(user.id, courseId);
+             // Update plan_type to paid so the trial banner disappears
+             await window.supabaseClient.from('profiles').update({ plan_type: 'paid' }).eq('id', user.id);
           }
         } catch (err) {
           console.error('Enrollment failed after payment:', err);
