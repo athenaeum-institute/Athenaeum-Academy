@@ -196,8 +196,8 @@
                 <span class="material-symbols-outlined">video_library</span>
               </div>
               <div>
-                <p class="bubble-num">7,500+</p>
-                <p class="bubble-label">Video Lessons</p>
+                <p class="bubble-num">Daily</p>
+                <p class="bubble-label">Live Sessions</p>
               </div>
             </div>
           </div>
@@ -213,11 +213,11 @@
       <div class="container feature-grid">
         <div class="feature-item">
           <span class="material-symbols-outlined feature-icon">menu_book</span>
-          <span class="feature-label">20k+ Courses</span>
+          <span class="feature-label">Expert Live Tutors</span>
         </div>
         <div class="feature-item">
           <span class="material-symbols-outlined feature-icon">all_inclusive</span>
-          <span class="feature-label">Lifetime Access</span>
+          <span class="feature-label">Live Classes + Backups</span>
         </div>
         <div class="feature-item">
           <span class="material-symbols-outlined feature-icon">savings</span>
@@ -277,11 +277,11 @@
             </li>
             <li>
               <span class="list-check"><span class="material-symbols-outlined">check</span></span>
-              Access more than 100K online courses
+              Join interactive live batches with expert teachers
             </li>
             <li>
               <span class="list-check"><span class="material-symbols-outlined">check</span></span>
-              Learn the high-impact skills that top companies want
+              Get full access to class recordings if you miss a session
             </li>
           </ul>
           <a href="about.html" class="btn btn-secondary" id="about-more-btn">About More →</a>
@@ -429,8 +429,8 @@
     <section class="courses section section--alt" id="courses">
       <div class="container">
         <div class="section-header">
-          <span class="section-eyebrow">POPULAR COURSES</span>
-          <h2 class="section-title center">Our Popular Online Courses</h2>
+          <span class="section-eyebrow">UPCOMING BATCHES</span>
+          <h2 class="section-title center">Enroll in our Live Batches</h2>
         </div>
 
                 <!-- Cards grid -->
@@ -456,6 +456,7 @@
             if(!grid || !window.AthenaeumCourses) return;
             
             try {
+              window.currentUser = await getCurrentUser();
               const allCourses = await window.AthenaeumCourses.fetchAllCourses();
               
               const oLevels = allCourses.filter(c => c.category === 'o_levels').slice(0, 2);
@@ -505,11 +506,11 @@
                 let btnText = "Enroll Now";
                 if (window.currentUser) {
                   if (course.is_free_preview) {
-                     targetUrl = `course-details.html?id=${course.id}`;
-                     btnText = "Start Free Preview";
-                  } else {
                      targetUrl = `video-player.html?course=${course.id}`;
-                     btnText = "Start Learning";
+                     btnText = "Watch Demo Class";
+                  } else {
+                     targetUrl = `checkout.html?course=${course.id}`;
+                     btnText = "Enroll Now";
                   }
                 }
 
@@ -527,7 +528,7 @@
                         </div>
                         <div class="course-footer" >
                           <span class="course-price" >${priceDisplay}</span>
-                          ${course.is_free_preview ? '<span style="font-size:0.8rem; background:#f0f9ff; color:#0284c7; padding:4px 8px; border-radius:12px; font-weight:600;">Free Preview</span>' : ''}
+                          ${course.is_free_preview ? '<span style="font-size:0.8rem; background:#f0f9ff; color:#0284c7; padding:4px 8px; border-radius:12px; font-weight:600;">Demo Available</span>' : ''}
                         </div>
                       </div>
                     </a>
@@ -601,11 +602,11 @@
         </div>
         <div class="stat-item">
           <p class="stat-number">200+</p>
-          <p class="stat-label">Expert Teachers</p>
+          <p class="stat-label">Expert Live Tutors</p>
         </div>
         <div class="stat-item">
           <p class="stat-number">20k+</p>
-          <p class="stat-label">Courses Available</p>
+          <p class="stat-label">Hours of Live Sessions</p>
         </div>
         <div class="stat-item">
           <p class="stat-number">98%</p>

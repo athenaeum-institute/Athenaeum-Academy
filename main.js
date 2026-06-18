@@ -233,7 +233,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     },
     {
       badge: "A*", badgeClass: "pill--astar",
-      quote: "The A-Level Math course here is exceptional. Detailed video lessons, instant doubt clearing and unlimited past papers — I scored A* and got into my dream university.",
+      quote: "The A-Level Math course here is exceptional. Detailed live classes, instant doubt clearing and recorded backups — I scored A* and got into my dream university.",
       name: "Zara Khan", detail: "A-Level Mathematics &bull; Cambridge Board",
       pill1: "A* Grade", pill2: "Mathematics"
     },
@@ -251,7 +251,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     },
     {
       badge: "A", badgeClass: "pill--a",
-      quote: "Athenaeum's MDCAT preparation track is unmatched. The biology videos, MCQ banks and mock tests perfectly prepared me. I cleared MDCAT with a top percentile score!",
+      quote: "Athenaeum's MDCAT preparation track is unmatched. The live biology sessions, MCQ banks and recorded backups perfectly prepared me. I cleared MDCAT with a top percentile score!",
       name: "Usman Iqbal", detail: "MDCAT Prep &bull; Pre-Medical",
       pill1: "Top Score", pill2: "MDCAT"
     }

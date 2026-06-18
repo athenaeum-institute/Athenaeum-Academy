@@ -234,11 +234,11 @@
       <!-- CONTINUE LEARNING HERO -->
       <div id="hero-resume" class="hero-resume fade-in" style="display:none;">
         <div style="z-index:2">
-          <span style="text-transform:uppercase; font-size:0.8rem; font-weight:800; letter-spacing:1px; color:var(--accent); margin-bottom:0.5rem; display:block;">Continue Learning</span>
+          <span style="text-transform:uppercase; font-size:0.8rem; font-weight:800; letter-spacing:1px; color:var(--accent); margin-bottom:0.5rem; display:block;">Recent Class Recording</span>
           <h2 id="hero-lesson-title" style="font-family:'Merriweather',serif; margin-bottom:0.5rem; font-size:2rem;">Lesson Title</h2>
           <p id="hero-course-title" style="color:rgba(255,255,255,0.7); margin-bottom:1.5rem">Course Title</p>
           <a href="video-player.html" class="btn" style="background:#fff; color:var(--primary)">
-            <span class="material-symbols-outlined">play_arrow</span> Resume Lesson
+            <span class="material-symbols-outlined">play_arrow</span> Watch Recording
           </a>
         </div>
       </div>
@@ -509,7 +509,10 @@
           <div class="course-body">
             <div style="font-size:0.75rem; color:var(--accent); font-weight:800; text-transform:uppercase; margin-bottom:0.25rem">${c.subject || c.category}</div>
             <h4 style="margin-bottom:1rem; font-size:1.1rem">${c.title}</h4>
-            <a href="video-player.html?course=${c.id}" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.5rem; font-size:0.85rem">Continue</a>
+            <div style="display:flex; gap:0.5rem;">
+              <a href="live-class.html" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Live Class</a>
+              <a href="video-player.html?course=${c.id}" class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Recordings</a>
+            </div>
           </div>
         </div>
       `).join('');

@@ -96,8 +96,8 @@
 
   <main class="section container" style="min-height: 60vh;">
     <div id="global-announcements" style="margin-top:2rem"></div>
-    <h1 class="section-title" style="text-align: center; margin-bottom: 0.5rem;">Course Catalog</h1>
-    <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">Explore our premium collection of Academics and Tech Skill bootcamps.</p>
+    <h1 class="section-title" style="text-align: center; margin-bottom: 0.5rem;">Live Tutoring Batches</h1>
+    <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">Enroll in our upcoming live batches for Academics and Tech Skills.</p>
     
         <!-- Course filter tabs -->
     <div class="course-tabs" id="catalog-tabs" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
@@ -193,11 +193,12 @@
         let btnText = "Enroll Now";
         if (window.currentUser) {
           if (course.is_free_preview) {
-             targetUrl = `course-details.html?id=${course.id}`;
-             btnText = "Start Free Preview";
-          } else {
              targetUrl = `video-player.html?course=${course.id}`;
-             btnText = "Start Learning";
+             targetUrl = `video-player.html?course=${course.id}`;
+             btnText = "Watch Demo Class";
+          } else {
+             targetUrl = `checkout.html?course=${course.id}`;
+             btnText = "Enroll Now";
           }
         }
 
@@ -215,7 +216,7 @@
                 </div>
                 <div class="course-footer" >
                   <span class="course-price" >${priceDisplay}</span>
-                  ${course.is_free_preview ? '<span style="font-size:0.8rem; background:#f0f9ff; color:#0284c7; padding:4px 8px; border-radius:12px; font-weight:600;">Free Preview</span>' : ''}
+                  ${course.is_free_preview ? '<span style="font-size:0.8rem; background:#f0f9ff; color:#0284c7; padding:4px 8px; border-radius:12px; font-weight:600;">Demo Available</span>' : ''}
                 </div>
               </div>
             </a>
@@ -251,6 +252,7 @@
       grid.innerHTML = skeletonHTML;
       
       try {
+        window.currentUser = await getCurrentUser();
         allCourses = await window.AthenaeumCourses.fetchAllCourses();
         updateCounts();
         

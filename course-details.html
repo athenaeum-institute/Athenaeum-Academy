@@ -371,7 +371,7 @@
         document.getElementById('cd-enrolled').textContent = `New`;
         
         // Duration/Level fallback
-        document.getElementById('cd-duration').textContent = `Self-paced`;
+        document.getElementById('cd-duration').textContent = `Live Batch`;
         document.getElementById('cd-level').textContent = course.subject || 'General';
         
         document.getElementById('cd-desc').textContent = course.description || 'No description provided.';
@@ -382,19 +382,23 @@
 
         // Button logic
         const actionsContainer = document.getElementById('cd-action-btns');
-        let targetUrl = 'auth.html?mode=register';
+        window.currentUser = await getCurrentUser();
+        let targetPreviewUrl = 'auth.html?mode=register';
+        let targetCheckoutUrl = 'auth.html?mode=register';
+
         if (window.currentUser) {
-            targetUrl = `video-player.html?course=${course.id}`;
+            targetPreviewUrl = `video-player.html?course=${course.id}`;
+            targetCheckoutUrl = `checkout.html?course=${course.id}`;
         }
         
         if (course.is_free_preview) {
            actionsContainer.innerHTML = `
-             <a href="${targetUrl}" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem; border: 2px solid var(--clr-primary); color: var(--clr-primary); text-decoration: none;">Start Free Preview</a>
-             <a href="${targetUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Full Course</a>
+             <a href="${targetPreviewUrl}" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem; border: 2px solid var(--clr-primary); color: var(--clr-primary); text-decoration: none;">Start Free Trial</a>
+             <a href="${targetCheckoutUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Full Course</a>
            `;
         } else {
            actionsContainer.innerHTML = `
-             <a href="${targetUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Now</a>
+             <a href="${targetCheckoutUrl}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">Enroll Now</a>
            `;
         }
 
@@ -406,10 +410,10 @@
             });
         } else {
             featuresHtml = `
-              <li><span class="material-symbols-outlined">check_circle</span><span>Comprehensive syllabus coverage</span></li>
-              <li><span class="material-symbols-outlined">check_circle</span><span>Step-by-step problem solving</span></li>
+              <li><span class="material-symbols-outlined">check_circle</span><span>Interactive Live Sessions</span></li>
+              <li><span class="material-symbols-outlined">check_circle</span><span>Recorded Backups for Missed Classes</span></li>
+              <li><span class="material-symbols-outlined">check_circle</span><span>Real-time doubt clearing</span></li>
               <li><span class="material-symbols-outlined">check_circle</span><span>Past paper walkthroughs</span></li>
-              <li><span class="material-symbols-outlined">check_circle</span><span>24/7 AI Tutor assistance</span></li>
             `;
         }
         document.getElementById('cd-features').innerHTML = featuresHtml;
