@@ -626,10 +626,10 @@ Rules:
       suggestionsEl.style.marginTop = '10px';
       suggestionsEl.style.marginBottom = '10px';
       suggestionsEl.innerHTML = `
-          <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
-          <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>
-          <button class="ustad-suggestion-chip" data-msg="How to use past perfect tense with examples?">📝 Past Perfect</button>
-          <button class="ustad-suggestion-chip" data-msg="Help me understand Newton's laws">🔬 Newton's Laws</button>
+          <button class="ustad-suggestion-chip" data-msg="How can I enroll in a new course?">🎓 Explore Courses</button>
+          <button class="ustad-suggestion-chip" data-msg="When are the live classes scheduled?">📅 Live Classes</button>
+          <button class="ustad-suggestion-chip" data-msg="Tell me about the Web Development Bootcamp">💻 Tech Bootcamps</button>
+          <button class="ustad-suggestion-chip" data-msg="How do I prepare for my Mock Exams?">📝 Mock Exams</button>
       `;
 
       messagesEl.insertBefore(msgEl, typing);
@@ -738,8 +738,6 @@ Rules:
           errorMsg = '⚠️ API key is not configured in Vercel. Please check environment variables.';
         } else if (err.message.includes('quota')) {
           errorMsg = '⚠️ API quota has been exceeded. Please try again later.';
-        } else if (!err.message.includes('Unexpected token')) {
-          errorMsg = `⚠️ Error: ${err.message}`;
         }
       }
 
