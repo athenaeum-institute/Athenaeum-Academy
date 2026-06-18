@@ -98,10 +98,14 @@
     <h1 class="section-title" style="text-align: center; margin-bottom: 0.5rem;">Course Catalog</h1>
     <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">Explore our premium collection of Academics and Tech Skill bootcamps.</p>
     
-    <!-- Course filter tabs -->
-    <div class="course-tabs" id="catalog-tabs" style="margin-bottom: 2rem;">
-      <button class="tab-btn active" onclick="filterCatalog('academics')" id="tab-academics">Academics</button>
-      <button class="tab-btn" onclick="filterCatalog('tech')" id="tab-tech" style="border-color:var(--clr-primary); color:var(--clr-primary);">Tech Skills & Bootcamps</button>
+        <!-- Course filter tabs -->
+    <div class="course-tabs" id="catalog-tabs" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
+      <button class="tab-btn active" onclick="filterCatalog('all')" id="tab-all">All (<span id="count-all">0</span>)</button>
+      <button class="tab-btn" onclick="filterCatalog('o_levels')" id="tab-o_levels">O Levels (<span id="count-o_levels">0</span>)</button>
+      <button class="tab-btn" onclick="filterCatalog('a_levels')" id="tab-a_levels">A Levels (<span id="count-a_levels">0</span>)</button>
+      <button class="tab-btn" onclick="filterCatalog('matric')" id="tab-matric">Matric (<span id="count-matric">0</span>)</button>
+      <button class="tab-btn" onclick="filterCatalog('inter')" id="tab-inter">Inter (<span id="count-inter">0</span>)</button>
+      <button class="tab-btn" onclick="filterCatalog('skill')" id="tab-skill">Skills (<span id="count-skill">0</span>)</button>
     </div>
 
     <div class="courses-grid" id="courses-grid">
@@ -109,10 +113,127 @@
     </div>
   </main>
 
+  
   <script>
+    let allCourses = [];
+
+    const formatPrice = (price) => {
+      if (parseFloat(price) === 0) return 'FREE';
+      return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', minimumFractionDigits: 0 }).format(price);
+    };
+
+    const getCategoryBadgeStyle = (category) => {
+      switch (category) {
+        case 'o_levels': return 'background: #005088; color: white; border: none;';
+        case 'a_levels': return 'background: #7B2FBE; color: white; border: none;';
+        case 'matric':   return 'background: #00A86B; color: white; border: none;';
+        case 'inter':    return 'background: #FF6B35; color: white; border: none;';
+        case 'skill':    return 'background: #FFD700; color: black; border: none;';
+        default:         return 'background: #eee; color: #333; border: none;';
+      }
+    };
+
+    const getCategoryLabel = (category) => {
+      switch (category) {
+        case 'o_levels': return 'O Levels';
+        case 'a_levels': return 'A Levels';
+        case 'matric': return 'Matric';
+        case 'inter': return 'Inter';
+        case 'skill': return 'Skills';
+        default: return (category || '').toUpperCase();
+      }
+    };
+
+    window.filterCatalog = (category) => {
+      // Update active tab
+      document.querySelectorAll('#catalog-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + category).classList.add('active');
+
+      const grid = document.getElementById('courses-grid');
+      grid.style.opacity = '0';
+      
+      setTimeout(() => {
+        renderCourses(category);
+        grid.style.opacity = '1';
+      }, 300);
+    };
+
+    const updateCounts = () => {
+      const counts = { all: allCourses.length, o_levels: 0, a_levels: 0, matric: 0, inter: 0, skill: 0 };
+      allCourses.forEach(c => {
+        if (counts[c.category] !== undefined) counts[c.category]++;
+      });
+      for (const [cat, count] of Object.entries(counts)) {
+        const el = document.getElementById('count-' + cat);
+        if (el) el.innerText = count;
+      }
+    };
+
+    const renderCourses = (filterCat) => {
+      const grid = document.getElementById('courses-grid');
+      let filtered = allCourses;
+      
+      if (filterCat !== 'all') {
+        filtered = allCourses.filter(c => c.category === filterCat);
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No courses found in this category.</p>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(course => {
+        const priceDisplay = formatPrice(course.price);
+        const badgeStyle = getCategoryBadgeStyle(course.category);
+        const badgeLabel = getCategoryLabel(course.category);
+        
+        let targetUrl = `auth.html?mode=register`;
+        let btnText = "Enroll Now";
+        if (window.currentUser) {
+          if (course.is_free_preview) {
+             targetUrl = `course-details.html?id=${course.id}`;
+             btnText = "Start Free Preview";
+          } else {
+             targetUrl = `video-player.html?course=${course.id}`;
+             btnText = "Start Learning";
+          }
+        }
+
+        html += `
+          <article class="course-card" style="display: flex; flex-direction: column;">
+            <a href="course-details.html?id=${course.id}" style="text-decoration: none; color: inherit; display: block; flex: 1;">
+              <div class="course-thumb">
+                <img src="${course.thumbnail_url || 'https://via.placeholder.com/400x250'}" alt="${course.title}" loading="lazy" />
+                <span class="board-badge" style="${badgeStyle}">${badgeLabel}</span>
+              </div>
+              <div class="course-body" style="flex: 1; display: flex; flex-direction: column;">
+                <h3 class="course-title" style="margin-top:0.5rem; margin-bottom: 0.5rem; font-size: 1.2rem;">${course.title}</h3>
+                <div class="course-meta" style="margin-bottom: auto;">
+                  <span><span class="material-symbols-outlined" style="font-size:18px;">book</span> ${course.subject || 'General'}</span>
+                </div>
+                <div class="course-footer" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                  <span class="course-price" style="color: var(--clr-primary); font-weight: 800; font-size: 1.2rem;">${priceDisplay}</span>
+                  ${course.is_free_preview ? '<span style="font-size:0.8rem; background:#f0f9ff; color:#0284c7; padding:4px 8px; border-radius:12px; font-weight:600;">Free Preview</span>' : ''}
+                </div>
+              </div>
+            </a>
+            <div style="padding: 0 1.5rem 1.5rem;">
+              <a href="${targetUrl}" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">${btnText}</a>
+            </div>
+          </article>
+        `;
+      });
+      
+      grid.innerHTML = html;
+    };
+
     document.addEventListener('DOMContentLoaded', async () => {
       const grid = document.getElementById('courses-grid');
       if(!grid || !window.AthenaeumCourses) return;
+      
+      // Ensure smooth transition for filtering
+      grid.style.transition = 'opacity 0.3s ease';
       
       const skeletonHTML = `
         <div class="course-skeleton">
@@ -131,54 +252,22 @@
       grid.innerHTML = skeletonHTML;
       
       try {
-        const courses = await window.AthenaeumCourses.fetchAllCourses();
-        grid.innerHTML = '';
+        allCourses = await window.AthenaeumCourses.fetchAllCourses();
+        updateCounts();
         
-        if (!courses || courses.length === 0) {
-          grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No published courses found.</p>';
-          return;
-        }
-
-        courses.forEach(course => {
-          // Format price: if 0 it's FREE, otherwise add currency symbol
-          const priceDisplay = parseFloat(course.price) === 0 ? 'FREE' : `Rs. ${course.price}`;
-          const instructorName = course.profiles?.full_name || 'Instructor';
-          const instructorAvatar = course.profiles?.avatar_url || 'https://via.placeholder.com/40';
-
-          grid.innerHTML += `
-            <article class="course-card">
-              <a href="course-details.html?id=${course.id}" style="text-decoration: none; color: inherit; display: block; height: 100%;">
-                <div class="course-thumb">
-                  <img src="${course.thumbnail_url || 'https://via.placeholder.com/400x250'}" alt="${course.title}" loading="lazy" />
-                  <span class="board-badge">${(course.category || '').toUpperCase()}</span>
-                </div>
-                <div class="course-body">
-                  <div class="stars">
-                    ★★★★<span class="half-star">½</span>
-                    <span class="rating-text">(New)</span>
-                  </div>
-                  <h3 class="course-title">${course.title}</h3>
-                  <div class="course-meta">
-                    <span><span class="material-symbols-outlined">school</span> ${course.subject || 'General'}</span>
-                  </div>
-                  <div class="course-footer">
-                    <div class="instructor">
-                      <img src="${instructorAvatar}" alt="${instructorName}" class="instructor-avatar" / loading="lazy" decoding="async">
-                      <span>${instructorName}</span>
-                    </div>
-                    <span class="course-price" style="color: var(--clr-secondary); font-weight: 800;">${priceDisplay}</span>
-                  </div>
-                </div>
-              </a>
-            </article>
-          `;
-        });
+        // Parse URL tab query param if exists
+        const urlParams = new URLSearchParams(window.location.search);
+        let startTab = urlParams.get('tab') || 'all';
+        if (!['all', 'o_levels', 'a_levels', 'matric', 'inter', 'skill'].includes(startTab)) startTab = 'all';
+        
+        filterCatalog(startTab);
       } catch (err) {
         grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Failed to load courses. Please try again later.</p>';
         console.error('Render error:', err);
       }
     });
   </script>
+
 
   <footer class="footer">
     <div class="container footer-grid">
