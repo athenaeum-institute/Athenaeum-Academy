@@ -124,9 +124,11 @@
 
 /* #ustad-fab specific open state */
 #ustad-fab.open {
-  background: rgba(220, 38, 38, 0.8);
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3), inset 0 0 20px #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+  background: transparent;
+  box-shadow: none;
+  border-color: transparent;
+  opacity: 0;
+  pointer-events: none;
   transform: translateY(0);
 }
 
