@@ -279,7 +279,7 @@
     </div>
     <div class="nav-item" onclick="showPanel('ai-settings')">
       <span class="material-symbols-outlined">smart_toy</span>
-      <span>Ustad AI</span>
+      <span>Athenaeum Assistant</span>
     </div>
 
     <div class="nav-section">Users</div>
@@ -359,7 +359,7 @@
             <div class="stat-icon gold"><span class="material-symbols-outlined">smart_toy</span></div>
             <div class="stat-val" id="stat-ai-questions">—</div>
             <div class="stat-label">AI Questions Today</div>
-            <div class="stat-change up">↑ Ustad AI Usage</div>
+            <div class="stat-change up">↑ Athenaeum Assistant Usage</div>
           </div>
           <div class="stat-card purple">
             <div class="stat-icon purple"><span class="material-symbols-outlined">quiz</span></div>
@@ -377,7 +377,7 @@
             <span class="material-symbols-outlined">add_circle</span> Add New Course
           </button>
           <button class="btn btn-ghost" onclick="showPanel('ai-settings')" style="justify-content:flex-start;padding:1rem">
-            <span class="material-symbols-outlined">tune</span> Configure Ustad AI
+            <span class="material-symbols-outlined">tune</span> Configure Athenaeum Assistant
           </button>
           <button class="btn btn-ghost" onclick="showPanel('students')" style="justify-content:flex-start;padding:1rem">
             <span class="material-symbols-outlined">manage_accounts</span> Manage Students
@@ -439,7 +439,7 @@
       <!-- ── USTAD AI SETTINGS PANEL ── -->
       <div id="panel-ai-settings" class="panel">
         <div class="section-header">
-          <div class="section-title">🤖 Ustad AI — Settings & Testing</div>
+          <div class="section-title">🤖 Athenaeum Assistant — Settings & Testing</div>
         </div>
 
         <div class="ai-stat-row">
@@ -461,7 +461,7 @@
           <div class="ai-card" style="grid-column:1/-1">
             <h3>🔑 Gemini API Key</h3>
             <div class="form-group">
-              <label class="form-label">API Key (stored in ustad-ai.js)</label>
+              <label class="form-label">API Key (stored in athenaeum-assistant.js)</label>
               <div style="display:flex;gap:.5rem">
                 <input type="password" class="form-input" id="gemini-key-input" placeholder="AIzaSy..." style="flex:1">
                 <button class="btn btn-ghost" onclick="toggleKeyVisibility()">👁️ Show</button>
@@ -475,7 +475,7 @@
             <h3>⚙️ AI Feature Toggles</h3>
             <div class="toggle-row">
               <div>
-                <div class="toggle-label">Ustad AI Chatbot</div>
+                <div class="toggle-label">Athenaeum Assistant Chatbot</div>
                 <div class="toggle-sub">Show/hide AI widget on website</div>
               </div>
               <label class="toggle">
@@ -522,7 +522,7 @@
 
           <!-- LIVE TEST -->
           <div class="ai-card" style="grid-column:1/-1">
-            <h3>🧪 Live Test Ustad AI</h3>
+            <h3>🧪 Live Test Athenaeum Assistant</h3>
             <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
               <select class="form-select" style="width:160px" id="test-subject">
                 <option value="general">General</option>
@@ -895,7 +895,7 @@ function showPanel(name) {
   const titles = {
     dashboard: 'Dashboard',
     courses: 'Course Management',
-    'ai-settings': 'Ustad AI Settings',
+    'ai-settings': 'Athenaeum Assistant Settings',
     students: 'Student Management',
     teachers: 'Teacher Management',
     announcements: 'Announcements',
@@ -1350,8 +1350,8 @@ function saveApiKey() {
   }
   // Store in localStorage for reference
   localStorage.setItem('admin_gemini_key', key);
-  showToast('API Key saved locally! Update ustad-ai.js line 15 with this key.', 'success');
-  console.log('Update ustad-ai.js line 15:\nconst GEMINI_API_KEY = \'' + key + '\';');
+  showToast('API Key saved locally! Update athenaeum-assistant.js line 15 with this key.', 'success');
+  console.log('Update athenaeum-assistant.js line 15:\nconst GEMINI_API_KEY = \'' + key + '\';');
 }
 
 function saveAiSettings() {
@@ -1392,10 +1392,10 @@ async function sendTestMessage() {
   document.getElementById('test-message').value = '';
 
   const loadingId = 'loading-' + Date.now();
-  chat.insertAdjacentHTML('beforeend', `<div id="${loadingId}" style="color:var(--muted);font-size:.85rem;padding:.5rem 0">⏳ Ustad AI is typing...</div>`);
+  chat.insertAdjacentHTML('beforeend', `<div id="${loadingId}" style="color:var(--muted);font-size:.85rem;padding:.5rem 0">⏳ Athenaeum Assistant is typing...</div>`);
   chat.scrollTop = chat.scrollHeight;
 
-  const systemPrompt = `You are Ustad AI, a warm Pakistani personal teacher for Athenaeum Academy. Student name: ${studentName}. Subject: ${subject}. Be encouraging, helpful, and end with a motivating line.`;
+  const systemPrompt = `You are Athenaeum Assistant, a warm Pakistani personal teacher for Athenaeum Academy. Student name: ${studentName}. Subject: ${subject}. Be encouraging, helpful, and end with a motivating line.`;
 
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
@@ -1424,7 +1424,7 @@ function appendTestMsg(role, text) {
   const chat = document.getElementById('test-chat');
   const div = document.createElement('div');
   div.style.cssText = `margin-bottom:.75rem;padding:.6rem .85rem;border-radius:10px;font-size:.85rem;line-height:1.5;max-width:90%;${role==='user'?'background:rgba(0,210,255,.1);margin-left:auto;text-align:right;':'background:var(--card2);'}`;
-  div.innerHTML = (role === 'ai' ? '🎓 <strong>Ustad AI:</strong> ' : '👤 <strong>You:</strong> ') + text.replace(/\n/g, '<br>');
+  div.innerHTML = (role === 'ai' ? '🎓 <strong>Athenaeum Assistant:</strong> ' : '👤 <strong>You:</strong> ') + text.replace(/\n/g, '<br>');
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
 }

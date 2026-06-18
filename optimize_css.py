@@ -1,7 +1,7 @@
 import os
 import re
 
-CSS_FILES = ['styles.css', 'ustad-ai.css']
+CSS_FILES = ['styles.css', 'athenaeum-assistant.css']
 
 def optimize_file(filepath):
     if not os.path.exists(filepath):
@@ -26,7 +26,7 @@ def optimize_file(filepath):
     content = content.replace('rgba(255, 255, 255, 0.8)', '#ffffff')
     content = content.replace('rgba(255, 255, 255, 0.1)', '#ffffff') # teaser btn? wait.
     
-    # For Ustad AI chat panel:
+    # For Athenaeum Assistant chat panel:
     content = content.replace('rgba(255, 255, 255, 0.97)', '#ffffff')
     
     with open(filepath, 'w', encoding='utf-8') as f:

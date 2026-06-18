@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="checkout.css">
   <style>
-    body { background: #f1f5f9; }
+    body { background: #ffffff; }
   </style>
 
   <!-- Vercel Speed Insights -->
@@ -24,6 +24,10 @@
   <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
 </head>
 <body>
 <div class="global-wrapper">
@@ -73,7 +77,7 @@
                 <label class="field-label">Email Address for Receipt</label>
                 <div class="field-input-icon">
                   <span class="f-ico"><span class="material-symbols-outlined">mail</span></span>
-                  <input type="email" class="field-input" value="fatima.anwar@student.academypro.com" required>
+                  <input type="email" id="checkout-email" class="field-input" placeholder="student@example.com" required>
                 </div>
               </div>
             </div>
@@ -81,11 +85,11 @@
             <div class="form-row cols-2" style="margin-bottom:2rem;">
               <div class="field-group">
                 <label class="field-label">First Name</label>
-                <input type="text" class="field-input" value="Fatima" required>
+                <input type="text" id="checkout-fname" class="field-input" placeholder="First Name" required>
               </div>
               <div class="field-group">
                 <label class="field-label">Last Name</label>
-                <input type="text" class="field-input" value="Anwar" required>
+                <input type="text" id="checkout-lname" class="field-input" placeholder="Last Name" required>
               </div>
             </div>
 
@@ -259,7 +263,7 @@
           <div class="order-features">
             <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Live Classes & Recordings</div>
             <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> Chapter Quizzes & Past Papers</div>
-            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> 24/7 Ustad AI Tutor Access</div>
+            <div class="order-feature"><span class="material-symbols-outlined">check_circle</span> 24/7 Athenaeum Assistant Tutor Access</div>
           </div>
 
           <!-- Financial Aid Slider -->
@@ -270,17 +274,17 @@
             <div style="width: 100%; margin-top: 10px;">
               <input type="range" id="price-slider" min="500" max="2499" value="2499" step="100" style="width: 100%; cursor: pointer;" oninput="updateSliderPrice()">
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--clr-muted); margin-top: 5px; font-weight: 600;">
-                <span>Rs. 500 (Min)</span>
-                <span>Rs. 2,499</span>
+                <span id="slider-min-disp">Rs. 500 (Min)</span>
+                <span id="slider-max-disp">Rs. 2,499</span>
               </div>
             </div>
           </div>
 
-          <div class="order-line-items">
-            <div class="order-line">
-              <span class="o-label">Standard Price</span>
-              <span class="o-val">Rs. 2,499</span>
-            </div>
+            <div class="order-line-items">
+              <div class="order-line">
+                <span class="o-label">Standard Price</span>
+                <span class="o-val" id="std-price-disp">Rs. 2,499</span>
+              </div>
             <div class="order-line" id="discount-line" style="display:none;">
               <span class="o-label">Financial Aid Discount</span>
               <span class="o-val discount" id="discount-val">- Rs. 0</span>
@@ -354,13 +358,41 @@
     let basePrice = 2499;
     let currentPrice = 2499;
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const courseNameParam = urlParams.get('course');
+      const courseId = urlParams.get('course');
       
-      if (courseNameParam) {
-        document.getElementById('course-name-disp').textContent = courseNameParam;
-        document.getElementById('receipt-course-name').textContent = courseNameParam;
+      try {
+        const user = await getCurrentUser();
+        if (user && user.email) {
+           document.getElementById('checkout-email').value = user.email;
+           const nameParts = (user.user_metadata?.full_name || "Student").split(" ");
+           document.getElementById('checkout-fname').value = nameParts[0] || "";
+           document.getElementById('checkout-lname').value = nameParts.slice(1).join(" ") || "";
+        }
+
+        if (courseId) {
+          const { data: course, error } = await window.supabaseClient.from('courses').select('*').eq('id', courseId).single();
+          if (course) {
+            document.getElementById('course-name-disp').textContent = course.title;
+            document.getElementById('receipt-course-name').textContent = course.title;
+            
+            basePrice = course.price || 0;
+            currentPrice = basePrice;
+            const priceSlider = document.getElementById('price-slider');
+            if (priceSlider) {
+              priceSlider.max = basePrice;
+              priceSlider.value = basePrice;
+              priceSlider.min = Math.floor(basePrice / 3);
+              document.getElementById('slider-min-disp').textContent = 'Rs. ' + priceSlider.min + ' (Min)';
+              document.getElementById('slider-max-disp').textContent = 'Rs. ' + basePrice;
+            }
+            document.getElementById('std-price-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
+            updateSliderPrice();
+          }
+        }
+      } catch (err) {
+        console.error(err);
       }
     });
 
@@ -483,7 +515,7 @@
     }
 
     // ── Process Payment ─────────────────────────────────────
-    function processPayment(e) {
+    async function processPayment(e) {
       e.preventDefault();
       const btn = document.getElementById('pay-submit-btn');
       btn.innerHTML = '<span class="material-symbols-outlined rotate">sync</span> Processing securely...';
@@ -508,9 +540,22 @@
       }
       document.getElementById('receipt-method').textContent = methodStr;
 
-      // Simulate API call
-      setTimeout(() => {
+      // Simulate API call and execute Enrollment
+      setTimeout(async () => {
         document.body.style.cursor = '';
+        
+        try {
+          const user = await getCurrentUser();
+          const urlParams = new URLSearchParams(window.location.search);
+          const courseId = urlParams.get('course');
+          
+          if (user && courseId && window.AthenaeumCourses) {
+             await window.AthenaeumCourses.enrollStudent(user.id, courseId);
+          }
+        } catch (err) {
+          console.error('Enrollment failed after payment:', err);
+        }
+
         document.getElementById('checkout-main').style.display = 'none';
         document.querySelector('.checkout-progress').style.display = 'none';
 

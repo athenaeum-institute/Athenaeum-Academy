@@ -492,11 +492,11 @@ img { max-width:100%; }
 
 /* Form Panel */
 .checkout-panel {
-  background:var(--clr-card);
-  border-radius:var(--radius-xl);
-  border:1px solid var(--clr-border);
+  background:#fff;
+  border-radius:0;
+  border:none;
   overflow:hidden;
-  box-shadow:var(--shadow-md);
+  box-shadow:none;
 }
 .panel-header {
   padding:1.5rem 2rem;
@@ -756,11 +756,11 @@ img { max-width:100%; }
 
 /* ── Order Summary ───────────────────────────────────────── */
 .order-summary {
-  background:var(--clr-card);
+  background:var(--clr-surface);
   border-radius:var(--radius-xl);
   border:1px solid var(--clr-border);
   overflow:hidden;
-  box-shadow:var(--shadow-md);
+  box-shadow:var(--shadow-sm);
   position:sticky; top:88px;
 }
 .order-header {

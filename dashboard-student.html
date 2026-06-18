@@ -12,7 +12,7 @@
   
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="engagement.css">
-  <link rel="stylesheet" href="ustad-ai.css">
+  <link rel="stylesheet" href="athenaeum-assistant.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -274,7 +274,7 @@
         <a href="courses.html" class="qa-btn"><span class="material-symbols-outlined">library_books</span> Browse Courses</a>
         <a href="mock-exam.html" class="qa-btn"><span class="material-symbols-outlined">quiz</span> Take Mock Exam</a>
         <a href="live-class.html" class="qa-btn"><span class="material-symbols-outlined">co_present</span> Live Classes</a>
-        <a href="javascript:void(0)" onclick="alert(\`Coming Soon!\`)" class="qa-btn" onclick="openUstadAI(true)"><span class="material-symbols-outlined">smart_toy</span> Ask Ustad AI</a>
+        <a href="javascript:void(0)" onclick="alert(\`Coming Soon!\`)" class="qa-btn" onclick="openUstadAI(true)"><span class="material-symbols-outlined">smart_toy</span> Ask Athenaeum Assistant</a>
       </div>
 
       <!-- COURSES ROW -->
@@ -330,7 +330,7 @@
   <div id="ustad-widget" style="position:fixed; bottom:20px; right:20px; z-index:1000; display:none;">
     <div style="background:var(--card); border:1px solid var(--accent); border-radius:16px; width:320px; box-shadow:0 10px 40px rgba(0,0,0,0.5); overflow:hidden;">
       <div style="background:linear-gradient(135deg,var(--primary),var(--accent)); padding:1rem; color:#fff; display:flex; justify-content:space-between; align-items:center;">
-        <div style="display:flex; align-items:center; gap:.5rem; font-weight:700;"><span class="material-symbols-outlined">smart_toy</span> Ustad AI</div>
+        <div style="display:flex; align-items:center; gap:.5rem; font-weight:700;"><span class="material-symbols-outlined">smart_toy</span> Athenaeum Assistant</div>
         <button onclick="document.getElementById('ustad-widget').style.display='none'" style="background:none;border:none;color:#fff;cursor:pointer">✕</button>
       </div>
       <div style="padding:1.5rem; font-size:.95rem; line-height:1.5;" id="ustad-msg">
@@ -395,7 +395,7 @@
         const todayStr = new Date().toDateString();
         if (joinedDate === todayStr && !sessionStorage.getItem('ai_welcomed')) {
           setTimeout(() => {
-            openUstadAI(false, `Welcome to Athenaeum, ${data.profile.full_name.split(' ')[0]}! 🎉\nI am Ustad AI — your personal teacher.\nI am here to help you with Math, Science, and English.\nAsk me anything! 😊`);
+            openUstadAI(false, `Welcome to Athenaeum, ${data.profile.full_name.split(' ')[0]}! 🎉\nI am Athenaeum Assistant — your personal teacher.\nI am here to help you with Math, Science, and English.\nAsk me anything! 😊`);
             sessionStorage.setItem('ai_welcomed', 'true');
           }, 2000);
         }

@@ -130,7 +130,7 @@ pages = {
 <h3 class="legal-heading">3. Free Trial</h3>
 <ul class="legal-body">
   <li>New students receive a 3-day free trial</li>
-  <li>Free trial includes limited Ustad AI access (5 questions per day)</li>
+  <li>Free trial includes limited Athenaeum Assistant access (5 questions per day)</li>
   <li>Free trial includes limited mock exams (2 per day)</li>
   <li>Trial expires automatically after 72 hours</li>
 </ul>
@@ -150,7 +150,7 @@ pages = {
 <ul class="legal-body">
   <li>Do not share course content outside the platform</li>
   <li>Do not attempt to bypass trial or payment limits</li>
-  <li>Do not misuse Ustad AI for non-academic purposes</li>
+  <li>Do not misuse Athenaeum Assistant for non-academic purposes</li>
   <li>Respectful behavior is expected at all times</li>
 </ul>
 </section>
@@ -159,7 +159,7 @@ pages = {
 <h3 class="legal-heading">6. Intellectual Property</h3>
 <ul class="legal-body">
   <li>All course content is owned by Athenaeum</li>
-  <li>Ustad AI responses are for personal learning only</li>
+  <li>Athenaeum Assistant responses are for personal learning only</li>
   <li>You may not reproduce or distribute any content</li>
 </ul>
 </section>

@@ -1,5 +1,5 @@
 /* ============================================================
-   Ustad AI — Personal Teacher Assistant
+   Athenaeum Assistant — Personal Teacher Assistant
    JavaScript Module v1.0
    
    Features:
@@ -135,10 +135,18 @@
       general: `- Help with any academic subject. Ask the student what subject they need help with if unclear.`,
     };
 
-    return `You are Ustad AI, a personal AI teacher for students at Athenaeum Online Academy.
+    return `You are Athenaeum Assistant, a personal AI teacher and website guide for students at Athenaeum Online Academy.
 
 PERSONA:
-- Your name is "Ustad AI" — a warm, encouraging personal tutor.
+- Your name is "Athenaeum Assistant" — a warm, encouraging personal tutor and platform guide.
+- The student's name is "${name}". Use it occasionally to make responses personal.
+
+WEBSITE GUIDE (IMPORTANT):
+- You must guide students on how to use the Athenaeum website.
+- If they want to buy a course, tell them to click the "Enroll Now" button on the course cards which takes them to checkout.
+- If they want a trial, tell them to click "Free Trial" to view live class timings.
+- After they purchase a course, tell them it will appear in their Student Dashboard, where they can access Live Classes, Recordings, and Mock Exams.
+- If they ask about quizzes or mock exams, tell them to go to their course dashboard after enrolling.
 - You are friendly, patient, and genuinely care about the student's success.
 - You speak like a caring teacher — supportive and motivating.
 - The student's name is "${name}". Use it occasionally to make responses personal.
@@ -179,7 +187,7 @@ BOUNDARIES:
     const subjectMap = { math: 'Mathematics', science: 'Science', english: 'English' };
     const subjectLabel = subjectMap[subject] || subject;
 
-    return `You are Ustad AI, a Pakistani academic tutor. Generate a practice quiz for a student named ${name}.
+    return `You are Athenaeum Assistant, a Pakistani academic tutor. Generate a practice quiz for a student named ${name}.
 
 Subject: ${subjectLabel}
 Topic: ${topic}
@@ -348,16 +356,16 @@ Rules:
   function injectWidget() {
     // Wrapper
     const wrapper = document.createElement('div');
-    wrapper.id = 'ustad-ai-wrapper';
+    wrapper.id = 'athenaeum-assistant-wrapper';
 
     // FAB button
     wrapper.innerHTML = `
-      <div id="ustad-chat-panel">
+      <div id="assistant-chat-panel">
         <!-- Header -->
         <div id="ustad-chat-header">
-          <div class="ustad-ai-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
+          <div class="athenaeum-assistant-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
           <div class="ustad-header-info">
-            <h4>Ustad AI</h4>
+            <h4>Athenaeum Assistant</h4>
             <p><span class="ustad-online-dot"></span> Online · Your Personal Teacher</p>
           </div>
           <div class="ustad-header-actions">
@@ -409,16 +417,16 @@ Rules:
               <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
           </div>
-          <p class="ustad-input-hint">Ustad AI · Powered by Google Gemini</p>
+          <p class="ustad-input-hint">Athenaeum Assistant · Powered by Google Gemini</p>
         </div>
 
         <p class="ustad-disclaimer">AI can make mistakes. Always verify important information.</p>
       </div>
 
-      <button id="ustad-fab" title="Open Ustad AI">
+      <button id="assistant-fab" title="Open Athenaeum Assistant">
         <div class="teaser-icon"><img src="logo_transparent.png" alt="Athenaeum"></div>
         <div class="teaser-text">
-          <strong>Ustad AI Personal Teacher</strong>
+          <strong>Athenaeum Assistant Personal Teacher</strong>
           <span>Welcome, <span id="ustad-user-name">Student</span>!</span>
         </div>
       </button>
@@ -475,7 +483,7 @@ Rules:
         <!-- Loading Screen -->
         <div id="ustad-quiz-loading">
           <div class="quiz-loading-spinner"></div>
-          <p class="quiz-loading-text">Ustad AI is preparing your quiz...<br>Thoda wait karein! 😊</p>
+          <p class="quiz-loading-text">Athenaeum Assistant is preparing your quiz...<br>Thoda wait karein! 😊</p>
         </div>
 
         <!-- Questions Screen -->
@@ -521,7 +529,7 @@ Rules:
     teaser.innerHTML = `
       <div class="teaser-icon">🔒</div>
       <div class="teaser-text" style="text-align: left;">
-        <strong>Ustad AI Personal Teacher</strong>
+        <strong>Athenaeum Assistant Personal Teacher</strong>
         <span>Login to unlock your AI tutor</span>
       </div>
     `;
@@ -546,7 +554,7 @@ Rules:
       <button onclick="this.parentElement.style.display='none'" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#94a3b8; cursor:pointer; font-size:16px;">✕</button>
       <div style="font-size:24px; margin-bottom:10px;">🔒</div>
       <p style="color: var(--text, #f8fafc); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem;">
-        Ustad AI is exclusively available for registered students!<br><br>
+        Athenaeum Assistant is exclusively available for registered students!<br><br>
         Start your free trial today — it's completely free! <img src="logo_transparent.png" alt="Athenaeum" style="height:18px; vertical-align:middle;">
       </p>
       <div style="display:flex; flex-direction:column; gap:0.5rem;">
@@ -575,7 +583,7 @@ Rules:
     welcomeEl.innerHTML = `
       <div class="welcome-emoji"><img src="logo_transparent.png" alt="Athenaeum" style="width:40px; height:40px; object-fit:contain;"></div>
       <h4>Hello, ${name}!</h4>
-      <p>I am your <strong>Ustad AI</strong> — your personal teacher. Ask me anything, I am here to help! 😊</p>
+      <p>I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help! 😊</p>
       <div class="ustad-suggestions">
         <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
         <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>
@@ -679,12 +687,12 @@ Rules:
 
     } catch (err) {
       typingEl.classList.remove('visible');
-      console.error('Ustad AI error:', err);
+      console.error('Athenaeum Assistant error:', err);
 
       let errorMsg = 'I apologize! I am having trouble connecting to my AI core right now. Please try again in a moment. 🙏';
 
       if (err.message && err.message.includes('API key')) {
-        errorMsg = '⚠️ API key is not configured. Please check the ustad-ai.js configuration.';
+        errorMsg = '⚠️ API key is not configured. Please check the athenaeum-assistant.js configuration.';
       } else if (err.message && err.message.includes('quota')) {
         errorMsg = '⚠️ API quota has been exceeded. Please try again later.';
       }
@@ -719,7 +727,7 @@ Rules:
         <h4 style="margin-bottom: 0.5rem;">🔒 Daily Limit Reached!</h4>
         <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;">
           Your free trial allows ${FREE_TRIAL_QUESTIONS_PER_DAY} AI questions per day.<br><br>
-          Purchase a course for unlimited access to Ustad AI, mock exams, and all lessons for that subject!
+          Purchase a course for unlimited access to Athenaeum Assistant, mock exams, and all lessons for that subject!
         </p>
         <a href="courses.html" class="btn btn-primary" style="display:block; margin-bottom: 0.5rem; text-decoration:none;">Browse Courses ✨</a>
         <button class="btn btn-ghost full-width" onclick="this.parentElement.remove()">Maybe Tomorrow</button>
@@ -898,7 +906,7 @@ Rules:
       3: `Good effort ${state.studentName}! Thodi aur practice karo! 💪`,
       2: `${state.studentName}, keep trying! Practice makes perfect! 📚`,
       1: `${state.studentName}, fikr mat karo! Revision karo aur dobara try karo! 🌟`,
-      0: `${state.studentName}, revision ki zaroorat hai. Ustad AI se madad lo! 💪`,
+      0: `${state.studentName}, revision ki zaroorat hai. Athenaeum Assistant se madad lo! 💪`,
     };
 
     document.getElementById('ustad-score-emoji').textContent = emoji;
@@ -929,13 +937,13 @@ Rules:
   ────────────────────────────────────────────────────────── */
   function toggleChat() {
     state.chatOpen = !state.chatOpen;
-    const panel = document.getElementById('ustad-chat-panel');
-    const fab = document.getElementById('ustad-fab');
+    const panel = document.getElementById('assistant-chat-panel');
+    const fab = document.getElementById('assistant-fab');
 
     if (state.chatOpen) {
       panel.classList.add('open');
       fab.classList.add('open');
-      fab.title = 'Close Ustad AI';
+      fab.title = 'Close Athenaeum Assistant';
       setTimeout(() => {
         const messagesEl = document.getElementById('ustad-messages');
         if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -945,7 +953,7 @@ Rules:
     } else {
       panel.classList.remove('open');
       fab.classList.remove('open');
-      fab.title = 'Open Ustad AI';
+      fab.title = 'Open Athenaeum Assistant';
     }
   }
 
@@ -954,7 +962,7 @@ Rules:
   ────────────────────────────────────────────────────────── */
   function bindEvents() {
     // FAB toggle
-    const fab = document.getElementById('ustad-fab');
+    const fab = document.getElementById('assistant-fab');
     if (fab) fab.addEventListener('click', toggleChat);
 
     // Minimize button toggle
@@ -1138,7 +1146,7 @@ Rules:
       // Auth state change listener
       window.supabaseClient.auth.onAuthStateChange((event, newSession) => {
         if (event === 'SIGNED_OUT') {
-          const wrapper = document.getElementById('ustad-ai-wrapper');
+          const wrapper = document.getElementById('athenaeum-assistant-wrapper');
           const modal = document.getElementById('ustad-quiz-modal');
           if (wrapper) wrapper.remove();
           if (modal) modal.remove();
@@ -1147,7 +1155,7 @@ Rules:
       });
 
     } catch (err) {
-      console.warn('Ustad AI init error:', err);
+      console.warn('Athenaeum Assistant init error:', err);
     }
   }
 

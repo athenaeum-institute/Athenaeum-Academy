@@ -134,14 +134,14 @@ qa_old = """      <div class="qa-grid fade-in">
         <a href="courses.html" class="qa-btn"><span class="material-symbols-outlined">library_books</span> Browse Courses</a>
         <a href="mock-exam.html" class="qa-btn"><span class="material-symbols-outlined">quiz</span> Take Mock Exam</a>
         <a href="live-class.html" class="qa-btn"><span class="material-symbols-outlined">co_present</span> Live Classes</a>
-        <a href="javascript:void(0)" onclick="alert(`Coming Soon!`)" class="qa-btn" onclick="openUstadAI(true)"><span class="material-symbols-outlined">smart_toy</span> Ask Ustad AI</a>
+        <a href="javascript:void(0)" onclick="alert(`Coming Soon!`)" class="qa-btn" onclick="openUstadAI(true)"><span class="material-symbols-outlined">smart_toy</span> Ask Athenaeum Assistant</a>
       </div>"""
       
 qa_new = """      <div class="qa-grid fade-in">
         <a href="courses.html" class="qa-btn"><div class="qa-icon-wrap"><span class="material-symbols-outlined">library_books</span></div> Browse</a>
         <a href="mock-exam.html" class="qa-btn"><div class="qa-icon-wrap"><span class="material-symbols-outlined">quiz</span></div> Mock Exam</a>
         <a href="live-class.html" class="qa-btn"><div class="qa-icon-wrap"><span class="material-symbols-outlined">co_present</span></div> Live Class</a>
-        <a href="javascript:void(0)" onclick="openUstadAI(true)" class="qa-btn"><div class="qa-icon-wrap"><span class="material-symbols-outlined">smart_toy</span></div> Ustad AI</a>
+        <a href="javascript:void(0)" onclick="openUstadAI(true)" class="qa-btn"><div class="qa-icon-wrap"><span class="material-symbols-outlined">smart_toy</span></div> Athenaeum Assistant</a>
       </div>"""
 
 html = html.replace(qa_old, qa_new)

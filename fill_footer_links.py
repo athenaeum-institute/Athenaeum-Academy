@@ -10,7 +10,7 @@ replacement_block = """        <ul>
           <li><a href="auth.html?mode=register">Free Trial</a></li>
           <li><a href="live-class.html">Live Classes</a></li>
           <li><a href="mock-exam.html">Mock Exams</a></li>
-          <li><a href="javascript:void(0)" onclick="document.getElementById('ustad-fab') ? document.getElementById('ustad-fab').click() : alert('Ustad AI is not available')">Ustad AI Tutor</a></li>
+          <li><a href="javascript:void(0)" onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum Assistant Tutor</a></li>
         </ul>"""
 
 for file_name in files_to_update:

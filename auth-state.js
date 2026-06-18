@@ -184,7 +184,7 @@ async function updateNavbar() {
             <span class="material-symbols-outlined">library_books</span> My Courses
           </a>
           <a href="#" onclick="if(window.toggleUstadAI) toggleUstadAI(); return false;">
-            <span class="material-symbols-outlined">smart_toy</span> Ustad AI
+            <span class="material-symbols-outlined">smart_toy</span> Athenaeum Assistant
           </a>
           <a href="#">
             <span class="material-symbols-outlined">settings</span> Settings
