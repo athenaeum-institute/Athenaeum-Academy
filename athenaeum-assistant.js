@@ -423,7 +423,7 @@ Rules:
         <p class="ustad-disclaimer">AI can make mistakes. Always verify important information.</p>
       </div>
 
-      <button id="assistant-fab" title="Open Athenaeum Assistant">
+      <button id="assistant-fab" class="${(window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/Academy/')) ? '' : 'round-fab'}" title="Open Athenaeum Assistant">
         <div class="teaser-icon"><img src="logo_transparent.png" alt="Athenaeum"></div>
         <div class="teaser-text">
           <strong>Athenaeum Assistant Personal Teacher</strong>
@@ -526,6 +526,8 @@ Rules:
     teaser.id = 'ustad-teaser-btn';
     teaser.style.border = 'none';
     teaser.style.cursor = 'pointer';
+    const isIndex = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/Academy/');
+    teaser.className = isIndex ? '' : 'round-fab';
     teaser.innerHTML = `
       <div class="teaser-icon">🔒</div>
       <div class="teaser-text" style="text-align: left;">
@@ -575,15 +577,20 @@ Rules:
      WELCOME MESSAGE
   ────────────────────────────────────────────────────────── */
   function showWelcomeMessage(name) {
+    const isIndex = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/Academy/');
     const messagesEl = document.getElementById('ustad-messages');
     const typing = document.getElementById('ustad-typing');
+
+    const welcomeText = isIndex 
+      ? `I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help! 😊`
+      : `Need help about this page? I am your <strong>Athenaeum Assistant</strong>, here to help you on every page! 😊`;
 
     const welcomeEl = document.createElement('div');
     welcomeEl.classList.add('ustad-welcome-card');
     welcomeEl.innerHTML = `
       <div class="welcome-emoji"><img src="logo_transparent.png" alt="Athenaeum" style="width:40px; height:40px; object-fit:contain;"></div>
       <h4>Hello, ${name}!</h4>
-      <p>I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help! 😊</p>
+      <p>${welcomeText}</p>
       <div class="ustad-suggestions">
         <button class="ustad-suggestion-chip" data-msg="Explain quadratic formula with steps">📐 Quadratic Formula</button>
         <button class="ustad-suggestion-chip" data-msg="What is photosynthesis? Give a simple example">🌿 Photosynthesis</button>

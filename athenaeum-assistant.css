@@ -1318,3 +1318,23 @@
     gap: 8px;
   }
 }
+
+/* ── Round FAB for non-index pages ─────────────────────────────── */
+#ustad-teaser-btn.round-fab, #assistant-fab.round-fab {
+  border-radius: 50%;
+  padding: 0;
+  width: 62px;
+  right: 20px;
+  justify-content: center;
+  -webkit-mask-image: none;
+  mask-image: none;
+  border-right: 1px solid #ffffff;
+}
+
+#ustad-teaser-btn.round-fab .teaser-text, #assistant-fab.round-fab .teaser-text {
+  display: none;
+}
+
+#ustad-teaser-btn.round-fab .teaser-icon, #assistant-fab.round-fab .teaser-icon {
+  margin: 0;
+}
