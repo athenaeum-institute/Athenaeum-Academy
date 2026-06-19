@@ -726,8 +726,8 @@ Rules:
           bubbleEl.innerHTML = currentHTML;
           scrollToBottomIfNeeded(messagesEl);
           
-          // Brisk typing speed: 15ms - 30ms
-          const speed = Math.floor(Math.random() * 16) + 15;
+          // Swift typing speed: 5ms - 12ms
+          const speed = Math.floor(Math.random() * 8) + 5;
           setTimeout(typeWriterSafe, speed);
         } else {
           // done typing
@@ -835,8 +835,8 @@ Rules:
              scrollToBottomIfNeeded(messagesEl);
           }
           
-          // Brisk typing speed: 15ms - 30ms
-          const speed = Math.floor(Math.random() * 16) + 15;
+          // Swift typing speed: 5ms - 12ms
+          const speed = Math.floor(Math.random() * 8) + 5;
           setTimeout(typeNextChar, speed);
         } else {
           isTypingAI = false;
