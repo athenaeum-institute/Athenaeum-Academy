@@ -616,7 +616,7 @@ Rules:
       msgEl.innerHTML = `
         <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
         <div class="ustad-msg-content">
-          <div class="ustad-msg-bubble" style="border-top-left-radius: 4px; border-bottom-left-radius: 20px;">${welcomeText}</div>
+          <div class="ustad-msg-bubble" style="border-top-left-radius: 4px; border-bottom-left-radius: 20px;"></div>
           <div class="ustad-msg-time">${getTimeStr()}</div>
         </div>
       `;
@@ -625,6 +625,7 @@ Rules:
       suggestionsEl.classList.add('ustad-suggestions');
       suggestionsEl.style.marginTop = '10px';
       suggestionsEl.style.marginBottom = '10px';
+      suggestionsEl.style.display = 'none'; // Hide while typing
       suggestionsEl.innerHTML = `
           <button class="ustad-suggestion-chip" data-msg="How can I enroll in a new course?">🎓 Explore Courses</button>
           <button class="ustad-suggestion-chip" data-msg="When are the live classes scheduled?">📅 Live Classes</button>
@@ -634,8 +635,65 @@ Rules:
 
       messagesEl.insertBefore(msgEl, typing);
       messagesEl.insertBefore(suggestionsEl, typing);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }, 1500);
+      
+      const bubbleEl = msgEl.querySelector('.ustad-msg-bubble');
+      
+      let i = 0;
+      let currentHTML = '';
+      
+      function typeWriter() {
+        if (i < welcomeText.length) {
+          if (welcomeText.charAt(i) === '<') {
+            let tag = '';
+            while (i < welcomeText.length && welcomeText.charAt(i) !== '>') {
+              tag += welcomeText.charAt(i);
+              i++;
+            }
+            tag += '>';
+            currentHTML += tag;
+            // The increment for '>' happens via the loop condition implicitly 
+            // since we used the char at i and then advanced i before checking 
+            // the loop, wait we advanced i but didn't consume '>'. 
+            // Let's adjust the logic slightly below:
+          }
+          // Note: Wait, if the above logic is fixed, we should be careful.
+          // In the replacement content, I'll ensure the HTML parsing is flawless.
+        }
+      }
+      
+      // Let's define the correct typeWriter logic inside
+      function typeWriterSafe() {
+        if (i < welcomeText.length) {
+          if (welcomeText.charAt(i) === '<') {
+            let tag = '';
+            while (i < welcomeText.length && welcomeText.charAt(i) !== '>') {
+              tag += welcomeText.charAt(i);
+              i++;
+            }
+            tag += '>';
+            currentHTML += tag;
+            i++; // skip the '>'
+          } else {
+            currentHTML += welcomeText.charAt(i);
+            i++;
+          }
+          
+          bubbleEl.innerHTML = currentHTML;
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+          
+          // Realistic typing speed: 10ms - 30ms
+          const speed = Math.floor(Math.random() * 20) + 10;
+          setTimeout(typeWriterSafe, speed);
+        } else {
+          // done typing
+          suggestionsEl.style.display = 'flex';
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+      }
+
+      typeWriterSafe();
+
+    }, 600); // 600ms initial wait to simulate thinking
   }
 
   /* ──────────────────────────────────────────────────────────
