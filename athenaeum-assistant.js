@@ -718,8 +718,8 @@ Rules:
           bubbleEl.innerHTML = currentHTML;
           messagesEl.scrollTop = messagesEl.scrollHeight;
           
-          // Realistic typing speed: 10ms - 30ms
-          const speed = Math.floor(Math.random() * 20) + 10;
+          // Realistic typing speed: 20ms - 70ms
+          const speed = Math.floor(Math.random() * 50) + 20;
           setTimeout(typeWriterSafe, speed);
         } else {
           // done typing
@@ -813,6 +813,26 @@ Rules:
     try {
       let isFirstChunk = true;
       let bubbleEl = null;
+      let targetText = '';
+      let typedText = '';
+      let isTypingAI = false;
+
+      function typeNextChar() {
+        if (typedText.length < targetText.length) {
+          isTypingAI = true;
+          typedText += targetText.charAt(typedText.length);
+          
+          if (bubbleEl) {
+             bubbleEl.innerHTML = formatAIMessage(typedText);
+             messagesEl.scrollTop = messagesEl.scrollHeight;
+          }
+          
+          const speed = Math.floor(Math.random() * 50) + 20; // 20ms to 70ms
+          setTimeout(typeNextChar, speed);
+        } else {
+          isTypingAI = false;
+        }
+      }
 
       const reply = await callGemini(text, (accumulatedText) => {
         if (isFirstChunk) {
@@ -833,11 +853,10 @@ Rules:
           bubbleEl = msgEl.querySelector('.ustad-msg-bubble');
         }
         
-        // Update the bubble HTML with progressive markdown
-        bubbleEl.innerHTML = formatAIMessage(accumulatedText);
-        
-        // Auto-Scroll to Bottom
-        messagesEl.scrollTop = messagesEl.scrollHeight;
+        targetText = accumulatedText;
+        if (!isTypingAI) {
+          typeNextChar();
+        }
       });
 
       // If for some reason the stream had no chunks but succeeded
