@@ -57,7 +57,7 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown">
-          <a href="javascript:void(0)" class="nav-link has-dropdown" style="display:inline-flex; align-items:center; gap:4px;">Academics <span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_down</span></a>
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
           <ul class="dropdown-menu">
             <li><a href="oa-levels.html">O/A Levels</a></li>
             <li><a href="matric-inter.html">Matric/Inter</a></li>
@@ -77,8 +77,8 @@
           <button class="icon-btn" aria-label="Wishlist" id="btn-wishlist">
             <span class="material-symbols-outlined">favorite</span>
           </button>
-          <button class="icon-btn cart-btn" aria-label="Cart" id="btn-cart">
-            <span class="material-symbols-outlined">shopping_cart</span>
+          <button class="icon-btn cart-btn" aria-label="Notifications" id="btn-notifications">
+            <span class="material-symbols-outlined">notifications</span>
             <span class="cart-badge">0</span>
           </button>
         </div>
@@ -90,6 +90,14 @@
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
+
+      <!-- Search Overlay -->
+      <div class="search-overlay" id="search-overlay" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--clr-surface); padding: 1rem 24px; border-bottom: 1px solid var(--clr-border); box-shadow: var(--shadow-md); z-index: 999;">
+        <div style="max-width: 800px; margin: 0 auto; display: flex; gap: 10px;">
+          <input type="text" id="global-search-input" placeholder="Search courses, skills, and resources..." style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--clr-border); border-radius: var(--radius-full); font-size: 1rem; outline: none;">
+          <button class="btn btn-primary" onclick="executeGlobalSearch()">Search</button>
+        </div>
+      </div>
     </nav>
 
     <!-- Mobile drawer -->
