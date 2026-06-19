@@ -22,42 +22,17 @@
   <script src="auth-state.js"></script>
   <script src="supabase-courses.js"></script>
   
+
+
   <style>
     /* Premium Course Details Styles - Compact & Modern */
-    .cd-hero {
-      background: linear-gradient(135deg, var(--clr-primary-dark) 0%, var(--clr-primary) 100%);
-      color: #fff;
-      padding: 2.5rem 0 3rem 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cd-hero::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 40%),
-                  url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.06)"/></svg>');
-      pointer-events: none;
-    }
-
-    .cd-hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 800px;
-    }
-
     .cd-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: var(--clr-surface-alt);
+      border: 1px solid var(--clr-border);
+      color: var(--clr-primary);
       padding: 5px 12px;
       border-radius: 20px;
       font-size: 0.75rem;
@@ -65,7 +40,6 @@
       margin-bottom: 1.2rem;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .cd-title {
@@ -74,7 +48,7 @@
       font-weight: 800;
       line-height: 1.2;
       margin-bottom: 1rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      color: var(--clr-primary-dark);
     }
 
     .cd-meta {
@@ -83,8 +57,11 @@
       gap: 1.2rem;
       align-items: center;
       font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.9);
+      color: var(--clr-on-surface-var);
       font-weight: 500;
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
     }
 
     .cd-meta-item {
@@ -297,9 +274,9 @@
   </nav>
 
   <div id="course-content" style="display: none;">
-    <!-- Hero Section -->
-    <section class="cd-hero">
-      <div class="container cd-hero-content">
+    <!-- Main Content & Sidebar -->
+    <main class="container cd-grid">
+      <div class="cd-main">
         <div class="cd-badge" id="cd-category"><span class="material-symbols-outlined">category</span> O-Level</div>
         <h1 class="cd-title" id="cd-title">Course Title</h1>
         <div class="cd-meta">
@@ -320,12 +297,7 @@
             <span id="cd-level">Intermediate</span>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Main Content & Sidebar -->
-    <main class="container cd-grid">
-      <div class="cd-main">
         <h2>About this course</h2>
         <p class="cd-desc" id="cd-desc">Course description goes here.</p>
 
