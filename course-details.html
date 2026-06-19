@@ -23,12 +23,13 @@
   <script src="supabase-courses.js"></script>
   
   <style>
-    /* Premium Course Details Styles */
+    /* Premium Course Details Styles - Compact & Modern */
     .cd-hero {
-      background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+      background: linear-gradient(135deg, var(--clr-primary-dark) 0%, var(--clr-primary) 100%);
       color: #fff;
-      padding: 4rem 0;
+      padding: 2.5rem 0 3rem 0;
       position: relative;
+      overflow: hidden;
     }
 
     .cd-hero::after {
@@ -38,145 +39,212 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1.5" fill="rgba(255,255,255,0.05)"/></svg>');
+      background: radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 40%),
+                  url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.06)"/></svg>');
       pointer-events: none;
     }
 
     .cd-hero-content {
       position: relative;
       z-index: 2;
+      max-width: 800px;
     }
 
     .cd-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 12px;
+      gap: 0.35rem;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 5px 12px;
       border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
       letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .cd-title {
       font-family: var(--font-heading);
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 800;
       line-height: 1.2;
       margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .cd-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.5rem;
+      gap: 1.2rem;
       align-items: center;
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
     }
 
     .cd-meta-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
+    }
+
+    .cd-meta-item .material-symbols-outlined {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .breadcrumbs {
+      background: #fff;
+      padding: 0.8rem 0;
+      font-size: 0.8rem;
+      color: var(--clr-on-surface-var);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    
+    .breadcrumbs a {
+      color: var(--clr-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .breadcrumbs a:hover {
+      color: var(--clr-secondary);
     }
 
     .cd-grid {
       display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 3rem;
-      margin-top: 3rem;
-      margin-bottom: 5rem;
+      grid-template-columns: 1fr 320px;
+      gap: 2.5rem;
+      margin-top: 2rem;
+      margin-bottom: 4rem;
       align-items: start;
     }
 
     .cd-main h2 {
       font-family: var(--font-heading);
-      font-size: 1.75rem;
-      margin-bottom: 1.5rem;
-      color: var(--clr-text);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--clr-primary-dark);
+      border-bottom: 2px solid var(--clr-surface-high);
+      padding-bottom: 0.5rem;
+      display: inline-block;
     }
 
     .cd-desc {
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: var(--clr-text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--clr-on-surface-var);
       margin-bottom: 2.5rem;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.03);
     }
 
     .cd-features {
       list-style: none;
       padding: 0;
-      margin: 0 0 3rem 0;
+      margin: 0 0 2rem 0;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.8rem;
     }
 
     .cd-features li {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem;
-      background: var(--clr-surface-high);
-      padding: 1rem;
+      gap: 0.6rem;
+      background: #fff;
+      padding: 0.8rem 1rem;
       border-radius: var(--radius-md);
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--clr-on-surface);
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .cd-features li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+      border-color: rgba(0, 210, 255, 0.3);
     }
 
     .cd-features li .material-symbols-outlined {
-      color: var(--clr-success, #10B981);
+      color: var(--clr-secondary);
+      font-size: 1.2rem;
+      font-weight: 700;
     }
 
     .cd-sidebar {
       position: sticky;
-      top: 100px;
-      background: var(--clr-surface);
+      top: 80px;
+      background: #fff;
       border-radius: var(--radius-lg);
-      padding: 2rem;
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--clr-border);
+      padding: 1.2rem;
+      box-shadow: 0 10px 30px rgba(0,80,136,0.08);
+      border: 1px solid rgba(0,0,0,0.04);
     }
 
     .cd-sidebar img {
       width: 100%;
       border-radius: var(--radius-md);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       aspect-ratio: 16/9;
       object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
     .cd-price {
-      font-size: 2.25rem;
+      font-size: 1.6rem;
       font-weight: 900;
-      color: var(--clr-text);
-      margin-bottom: 1.5rem;
+      color: var(--clr-primary-dark);
+      margin-bottom: 1.2rem;
       font-family: var(--font-heading);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--clr-surface-alt);
+      padding: 0.6rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(0,0,0,0.03);
     }
 
     .cd-sidebar .btn {
       width: 100%;
       justify-content: center;
-      padding: 1rem;
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+    }
+
+    .cd-instructor {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem;
+      background: var(--clr-surface-alt);
+      border-radius: var(--radius-md);
+      margin-top: 1.2rem;
     }
 
     @media (max-width: 992px) {
       .cd-grid {
         grid-template-columns: 1fr;
       }
-
       .cd-sidebar {
         position: relative;
         top: 0;
-      }
-
-      .cd-features {
-        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -273,14 +341,12 @@
         <div id="cd-action-btns"></div>
         <p style="text-align: center; font-size: 0.85rem; color: var(--clr-text-muted);">Includes full lifetime access & updates</p>
 
-        <hr style="border:none; border-top: 1px solid var(--clr-border); margin: 1.5rem 0;" />
-
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="cd-instructor">
           <img id="cd-instructor-img" src=""
-            style="width: 50px; height: 50px; border-radius: 50%; margin: 0; aspect-ratio: 1;" / loading="lazy" decoding="async">
+            style="width: 44px; height: 44px; border-radius: 50%; margin: 0; aspect-ratio: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" / loading="lazy" decoding="async">
           <div>
-            <div style="font-weight: 700; color: var(--clr-text);">Instructor</div>
-            <div id="cd-instructor-name" style="color: var(--clr-text-muted); font-size: 0.95rem;">Prof. Name</div>
+            <div style="font-weight: 700; color: var(--clr-primary-dark); font-size: 0.9rem;">Instructor</div>
+            <div id="cd-instructor-name" style="color: var(--clr-on-surface-var); font-size: 0.85rem; font-weight: 500;">Prof. Name</div>
           </div>
         </div>
       </aside>
