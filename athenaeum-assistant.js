@@ -711,15 +711,20 @@ Rules:
             currentHTML += tag;
             i++; // skip the '>'
           } else {
-            currentHTML += welcomeText.charAt(i);
-            i++;
+            // Chunk 2-4 characters to simulate fast token generation
+            let chunkLen = Math.floor(Math.random() * 3) + 2;
+            for (let j = 0; j < chunkLen && i < welcomeText.length; j++) {
+              if (welcomeText.charAt(i) === '<') break;
+              currentHTML += welcomeText.charAt(i);
+              i++;
+            }
           }
           
           bubbleEl.innerHTML = currentHTML;
           messagesEl.scrollTop = messagesEl.scrollHeight;
           
-          // Realistic typing speed: 20ms - 70ms
-          const speed = Math.floor(Math.random() * 50) + 20;
+          // Fast token typing speed: 10ms - 15ms
+          const speed = Math.floor(Math.random() * 6) + 10;
           setTimeout(typeWriterSafe, speed);
         } else {
           // done typing
@@ -813,26 +818,6 @@ Rules:
     try {
       let isFirstChunk = true;
       let bubbleEl = null;
-      let targetText = '';
-      let typedText = '';
-      let isTypingAI = false;
-
-      function typeNextChar() {
-        if (typedText.length < targetText.length) {
-          isTypingAI = true;
-          typedText += targetText.charAt(typedText.length);
-          
-          if (bubbleEl) {
-             bubbleEl.innerHTML = formatAIMessage(typedText);
-             messagesEl.scrollTop = messagesEl.scrollHeight;
-          }
-          
-          const speed = Math.floor(Math.random() * 50) + 20; // 20ms to 70ms
-          setTimeout(typeNextChar, speed);
-        } else {
-          isTypingAI = false;
-        }
-      }
 
       const reply = await callGemini(text, (accumulatedText) => {
         if (isFirstChunk) {
@@ -853,9 +838,10 @@ Rules:
           bubbleEl = msgEl.querySelector('.ustad-msg-bubble');
         }
         
-        targetText = accumulatedText;
-        if (!isTypingAI) {
-          typeNextChar();
+        // Render instantly as chunks arrive
+        if (bubbleEl) {
+          bubbleEl.innerHTML = formatAIMessage(accumulatedText);
+          messagesEl.scrollTop = messagesEl.scrollHeight;
         }
       });
 
