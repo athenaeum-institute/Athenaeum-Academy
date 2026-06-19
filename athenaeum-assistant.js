@@ -407,6 +407,14 @@ Rules:
     return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   }
 
+  function scrollToBottomIfNeeded(el) {
+    const threshold = 100;
+    const isNearBottom = (el.scrollHeight - el.scrollTop - el.clientHeight) <= threshold;
+    if (isNearBottom) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }
+
   /* ──────────────────────────────────────────────────────────
      DOM INJECTION — Main Widget HTML
   ────────────────────────────────────────────────────────── */
@@ -721,7 +729,7 @@ Rules:
           }
           
           bubbleEl.innerHTML = currentHTML;
-          messagesEl.scrollTop = messagesEl.scrollHeight;
+          scrollToBottomIfNeeded(messagesEl);
           
           // Fast token typing speed: 10ms - 15ms
           const speed = Math.floor(Math.random() * 6) + 10;
@@ -729,7 +737,7 @@ Rules:
         } else {
           // done typing
           suggestionsEl.style.display = 'flex';
-          messagesEl.scrollTop = messagesEl.scrollHeight;
+          scrollToBottomIfNeeded(messagesEl);
         }
       }
 
@@ -841,7 +849,7 @@ Rules:
         // Render instantly as chunks arrive
         if (bubbleEl) {
           bubbleEl.innerHTML = formatAIMessage(accumulatedText);
-          messagesEl.scrollTop = messagesEl.scrollHeight;
+          scrollToBottomIfNeeded(messagesEl);
         }
       });
 
