@@ -805,7 +805,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="document.getElementById('announcement-modal').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="publishAnnouncement()">Publish</button>
+      <button class="btn btn-primary" id="ann-submit-btn" onclick="saveAnnouncement(event)">Publish</button>
     </div>
   </div>
 </div>
@@ -1292,22 +1292,20 @@ async function loadAnnouncements() {
   }
 }
 
-function openAnnModal() {
-  document.getElementById('ann-title').value = '';
-  document.getElementById('ann-msg').value = '';
-  document.getElementById('ann-target').value = 'all';
-  document.getElementById('ann-type').value = 'info';
-  document.getElementById('ann-pinned').checked = false;
-  document.getElementById('modal-announcement').classList.add('open');
+function openAddAnnouncementModal() {
+  document.getElementById('a-title').value = '';
+  document.getElementById('a-message').value = '';
+  document.getElementById('a-target').value = 'all';
+  document.getElementById('announcement-modal').classList.add('open');
 }
 
 async function saveAnnouncement(e) {
   e.preventDefault();
-  const title = document.getElementById('ann-title').value.trim();
-  const msg = document.getElementById('ann-msg').value.trim();
-  const target = document.getElementById('ann-target').value;
-  const type = document.getElementById('ann-type').value;
-  const isPinned = document.getElementById('ann-pinned').checked;
+  const title = document.getElementById('a-title').value.trim();
+  const msg = document.getElementById('a-message').value.trim();
+  const target = document.getElementById('a-target').value;
+  const type = 'info';
+  const isPinned = false;
   const btn = document.getElementById('ann-submit-btn');
   
   if (!title || !msg) { showToast('Title and message are required', 'error'); return; }
@@ -1317,7 +1315,7 @@ async function saveAnnouncement(e) {
     const res = await window.AthenaeumAdmin.saveAnnouncement(title, msg, target, type, isPinned);
     if (res.status === 'error') throw new Error(res.message);
     showToast('Announcement published! 📢', 'success');
-    document.getElementById('modal-announcement').classList.remove('open');
+    document.getElementById('announcement-modal').classList.remove('open');
     await loadAnnouncements();
   } catch(err) {
     showToast('Error: ' + err.message, 'error');
