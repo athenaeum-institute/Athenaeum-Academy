@@ -236,7 +236,7 @@ Rules:
   /* ──────────────────────────────────────────────────────────
      GEMINI API CALL
   ────────────────────────────────────────────────────────── */
-  async function callGemini(userMessage) {
+  async function callGemini(userMessage, onChunk) {
     const systemPrompt = buildSystemPrompt(state.studentName, state.currentSubject);
 
     // Build contents array from history + new message
@@ -268,8 +268,45 @@ Rules:
       throw new Error(errMsg || `API Error ${response.status}`);
     }
 
-    const data = await response.json();
-    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let aiText = '';
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      let lines = buffer.split('\n');
+      buffer = lines.pop(); 
+      
+      for (let line of lines) {
+        if (line.startsWith('data:') && !line.includes('[DONE]')) {
+          const dataStr = line.slice(5).trim();
+          if (!dataStr) continue;
+          try {
+            const data = JSON.parse(dataStr);
+            if (data.text) {
+              aiText += data.text;
+              if (onChunk) onChunk(aiText);
+            }
+          } catch (e) {}
+        }
+      }
+    }
+
+    if (buffer.startsWith('data:') && !buffer.includes('[DONE]')) {
+      try {
+        const dataStr = buffer.slice(5).trim();
+        const data = JSON.parse(dataStr);
+        if (data.text) {
+          aiText += data.text;
+          if (onChunk) onChunk(aiText);
+        }
+      } catch (e) {}
+    }
+
     if (!aiText) throw new Error('Empty response from AI');
 
     // Update history
@@ -774,9 +811,40 @@ Rules:
     messagesEl.scrollTop = messagesEl.scrollHeight;
 
     try {
-      const reply = await callGemini(text);
-      typingEl.classList.remove('visible');
-      appendMessage('ai', reply);
+      let isFirstChunk = true;
+      let bubbleEl = null;
+
+      const reply = await callGemini(text, (accumulatedText) => {
+        if (isFirstChunk) {
+          isFirstChunk = false;
+          typingEl.classList.remove('visible');
+          
+          // Create the empty message bubble
+          const msgEl = document.createElement('div');
+          msgEl.classList.add('ustad-msg', 'ai-msg');
+          msgEl.innerHTML = `
+            <div class="ustad-msg-avatar"><img src="logo_transparent.png" alt="Athenaeum"></div>
+            <div class="ustad-msg-content">
+              <div class="ustad-msg-bubble"></div>
+              <div class="ustad-msg-time">${getTimeStr()}</div>
+            </div>
+          `;
+          messagesEl.insertBefore(msgEl, typingEl);
+          bubbleEl = msgEl.querySelector('.ustad-msg-bubble');
+        }
+        
+        // Update the bubble HTML with progressive markdown
+        bubbleEl.innerHTML = formatAIMessage(accumulatedText);
+        
+        // Auto-Scroll to Bottom
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      });
+
+      // If for some reason the stream had no chunks but succeeded
+      if (isFirstChunk) {
+        typingEl.classList.remove('visible');
+        appendMessage('ai', reply);
+      }
 
       // Increment usage in Supabase DB + local state
       if (!state.isPaid) {

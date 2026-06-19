@@ -29,7 +29,8 @@ module.exports = async function handler(req, res) {
 
   try {
     const GEMINI_MODEL = 'gemini-2.5-flash';
-    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    // Use the streaming endpoint with SSE
+    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`;
 
     const response = await fetch(GEMINI_ENDPOINT, {
       method: 'POST',
@@ -40,6 +41,7 @@ module.exports = async function handler(req, res) {
     });
 
     if (!response.ok) {
+      // In case of error, we can't stream JSON easily. We read as normal.
       const errorData = await response.json().catch(() => ({}));
       
       // Fallback Interception: If quota exceeded or Too Many Requests
@@ -51,12 +53,62 @@ module.exports = async function handler(req, res) {
       return res.status(response.status).json(errorData);
     }
 
-    const data = await response.json();
-    return res.status(200).json(data);
+    // Set streaming headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    // Stream and process chunks
+    await processStream(response, res, true);
 
   } catch (error) {
     console.error('Error proxying to Gemini:', error);
-    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    if (!res.headersSent) {
+      return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    } else {
+      res.end();
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+// STREAM PROCESSOR
+// ----------------------------------------------------------------------
+async function processStream(response, res, isGemini) {
+  const decoder = new TextDecoder('utf-8');
+  let buffer = '';
+
+  try {
+    for await (const chunk of response.body) {
+      buffer += decoder.decode(chunk, { stream: true });
+      let lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete line
+      
+      for (let line of lines) {
+        if (line.startsWith('data:') && !line.includes('[DONE]')) {
+          const dataStr = line.slice(5).trim();
+          if (!dataStr) continue;
+          
+          try {
+            const data = JSON.parse(dataStr);
+            let text = isGemini 
+              ? (data.candidates?.[0]?.content?.parts?.[0]?.text || '') 
+              : (data.choices?.[0]?.delta?.content || '');
+            
+            if (text) {
+              res.write(`data: ${JSON.stringify({ text })}\n\n`);
+            }
+          } catch (e) {
+            // Ignore incomplete JSON parsing errors
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Stream reading error:', err);
+  } finally {
+    res.end();
   }
 }
 
@@ -66,7 +118,10 @@ module.exports = async function handler(req, res) {
 async function handleFallback(req, res) {
   const FALLBACK_API_KEY = process.env.FALLBACK_API_KEY;
   if (!FALLBACK_API_KEY) {
-    return res.status(429).json({ error: { message: 'API quota has been exceeded. No fallback key configured in Vercel environment.' } });
+    if (!res.headersSent) {
+      return res.status(429).json({ error: { message: 'API quota has been exceeded. No fallback key configured in Vercel environment.' } });
+    }
+    return res.end();
   }
 
   try {
@@ -97,6 +152,7 @@ async function handleFallback(req, res) {
       messages: messages,
       temperature: geminiBody.generationConfig?.temperature || 0.7,
       max_tokens: geminiBody.generationConfig?.maxOutputTokens || 1024,
+      stream: true // ENABLE STREAMING
     };
 
     // 4. Execute Fetch to OpenRouter
@@ -113,31 +169,30 @@ async function handleFallback(req, res) {
 
     if (!fallbackResponse.ok) {
       const err = await fallbackResponse.json().catch(() => ({}));
-      return res.status(fallbackResponse.status).json({ 
-        error: { message: `Fallback API failed: ${err.error?.message || 'Unknown error'}` } 
-      });
+      if (!res.headersSent) {
+        return res.status(fallbackResponse.status).json({ 
+          error: { message: `Fallback API failed: ${err.error?.message || 'Unknown error'}` } 
+        });
+      }
+      return res.end();
     }
 
-    const fallbackData = await fallbackResponse.json();
-    const fallbackText = fallbackData.choices?.[0]?.message?.content || '';
+    // Set streaming headers
+    if (!res.headersSent) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.flushHeaders();
+    }
 
-    // 5. Repackage response into exact Gemini JSON schema
-    const mockGeminiResponse = {
-      candidates: [
-        {
-          content: {
-            parts: [{ text: fallbackText }],
-            role: "model"
-          }
-        }
-      ]
-    };
-
-    // Send successful fallback response back to the frontend
-    return res.status(200).json(mockGeminiResponse);
+    // Stream and process chunks
+    await processStream(fallbackResponse, res, false);
 
   } catch (err) {
     console.error('Fallback Error:', err);
-    return res.status(500).json({ error: { message: 'Fallback failed due to internal error.' } });
+    if (!res.headersSent) {
+      return res.status(500).json({ error: { message: 'Fallback failed due to internal error.' } });
+    }
+    res.end();
   }
 }
