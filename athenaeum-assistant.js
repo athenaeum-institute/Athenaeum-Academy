@@ -719,20 +719,15 @@ Rules:
             currentHTML += tag;
             i++; // skip the '>'
           } else {
-            // Chunk 2-4 characters to simulate fast token generation
-            let chunkLen = Math.floor(Math.random() * 3) + 2;
-            for (let j = 0; j < chunkLen && i < welcomeText.length; j++) {
-              if (welcomeText.charAt(i) === '<') break;
-              currentHTML += welcomeText.charAt(i);
-              i++;
-            }
+            currentHTML += welcomeText.charAt(i);
+            i++;
           }
           
           bubbleEl.innerHTML = currentHTML;
           scrollToBottomIfNeeded(messagesEl);
           
-          // Fast token typing speed: 10ms - 15ms
-          const speed = Math.floor(Math.random() * 6) + 10;
+          // Brisk typing speed: 15ms - 30ms
+          const speed = Math.floor(Math.random() * 16) + 15;
           setTimeout(typeWriterSafe, speed);
         } else {
           // done typing
@@ -826,6 +821,27 @@ Rules:
     try {
       let isFirstChunk = true;
       let bubbleEl = null;
+      let targetText = '';
+      let typedText = '';
+      let isTypingAI = false;
+
+      function typeNextChar() {
+        if (typedText.length < targetText.length) {
+          isTypingAI = true;
+          typedText += targetText.charAt(typedText.length);
+          
+          if (bubbleEl) {
+             bubbleEl.innerHTML = formatAIMessage(typedText);
+             scrollToBottomIfNeeded(messagesEl);
+          }
+          
+          // Brisk typing speed: 15ms - 30ms
+          const speed = Math.floor(Math.random() * 16) + 15;
+          setTimeout(typeNextChar, speed);
+        } else {
+          isTypingAI = false;
+        }
+      }
 
       const reply = await callGemini(text, (accumulatedText) => {
         if (isFirstChunk) {
@@ -846,10 +862,9 @@ Rules:
           bubbleEl = msgEl.querySelector('.ustad-msg-bubble');
         }
         
-        // Render instantly as chunks arrive
-        if (bubbleEl) {
-          bubbleEl.innerHTML = formatAIMessage(accumulatedText);
-          scrollToBottomIfNeeded(messagesEl);
+        targetText = accumulatedText;
+        if (!isTypingAI) {
+          typeNextChar();
         }
       });
 
