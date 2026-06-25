@@ -491,6 +491,36 @@
               if (featured.length === 0) {
                   featured = allCourses.slice(0, 6);
               }
+
+              function addCourseSchema(course) {
+                const scriptId = 'schema-course-' + course.id;
+                if (document.getElementById(scriptId)) return;
+                
+                const schema = {
+                  "@context": "https://schema.org",
+                  "@type": "Course",
+                  "name": course.title || "",
+                  "description": course.description || course.subject || "",
+                  "provider": {
+                    "@type": "EducationalOrganization",
+                    "name": "Athenaeum Academy",
+                    "url": "https://athenaeumacademy.com"
+                  },
+                  "educationalLevel": course.category || "",
+                  "inLanguage": ["en", "ur"],
+                  "offers": {
+                    "@type": "Offer",
+                    "price": course.price || "0",
+                    "priceCurrency": "PKR",
+                    "availability": "https://schema.org/InStock"
+                  }
+                };
+                const script = document.createElement('script');
+                script.id = scriptId;
+                script.type = 'application/ld+json';
+                script.textContent = JSON.stringify(schema);
+                document.head.appendChild(script);
+              }
               
               const formatPrice = (price) => {
                 if (parseFloat(price) === 0) return 'FREE';
@@ -521,6 +551,7 @@
 
               let html = '';
               featured.forEach(course => {
+                addCourseSchema(course);
                 const priceDisplay = formatPrice(course.price);
                 const badgeStyle = getCategoryBadgeStyle(course.category);
                 const badgeLabel = getCategoryLabel(course.category);
