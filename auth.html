@@ -22,8 +22,24 @@
       if (window.supabaseClient) {
         const user = await getCurrentUser();
         if (user) {
-          const profile = await getUserProfile(user.id);
-          const role = profile?.role || 'Student';
+          let role = 'Student';
+          let profile = await getUserProfile(user.id);
+          
+          const storedRole = localStorage.getItem('oauthSelectedRole');
+          if (storedRole) {
+            localStorage.removeItem('oauthSelectedRole');
+            role = storedRole;
+            // Update profile with the stored role
+            await window.supabaseClient.from('profiles').upsert({
+              id: user.id,
+              full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+              email: user.email,
+              role: role
+            }, { onConflict: 'id' });
+          } else if (profile && profile.role) {
+            role = profile.role;
+          }
+
           let dashboardUrl = 'dashboard-student.html';
           if (role === 'Admin') dashboardUrl = 'admin.html';
           else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
@@ -252,10 +268,11 @@
 
     async function signInWithGoogle() {
       try {
+        localStorage.setItem('oauthSelectedRole', currentRole);
         const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: window.location.origin + '/dashboard-student.html',
+            redirectTo: window.location.origin + '/auth.html', // Redirect back to auth.html to handle role processing
             queryParams: {
               access_type: 'offline',
               prompt: 'consent',

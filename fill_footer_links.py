@@ -11,6 +11,7 @@ replacement_block = """        <ul>
           <li><a href="live-class.html">Live Classes</a></li>
           <li><a href="mock-exam.html">Mock Exams</a></li>
           <li><a href="javascript:void(0)" onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum Assistant Tutor</a></li>
+          <li><a href="become-a-teacher.html">Become a Teacher</a></li>
         </ul>"""
 
 for file_name in files_to_update:

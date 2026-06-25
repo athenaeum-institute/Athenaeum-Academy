@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Become a Teacher | Athenaeum</title>
+  <meta name="description" content="Join our teaching team and share your knowledge to help thousands of students succeed." />
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="athenaeum-assistant.css?v=2" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
+  
+  <!-- EmailJS Script -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  
+  <style>
+    /* Teacher Form Styles */
+    .hero-teacher {
+      background: linear-gradient(135deg, rgba(0, 80, 136, 0.05), rgba(123, 47, 190, 0.05));
+      padding: 6rem 1.5rem 4rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .hero-teacher h1 {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      color: var(--clr-primary-dark);
+      margin-bottom: 1rem;
+    }
+    
+    .hero-teacher p {
+      font-size: 1.2rem;
+      color: var(--clr-on-surface-var);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      max-width: 700px;
+      margin: 4rem auto;
+      padding: 2.5rem;
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 40px rgba(0,80,136,0.05);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--clr-on-surface);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.9rem;
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: var(--clr-surface-alt);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--clr-secondary);
+      box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.1);
+      background: #fff;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .checkbox-item, .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.95rem;
+      color: var(--clr-on-surface-var);
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .error-msg {
+      color: #dc2626;
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+      display: none;
+      font-weight: 500;
+    }
+
+    .success-message {
+      text-align: center;
+      padding: 3rem 2rem;
+      display: none;
+    }
+    
+    .success-icon {
+      font-size: 4rem;
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header id="navbar" class="navbar">
+    <nav class="container nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" loading="lazy" decoding="async">
+        <span class="logo-text">Athenaeum</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="courses.html" class="nav-link">Courses</a></li>
+        <li class="nav-dropdown">
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="oa-levels.html">O/A Levels</a></li>
+            <li><a href="matric-inter.html">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="auth.html" class="btn btn-ghost" id="btn-login">Login</a>
+        <a href="courses.html" class="btn btn-primary" id="btn-start-learning">Start Learning</a>
+      </div>
+      
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Navigation">
+        <span class="material-symbols-outlined" id="mobile-icon">menu</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-teacher">
+    <div class="container">
+      <h1>Join Our Teaching Team</h1>
+      <p>Share your knowledge and help thousands of Pakistani students succeed.</p>
+    </div>
+  </section>
+
+  <!-- Form Section -->
+  <section class="container">
+    <div class="form-section">
+      
+      <div id="application-success" class="success-message">
+        <span class="material-symbols-outlined success-icon">check_circle</span>
+        <h2 style="font-family: var(--font-heading); color: var(--clr-primary-dark); margin-bottom: 0.5rem;">Application Submitted!</h2>
+        <p style="color: var(--clr-on-surface-var); font-size: 1.1rem;" id="success-text">Thank you! Your application has been submitted. Our team will review it and contact you within 3-5 business days.</p>
+      </div>
+
+      <form id="teacher-form">
+        <div id="form-error-global" class="error-msg" style="text-align: center; margin-bottom: 1rem; font-size: 1rem;"></div>
+
+        <div class="form-group">
+          <label for="fullName">Full Name <span style="color:#dc2626">*</span></label>
+          <input type="text" id="fullName" name="fullName" class="form-control" required placeholder="e.g. Ali Ahmed">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address <span style="color:#dc2626">*</span></label>
+          <input type="email" id="email" name="email" class="form-control" required placeholder="e.g. ali@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number <span style="color:#dc2626">*</span></label>
+          <input type="text" id="phone" name="phone" class="form-control" required placeholder="e.g. +92 300 1234567">
+        </div>
+
+        <div class="form-group">
+          <label for="city">City <span style="color:#dc2626">*</span></label>
+          <input type="text" id="city" name="city" class="form-control" required placeholder="e.g. Lahore">
+        </div>
+
+        <div class="form-group">
+          <label for="subjects">Subject(s) You Teach <span style="color:#dc2626">*</span></label>
+          <input type="text" id="subjects" name="subjects" class="form-control" required placeholder="e.g. Physics, Mathematics">
+        </div>
+
+        <div class="form-group">
+          <label>Education Level You Can Teach <span style="color:#dc2626">*</span></label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="levels" value="O Levels"> O Levels</label>
+            <label class="checkbox-item"><input type="checkbox" name="levels" value="A Levels"> A Levels</label>
+            <label class="checkbox-item"><input type="checkbox" name="levels" value="Matric"> Matric</label>
+            <label class="checkbox-item"><input type="checkbox" name="levels" value="Inter/FSc"> Inter/FSc</label>
+            <label class="checkbox-item"><input type="checkbox" name="levels" value="MDCAT"> MDCAT</label>
+            <label class="checkbox-item"><input type="checkbox" name="levels" value="ECAT"> ECAT</label>
+          </div>
+          <div id="level-error" class="error-msg">Please select at least one level.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="qualification">Your Highest Qualification <span style="color:#dc2626">*</span></label>
+          <input type="text" id="qualification" name="qualification" class="form-control" required placeholder="e.g. BSc Physics from LUMS">
+        </div>
+
+        <div class="form-group">
+          <label for="experience">Years of Teaching Experience <span style="color:#dc2626">*</span></label>
+          <input type="number" id="experience" name="experience" class="form-control" required min="0" placeholder="e.g. 5">
+        </div>
+
+        <div class="form-group">
+          <label>Teaching Mode Preference <span style="color:#dc2626">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="teachingMode" value="Online Only" required> Online Only</label>
+            <label class="radio-item"><input type="radio" name="teachingMode" value="In-Person Only" required> In-Person Only</label>
+            <label class="radio-item"><input type="radio" name="teachingMode" value="Both" required> Both</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="introduction">Brief Introduction / Why You Want to Join <span style="color:#dc2626">*</span></label>
+          <textarea id="introduction" name="introduction" class="form-control" required minlength="100" placeholder="Tell us about your teaching philosophy and why you'd be a great fit... (minimum 100 characters)"></textarea>
+          <div id="intro-error" class="error-msg">Please enter at least 100 characters.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="cv">CV / Resume Upload <span style="color:#dc2626">*</span></label>
+          <!-- EmailJS supports attachments via base64, or they can just provide a link. We will capture the file input and convert if needed, or simply let the browser handle it. -->
+          <input type="file" id="cv" name="cv" class="form-control" accept=".pdf,.doc,.docx" style="background: transparent; padding: 0.5rem 0; border: none;">
+          <small style="color:var(--clr-on-surface-var); display:block; margin-top:0.3rem;">Accepted formats: .pdf, .doc, .docx</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">Submit Application</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo footer-logo">
+          <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 50px; width: auto; object-fit: contain;" loading="lazy" decoding="async">
+          <span class="logo-text">Athenaeum</span>
+        </a>
+        <p class="footer-desc">
+          Pakistan's premier online academy. Excellence in O/A Levels, Matric, and Intermediate education.
+        </p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook" onclick="alert('Social link coming soon!')"><span class="material-symbols-outlined">public</span></a>
+          <a href="#" aria-label="Twitter" onclick="alert('Social link coming soon!')"><span class="material-symbols-outlined">chat</span></a>
+          <a href="https://wa.me/923286715408" target="_blank" aria-label="WhatsApp"><span class="material-symbols-outlined">forum</span></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <ul>
+          <li><a href="oa-levels.html">O/A Levels</a></li>
+          <li><a href="matric-inter.html">Matric Science</a></li>
+          <li><a href="matric-inter.html">Intermediate Arts</a></li>
+          <li><a href="courses.html">Skill Development</a></li>
+          <li><a href="courses.html">MDCAT Prep</a></li>
+          <li><a href="courses.html">ECAT Prep</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Academy</h4>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="auth.html?mode=register">Free Trial</a></li>
+          <li><a href="live-class.html">Live Classes</a></li>
+          <li><a href="mock-exam.html">Mock Exams</a></li>
+          <li><a href="javascript:void(0)" onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum Assistant Tutor</a></li>
+          <li><a href="become-a-teacher.html">Become a Teacher</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="refund.html">Refund Policy</a></li>
+          <li><a href="cookie.html">Cookie Policy</a></li>
+          <li><a href="security.html">Security</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Athenaeum Institute. All rights reserved.</p>
+        <p>Developed with ❤️ for Pakistani Students</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- EmailJS Configuration ---
+    const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+    const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';  
+    const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+    
+    // Initialize EmailJS
+    (function() {
+      if(EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+      }
+    })();
+
+    document.getElementById('teacher-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const form = this;
+      const btn = document.getElementById('submit-btn');
+      const globalError = document.getElementById('form-error-global');
+      const levelError = document.getElementById('level-error');
+      const introError = document.getElementById('intro-error');
+      
+      // Reset errors
+      globalError.style.display = 'none';
+      levelError.style.display = 'none';
+      introError.style.display = 'none';
+      
+      // Validation: Levels (at least 1 checkbox)
+      const levels = Array.from(document.querySelectorAll('input[name="levels"]:checked')).map(el => el.value);
+      if (levels.length === 0) {
+        levelError.style.display = 'block';
+        return;
+      }
+      
+      // Validation: Introduction length
+      const intro = document.getElementById('introduction').value;
+      if (intro.trim().length < 100) {
+        introError.style.display = 'block';
+        return;
+      }
+
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const city = document.getElementById('city').value;
+      const subjects = document.getElementById('subjects').value;
+      const qualification = document.getElementById('qualification').value;
+      const experience = document.getElementById('experience').value;
+      const teachingMode = document.querySelector('input[name="teachingMode"]:checked').value;
+      
+      // Note: File attachments require multipart form data handling in EmailJS, 
+      // or sending the base64 encoded file string.
+      // For simplicity in this implementation, we will log the filename and rely on EmailJS settings.
+      const cvFile = document.getElementById('cv').files[0];
+      const cvName = cvFile ? cvFile.name : 'No file attached';
+
+      const templateParams = {
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        city: city,
+        subjects: subjects,
+        levels: levels.join(', '),
+        qualification: qualification,
+        experience: experience,
+        teachingMode: teachingMode,
+        introduction: intro,
+        cvName: cvName
+      };
+
+      if(EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') {
+        // Mock success for development if keys aren't set
+        console.log("EmailJS keys not set. Mocking success for:", templateParams);
+        showSuccess(fullName);
+        return;
+      }
+
+      btn.innerHTML = 'Submitting...';
+      btn.disabled = true;
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(function(response) {
+          console.log('SUCCESS!', response.status, response.text);
+          showSuccess(fullName);
+        }, function(error) {
+          console.error('FAILED...', error);
+          globalError.textContent = "Something went wrong. Please email us directly at support@athenaeumacademy.com";
+          globalError.style.display = 'block';
+          btn.innerHTML = 'Submit Application';
+          btn.disabled = false;
+        });
+    });
+
+    function showSuccess(name) {
+      document.getElementById('teacher-form').style.display = 'none';
+      const successDiv = document.getElementById('application-success');
+      const textEl = document.getElementById('success-text');
+      textEl.textContent = `Thank you ${name}! Your application has been submitted. Our team will review it and contact you within 3-5 business days.`;
+      successDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
