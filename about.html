@@ -37,6 +37,308 @@
   <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"About Athenaeum","item":"https://athenaeumacademy.com/about.html"}]}
   </script>
+
+<style>
+/* Custom CSS for About Page Redesign */
+.about-page {
+  background-color: #F8F9FA;
+  padding-bottom: 0;
+}
+
+/* Hero Section */
+.about-hero {
+  position: relative;
+  min-height: 300px;
+  background: linear-gradient(135deg, #0b1120 0%, #172554 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  overflow: hidden;
+}
+.about-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.about-hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 800px;
+}
+.about-hero-title {
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+.about-hero-subtitle {
+  color: #CBD5E1;
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+/* Sections */
+.about-section {
+  padding: 80px 20px;
+}
+.about-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Mission Section */
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+@media(min-width: 860px) {
+  .mission-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+.mission-label {
+  color: var(--clr-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+.mission-title {
+  color: var(--clr-primary-dark);
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+.mission-text {
+  color: #64748B;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+.stats-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.02);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+.stat-item h3 {
+  color: var(--clr-secondary);
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+.stat-item p {
+  color: #64748B;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Team Section */
+.team-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.team-title {
+  color: var(--clr-primary-dark);
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.team-subtitle {
+  color: #64748B;
+  font-size: 1.1rem;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+@media(min-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+}
+.team-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.02);
+}
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+}
+.team-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid #F8F9FA;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.team-name {
+  color: var(--clr-primary-dark);
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+.team-subject {
+  color: var(--clr-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Values Section */
+.values-section {
+  background-color: #F1F5F9;
+}
+.values-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media(min-width: 640px) {
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media(min-width: 1024px) {
+  .values-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.value-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+}
+.value-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+.value-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 210, 255, 0.1);
+  color: var(--clr-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.value-icon-wrapper .material-symbols-outlined {
+  font-size: 28px;
+}
+.value-title {
+  color: var(--clr-primary-dark);
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+.value-desc {
+  color: #64748B;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Bottom CTA Banner */
+.cta-banner-wrapper {
+  padding: 80px 20px;
+}
+.cta-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 24px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+}
+.cta-title {
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+.cta-subtitle {
+  color: #CBD5E1;
+  font-size: 1.15rem;
+  margin-bottom: 2.5rem;
+}
+.cta-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+@media(min-width: 480px) {
+  .cta-buttons {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+}
+.cta-btn-primary {
+  background: var(--clr-secondary);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 2px solid var(--clr-secondary);
+}
+.cta-btn-primary:hover {
+  background: #00b8e6;
+  border-color: #00b8e6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
+}
+.cta-btn-outline {
+  background: transparent;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 2px solid white;
+}
+.cta-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+</style>
 </head>
 <body>
   <header id="navbar" class="navbar">
@@ -87,73 +389,134 @@
     </div>
   </header>
 
-  <main style="min-height: calc(100vh - 80px); display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, #f8fafc, #e2e8f0); position: relative; overflow: hidden;">
-    
-    <!-- Decorative Blur Orbs -->
-    <div style="position: absolute; top: -10%; left: -5%; width: 400px; height: 400px; background: rgba(0, 210, 255, 0.15); filter: blur(80px); border-radius: 50%; z-index: 0;"></div>
-    <div style="position: absolute; bottom: -10%; right: -5%; width: 500px; height: 500px; background: rgba(123, 44, 191, 0.1); filter: blur(100px); border-radius: 50%; z-index: 0;"></div>
+  <main class="about-page">
+    <!-- Hero Section -->
+    <section class="about-hero">
+      <div class="about-hero-content">
+        <h1 class="about-hero-title">About Athenaeum</h1>
+        <p class="about-hero-subtitle">Pakistan's premier online academy &mdash; built for results.</p>
+      </div>
+    </section>
 
-    <div class="container" style="position: relative; z-index: 1; text-align: center; max-width: 900px; padding: 4rem 1.5rem;">
-      
-      <!-- Minimal Hero & Mission -->
-      <h1 style="font-size: clamp(36px, 5vw, 56px); font-weight: 900; font-family: var(--font-heading); color: var(--clr-primary-dark); margin-bottom: 1.5rem; line-height: 1.1; letter-spacing: -1px;">
-        Empowering the Next Generation.
-      </h1>
-      <p style="font-size: clamp(16px, 2vw, 20px); color: #475569; line-height: 1.6; max-width: 700px; margin: 0 auto 3rem auto; font-weight: 500;">
-        We are Pakistan's premier online educational platform, democratizing elite education for O/A Levels, Matriculation, and Intermediate boards. No fluff. Just results.
-      </p>
-
-      <!-- Sleek Stats Row (Replaces clunky cards) -->
-      <div style="display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; margin-bottom: 4rem; padding: 2rem; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+    <!-- Mission Section -->
+    <section class="about-section">
+      <div class="about-container mission-grid">
         <div>
-          <h3 style="font-size: 32px; font-weight: 800; color: var(--clr-primary); margin-bottom: 0.25rem;">10k+</h3>
-          <p style="font-size: 14px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px;">Students Enrolled</p>
+          <span class="mission-label">OUR MISSION</span>
+          <h2 class="mission-title">Empowering the Next Generation</h2>
+          <p class="mission-text">
+            We are Pakistan's premier online educational platform, democratizing elite education for O/A Levels, Matriculation, and Intermediate boards. No fluff. Just results.
+          </p>
         </div>
-        <div style="width: 1px; background: var(--clr-border);"></div>
-        <div>
-          <h3 style="font-size: 32px; font-weight: 800; color: var(--clr-purple); margin-bottom: 0.25rem;">50+</h3>
-          <p style="font-size: 14px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px;">Elite Faculty</p>
-        </div>
-        <div style="width: 1px; background: var(--clr-border);"></div>
-        <div>
-          <h3 style="font-size: 32px; font-weight: 800; color: var(--clr-secondary); margin-bottom: 0.25rem;">98%</h3>
-          <p style="font-size: 14px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px;">A* / A Grades</p>
+        <div class="stats-card">
+          <div class="stat-item">
+            <h3>16,500+</h3>
+            <p>Active Students</p>
+          </div>
+          <div class="stat-item">
+            <h3>200+</h3>
+            <p>Expert Teachers</p>
+          </div>
+          <div class="stat-item">
+            <h3>98%</h3>
+            <p>Pass Rate</p>
+          </div>
+          <div class="stat-item">
+            <h3>20k+</h3>
+            <p>Hours of Live Sessions</p>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- Minimal Team Strip (Replaces massive text cards) -->
-      <div>
-        <h4 style="font-size: 14px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem;">Led by the Best Minds</h4>
-        <div style="display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;">
+    <!-- Values / Why Athenaeum Section -->
+    <section class="about-section values-section">
+      <div class="about-container">
+        <div class="team-header">
+          <h2 class="team-title">Why Choose Athenaeum?</h2>
+        </div>
+        <div class="values-grid">
+          <div class="value-card">
+            <div class="value-icon-wrapper">
+              <span class="material-symbols-outlined">verified</span>
+            </div>
+            <h3 class="value-title">Accredited Faculty</h3>
+            <p class="value-desc">Learn directly from elite educators and industry professionals who are experts in their subjects.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon-wrapper">
+              <span class="material-symbols-outlined">schedule</span>
+            </div>
+            <h3 class="value-title">Flexible Schedule</h3>
+            <p class="value-desc">Study at your own pace with 24/7 access to recorded lectures and interactive live sessions.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon-wrapper">
+              <span class="material-symbols-outlined">trending_up</span>
+            </div>
+            <h3 class="value-title">Result-Oriented</h3>
+            <p class="value-desc">Our proven methodologies and rigorous testing ensure you're fully prepared to achieve top grades.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon-wrapper">
+              <span class="material-symbols-outlined">support_agent</span>
+            </div>
+            <h3 class="value-title">24/7 Support</h3>
+            <p class="value-desc">Never get stuck. Our dedicated academic support team is always available to help you succeed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="about-section">
+      <div class="about-container">
+        <div class="team-header">
+          <h2 class="team-title">Led by the Best Minds</h2>
+          <p class="team-subtitle">Expert educators dedicated to your success</p>
+        </div>
+        <div class="team-grid">
           <!-- Profile 1 -->
-          <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Maria Khan" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
-            <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Maria Khan</h5>
-            <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">Sciences</p>
+          <div class="team-card">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Maria Khan" class="team-photo" loading="lazy" decoding="async">
+            <h4 class="team-name">Maria Khan</h4>
+            <p class="team-subject">Sciences</p>
           </div>
           <!-- Profile 2 -->
-          <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Ali Raza" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
-            <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Sir Ali Raza</h5>
-            <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">Mathematics</p>
+          <div class="team-card">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Sir Ali Raza" class="team-photo" loading="lazy" decoding="async">
+            <h4 class="team-name">Sir Ali Raza</h4>
+            <p class="team-subject">Mathematics</p>
           </div>
           <!-- Profile 3 -->
-          <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Usman Farooq" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
-            <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Dr. Usman</h5>
-            <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">Physics</p>
+          <div class="team-card">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Dr. Usman" class="team-photo" loading="lazy" decoding="async">
+            <h4 class="team-name">Dr. Usman</h4>
+            <p class="team-subject">Physics</p>
           </div>
           <!-- Profile 4 -->
-          <div style="text-align: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Zara Malik" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" loading="lazy" decoding="async">
-            <h5 style="font-size: 15px; font-weight: 800; color: var(--clr-primary-dark);">Zara Malik</h5>
-            <p style="font-size: 12px; font-weight: 600; color: var(--clr-secondary);">English</p>
+          <div class="team-card">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Zara Malik" class="team-photo" loading="lazy" decoding="async">
+            <h4 class="team-name">Zara Malik</h4>
+            <p class="team-subject">English</p>
           </div>
         </div>
       </div>
-      
+    </section>
+
+    <!-- Bottom CTA Banner -->
+    <div class="about-container cta-banner-wrapper">
+      <div class="cta-banner">
+        <h2 class="cta-title">Ready to Start Learning?</h2>
+        <p class="cta-subtitle">Join 16,500+ students already achieving A* grades.</p>
+        <div class="cta-buttons">
+          <a href="/auth.html?mode=register" class="cta-btn-primary">Start Free Trial</a>
+          <a href="/courses.html" class="cta-btn-outline">Browse Courses</a>
+        </div>
+      </div>
     </div>
   </main>
+
   <script src="main.js"></script>
 
 <!-- Floating Glass Back Button -->
