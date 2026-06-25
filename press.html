@@ -108,9 +108,13 @@
   </header>
 
   <main>
-    <section class="section container" style="padding-top: 120px;">
+    <div class="page-hero">
+      <div class="page-hero-content">
+        <h1>About Athenaeum Academy</h1>
+      </div>
+    </div>
+    <section class="section container" style="padding-top: 40px;">
       <div class="section-header">
-        <h1 class="section-title center">About Athenaeum Academy</h1>
       </div>
       
       <div style="max-width: 800px; margin: 0 auto; line-height: 1.8; color: var(--clr-text);">
@@ -313,5 +317,80 @@
   </footer>
 
   <script src="main.js"></script>
+<style>
+.page-hero {
+  background: linear-gradient(135deg, 
+    #0a0f2e 0%, 
+    #0d1b4b 40%, 
+    #1a1060 70%, 
+    #0f0a3a 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 60px 20px;        /* smaller than contact page */
+  min-height: 200px;          /* compact height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Subtle dot grid pattern overlay */
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(255,255,255,0.06) 1px, 
+    transparent 1px
+  );
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Glowing orb top right */
+.page-hero::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(
+    circle, 
+    rgba(99, 102, 241, 0.25) 0%, 
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.page-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.page-hero h1 {
+  color: #ffffff;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.page-hero p {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .page-hero {
+    padding: 40px 16px;
+    min-height: 160px;
+  }
+}
+</style>
 </body>
 </html>

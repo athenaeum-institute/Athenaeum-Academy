@@ -44,6 +44,81 @@
   <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"Online Courses","item":"https://athenaeumacademy.com/courses.html"}]}
   </script>
+<style>
+.page-hero {
+  background: linear-gradient(135deg, 
+    #0a0f2e 0%, 
+    #0d1b4b 40%, 
+    #1a1060 70%, 
+    #0f0a3a 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 60px 20px;        /* smaller than contact page */
+  min-height: 200px;          /* compact height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Subtle dot grid pattern overlay */
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(255,255,255,0.06) 1px, 
+    transparent 1px
+  );
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Glowing orb top right */
+.page-hero::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(
+    circle, 
+    rgba(99, 102, 241, 0.25) 0%, 
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.page-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.page-hero h1 {
+  color: #ffffff;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.page-hero p {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .page-hero {
+    padding: 40px 16px;
+    min-height: 160px;
+  }
+}
+</style>
 </head>
 <body>
   <header id="navbar" class="navbar">
@@ -103,6 +178,13 @@
     </div>
   </header>
 
+  <div class="page-hero">
+    <div class="page-hero-content">
+      <h1>Live Tutoring Batches</h1>
+      <p>Enroll in our upcoming live batches for Academics and Tech Skills.</p>
+    </div>
+  </div>
+
   <nav class="breadcrumbs">
     <div class="container">
       <a href="index.html">Home</a> &gt; <span>Courses</span>
@@ -111,8 +193,6 @@
 
   <main class="section container" style="min-height: 60vh;">
     <div id="global-announcements" style="margin-top:2rem"></div>
-    <h1 class="section-title" style="text-align: center; margin-bottom: 0.5rem;">Live Tutoring Batches</h1>
-    <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">Enroll in our upcoming live batches for Academics and Tech Skills.</p>
     
         <!-- Course filter tabs -->
     <div class="course-tabs" id="catalog-tabs" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
