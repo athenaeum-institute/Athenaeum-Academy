@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /student-dashboard
+Disallow: /teacher-dashboard
+Disallow: /parent-dashboard
+Disallow: /login
+Disallow: /signup
+Sitemap: https://athenaeumacademy.com/sitemap.xml
