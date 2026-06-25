@@ -960,38 +960,67 @@
 
       <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
         
-        <details class="course-card" style="padding: 1.5rem; cursor: pointer;">
-          <summary style="font-size: 1.1rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; margin: 0;">
+        <div class="course-card faq-item" style="cursor: pointer; overflow: hidden; display: flex; flex-direction: column;">
+          <div class="faq-question" style="padding: 1.5rem; font-size: 1.1rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; margin: 0;">
             What courses does Athenaeum offer?
-            <span class="material-symbols-outlined" style="color: var(--clr-primary);">expand_more</span>
-          </summary>
-          <div style="margin-top: 1rem; color: var(--clr-text-light); line-height: 1.6;">
-            <p>Athenaeum Academy offers comprehensive online preparation for O Levels, A Levels, Matric Science/Arts, Intermediate (FSc), MDCAT, and ECAT. We also offer specialized tech skill development courses for all ages.</p>
+            <span class="material-symbols-outlined chevron" style="color: var(--clr-primary); transition: transform 0.3s;">expand_more</span>
           </div>
-        </details>
+          <div class="faq-answer" style="max-height: 0; padding: 0 1.5rem; overflow: hidden; color: var(--clr-text-light); line-height: 1.6; transition: max-height 0.3s ease, padding 0.3s ease;">
+            <p style="padding-bottom: 1.5rem; margin: 0;">Athenaeum Academy offers comprehensive online preparation for O Levels, A Levels, Matric Science/Arts, Intermediate (FSc), MDCAT, and ECAT. We also offer specialized tech skill development courses for all ages.</p>
+          </div>
+        </div>
 
-        <details class="course-card" style="padding: 1.5rem; cursor: pointer;">
-          <summary style="font-size: 1.1rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; margin: 0;">
+        <div class="course-card faq-item" style="cursor: pointer; overflow: hidden; display: flex; flex-direction: column;">
+          <div class="faq-question" style="padding: 1.5rem; font-size: 1.1rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; margin: 0;">
             How much do courses cost?
-            <span class="material-symbols-outlined" style="color: var(--clr-primary);">expand_more</span>
-          </summary>
-          <div style="margin-top: 1rem; color: var(--clr-text-light); line-height: 1.6;">
-            <p>Our courses are designed to be affordable while maintaining university-grade excellence. Specific pricing varies by program (O/A Levels, Board Exams, or Entry Tests). You can start with a 3-day free trial to experience our interactive classes before committing.</p>
+            <span class="material-symbols-outlined chevron" style="color: var(--clr-primary); transition: transform 0.3s;">expand_more</span>
           </div>
-        </details>
+          <div class="faq-answer" style="max-height: 0; padding: 0 1.5rem; overflow: hidden; color: var(--clr-text-light); line-height: 1.6; transition: max-height 0.3s ease, padding 0.3s ease;">
+            <p style="padding-bottom: 1.5rem; margin: 0;">Our courses are designed to be affordable while maintaining university-grade excellence. Specific pricing varies by program (O/A Levels, Board Exams, or Entry Tests). You can start with a 3-day free trial to experience our interactive classes before committing.</p>
+          </div>
+        </div>
 
-        <details class="course-card" style="padding: 1.5rem; cursor: pointer;">
-          <summary style="font-size: 1.1rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; margin: 0;">
+        <div class="course-card faq-item" style="cursor: pointer; overflow: hidden; display: flex; flex-direction: column;">
+          <div class="faq-question" style="padding: 1.5rem; font-size: 1.1rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; margin: 0;">
             Can parents track their child's progress?
-            <span class="material-symbols-outlined" style="color: var(--clr-primary);">expand_more</span>
-          </summary>
-          <div style="margin-top: 1rem; color: var(--clr-text-light); line-height: 1.6;">
-            <p>Yes! We provide a dedicated Parent Dashboard where you can monitor your child's attendance, weekly quiz scores, assignment submissions, and overall academic progress in real-time. We also offer a 24/7 parent helpline.</p>
+            <span class="material-symbols-outlined chevron" style="color: var(--clr-primary); transition: transform 0.3s;">expand_more</span>
           </div>
-        </details>
+          <div class="faq-answer" style="max-height: 0; padding: 0 1.5rem; overflow: hidden; color: var(--clr-text-light); line-height: 1.6; transition: max-height 0.3s ease, padding 0.3s ease;">
+            <p style="padding-bottom: 1.5rem; margin: 0;">Yes! We provide a dedicated Parent Dashboard where you can monitor your child's attendance, weekly quiz scores, assignment submissions, and overall academic progress in real-time. We also offer a 24/7 parent helpline.</p>
+          </div>
+        </div>
 
       </div>
     </section>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.faq-question').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            // Prevent main.js .course-card router click
+            e.stopPropagation();
+            
+            const answer = btn.nextElementSibling;
+            const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+            const chevron = btn.querySelector('.chevron');
+            
+            // Close all
+            document.querySelectorAll('.faq-answer').forEach(a => {
+              a.style.maxHeight = '0px';
+            });
+            document.querySelectorAll('.faq-question .chevron').forEach(c => {
+              c.style.transform = 'rotate(0deg)';
+            });
+            
+            // Toggle clicked
+            if (!isOpen) {
+              answer.style.maxHeight = answer.scrollHeight + 'px';
+              chevron.style.transform = 'rotate(180deg)';
+            }
+          });
+        });
+      });
+    </script>
 
   </main>
 
