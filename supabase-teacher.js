@@ -278,6 +278,49 @@ class AthenaeumTeacherService {
       if (error) throw error;
       return true;
   }
+
+  // ── LIVE CLASSES ──
+  async getMyLiveClasses() {
+    const tid = await this.getTeacherId();
+    if (!tid) return [];
+
+    const { data: courses } = await this.client.from('courses').select('id, title, subject').eq('instructor_id', tid);
+    if (!courses || courses.length === 0) return [];
+    
+    const courseIds = courses.map(c => c.id);
+    const courseMap = {};
+    courses.forEach(c => courseMap[c.id] = c);
+
+    const { data: classes, error } = await this.client.from('live_classes')
+      .select('*')
+      .in('course_id', courseIds)
+      .order('start_time', { ascending: false });
+
+    if (error) throw error;
+    
+    return classes.map(c => ({
+      ...c,
+      course_title: courseMap[c.course_id].title
+    }));
+  }
+
+  async saveLiveClass(classData) {
+    if (classData.id) {
+      const { data, error } = await this.client.from('live_classes').update(classData).eq('id', classData.id).select().single();
+      if (error) throw error;
+      return data;
+    } else {
+      const { data, error } = await this.client.from('live_classes').insert([classData]).select().single();
+      if (error) throw error;
+      return data;
+    }
+  }
+
+  async deleteLiveClass(id) {
+    const { error } = await this.client.from('live_classes').delete().eq('id', id);
+    if (error) throw error;
+    return true;
+  }
 }
 
 // Initialize on window
