@@ -14,7 +14,15 @@
   <style>
     body { overflow: hidden; }
   </style>
+  <!-- Optimize DNS Resolution for External APIs & Assets -->
+  <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <script src="https://meet.jit.si/external_api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
 
   <!-- Vercel Speed Insights -->
   <script>
@@ -59,7 +67,7 @@
 
     <!-- Video Stage (Jitsi Meet Integration) -->
     <div class="video-stage" style="padding: 0; background: transparent; border: none; display: flex; justify-content: center; align-items: center;">
-      <div id="meet-container" style="width: 100%; height: 600px; border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
+      <div id="meet-container" style="width: 100%; height: calc(100vh - 60px); min-height: 500px; border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
     </div>
 
     <!-- Control Bar -->
@@ -230,20 +238,29 @@
 
   <script>
     // Jitsi Meet Integration
-    window.onload = () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const room = urlParams.get('room');
       const title = urlParams.get('title');
       const teacher = urlParams.get('teacher');
 
       if (!room) {
-        alert("Invalid class room.");
+        alert("Invalid class link. Please go back to dashboard and click Join Class again.");
         window.location.href = 'student-live-classes.html';
         return;
       }
 
       document.getElementById('header-title').innerText = title || 'Live Class';
       document.getElementById('header-teacher').innerText = teacher ? '• ' + teacher : '';
+
+      // Wait for supabase session
+      const { data: { user } } = await window.supabaseClient.auth.getUser();
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const displayName = user.user_metadata?.full_name || user.email || 'Student';
 
       const domain = 'meet.jit.si';
       const options = {
@@ -252,18 +269,22 @@
         height: '100%',
         parentNode: document.querySelector('#meet-container'),
         userInfo: {
-            displayName: 'Student'
+            displayName: displayName,
+            email: user.email
         },
         configOverwrite: { 
           startWithAudioMuted: true, 
           startWithVideoMuted: true,
           prejoinPageEnabled: false,
           disableDeepLinking: true,
-          defaultLanguage: 'en'
+          defaultLanguage: 'en',
+          enableWelcomePage: false
         },
         interfaceConfigOverwrite: { 
           SHOW_JITSI_WATERMARK: false,
           SHOW_BRAND_WATERMARK: false,
+          SHOW_POWERED_BY: false,
+          DISPLAY_WELCOME_PAGE_CONTENT: false,
           SHOW_PROMOTIONAL_CLOSE_PAGE: false,
           HIDE_INVITE_MORE_HEADER: true,
           DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
@@ -275,8 +296,18 @@
           ]
         }
       };
+      
       const api = new JitsiMeetExternalAPI(domain, options);
-    };
+      
+      api.addEventListener('readyToClose', () => {
+        window.location.href = 'dashboard-student.html';
+      });
+
+      api.addEventListener('participantJoined', () => {
+        const count = api.getNumberOfParticipants();
+        // Just an example, update if you have participant count element
+      });
+    });
 
     // Tab switching
     function switchTab(tab) {
@@ -337,9 +368,6 @@
   </script>
 
 <!-- Athenaeum Assistant Widget (with Supabase for auth check) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-client.js"></script>
-  <script src="auth-state.js"></script>
 <script src="athenaeum-assistant.js?v=2" defer></script>
 
 <!-- Floating Glass Back Button -->
