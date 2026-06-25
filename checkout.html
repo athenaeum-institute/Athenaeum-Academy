@@ -551,8 +551,20 @@
           const urlParams = new URLSearchParams(window.location.search);
           const courseId = urlParams.get('course');
           
-          if (user && courseId && window.AthenaeumCourses) {
-             await window.AthenaeumCourses.enrollStudent(user.id, courseId);
+          if (user && courseId) {
+             const { error: enrollError } = await window.supabaseClient
+               .from('enrollments')
+               .upsert({
+                 student_id: user.id,
+                 course_id: courseId,
+                 payment_status: 'paid',
+                 enrolled_at: new Date().toISOString()
+               }, {
+                 onConflict: 'student_id,course_id'
+               });
+               
+             if (enrollError) throw enrollError;
+             
              // Update plan_type to paid so the trial banner disappears
              await window.supabaseClient.from('profiles').update({ plan_type: 'paid' }).eq('id', user.id);
           }

@@ -118,6 +118,9 @@ CREATE POLICY "Students can view their own enrollments" ON public.enrollments
 CREATE POLICY "Students can insert their own enrollments" ON public.enrollments
   FOR INSERT WITH CHECK (auth.uid() = student_id);
 
+CREATE POLICY "Students can update their own enrollments" ON public.enrollments
+  FOR UPDATE USING (auth.uid() = student_id);
+
 CREATE POLICY "Admin full access enrollments" ON public.enrollments
   FOR ALL USING (public.is_admin());
 
