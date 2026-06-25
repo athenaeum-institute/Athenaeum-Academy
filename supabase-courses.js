@@ -79,7 +79,7 @@ window.AthenaeumCourses = {
     if (!userId) return {};
     const { data, error } = await window.supabaseClient
       .from('enrollments')
-      .select('course_id, payment_status, status')
+      .select('course_id, payment_status')
       .eq('student_id', userId);
     
     if (error) {

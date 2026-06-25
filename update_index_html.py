@@ -75,8 +75,8 @@ replacement_html = """        <!-- Cards grid -->
                 
                 let buttonsHtml = '';
                 const enrollRecord = userEnrollments[course.id];
-                const isPaid = enrollRecord && (enrollRecord.payment_status === 'paid' || enrollRecord.status === 'active' || enrollRecord.status === 'paid');
-                const isTrial = enrollRecord && (enrollRecord.payment_status === 'free' || enrollRecord.status === 'free_trial');
+                const isPaid = enrollRecord && enrollRecord.payment_status === 'paid';
+                const isTrial = enrollRecord && enrollRecord.payment_status === 'free';
 
                 if (isPaid) {
                   buttonsHtml = `<a href="video-player.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Continue Learning &rarr;</a>`;
