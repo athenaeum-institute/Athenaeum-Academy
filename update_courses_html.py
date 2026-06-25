@@ -23,6 +23,7 @@ content = re.sub(
 js_logic = """
   <script>
     let allCourses = [];
+    let userEnrollments = {};
 
     const formatPrice = (price) => {
       if (parseFloat(price) === 0) return 'FREE';
@@ -95,16 +96,25 @@ js_logic = """
         const badgeStyle = getCategoryBadgeStyle(course.category);
         const badgeLabel = getCategoryLabel(course.category);
         
-        let targetUrl = `auth.html?mode=register`;
-        let btnText = "Enroll Now";
-        if (window.currentUser) {
-          if (course.is_free_preview) {
-             targetUrl = `course-details.html?id=${course.id}`;
-             btnText = "Start Free Preview";
-          } else {
-             targetUrl = `video-player.html?course=${course.id}`;
-             btnText = "Start Learning";
-          }
+        let buttonsHtml = '';
+        const enrollRecord = userEnrollments[course.id];
+        const isPaid = enrollRecord && (enrollRecord.payment_status === 'paid' || enrollRecord.status === 'active' || enrollRecord.status === 'paid');
+        const isTrial = enrollRecord && (enrollRecord.payment_status === 'free' || enrollRecord.status === 'free_trial');
+
+        if (isPaid) {
+          buttonsHtml = `<a href="video-player.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Continue Learning &rarr;</a>`;
+        } else if (isTrial) {
+          buttonsHtml = `
+            <a href="video-player.html?course=${course.id}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
+            <a href="checkout.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Upgrade to Full Access</a>
+          `;
+        } else {
+          let checkoutUrl = window.currentUser ? `checkout.html?course=${course.id}` : `auth.html?mode=register&redirect=checkout.html?course=${course.id}`;
+          let trialUrl = `trial-schedule.html?course=${course.id}`;
+          buttonsHtml = `
+            <a href="${trialUrl}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Free Trial</a>
+            <a href="${checkoutUrl}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Enroll Now</a>
+          `;
         }
 
         html += `
@@ -125,8 +135,8 @@ js_logic = """
                 </div>
               </div>
             </a>
-            <div style="padding: 0 1.5rem 1.5rem;">
-              <a href="${targetUrl}" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">${btnText}</a>
+            <div style="display: flex; gap: 0.5rem; padding: 0 1.2rem 1.2rem 1.2rem;">
+              ${buttonsHtml}
             </div>
           </article>
         `;
@@ -159,6 +169,10 @@ js_logic = """
       grid.innerHTML = skeletonHTML;
       
       try {
+        window.currentUser = await getCurrentUser();
+        if (window.currentUser) {
+          userEnrollments = await window.AthenaeumCourses.getUserEnrollmentMap(window.currentUser.id);
+        }
         allCourses = await window.AthenaeumCourses.fetchAllCourses();
         updateCounts();
         

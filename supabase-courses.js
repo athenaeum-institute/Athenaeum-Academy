@@ -74,6 +74,34 @@ window.AthenaeumCourses = {
     return data;
   },
 
+  // Get all user enrollments for quick lookup
+  async getUserEnrollmentMap(userId) {
+    if (!userId) return {};
+    const { data, error } = await window.supabaseClient
+      .from('enrollments')
+      .select('course_id, payment_status, status')
+      .eq('student_id', userId);
+    
+    if (error) {
+      console.error('Error fetching user enrollments:', error);
+      return {};
+    }
+    const map = {};
+    if (data) {
+      data.forEach(e => {
+        // If there's a status column, we use that if it implies paid. 
+        // We'll prioritize 'paid' if payment_status is 'paid' or status is 'active'/'paid'
+        // For simplicity, store both in an object if needed, or just a string status.
+        // Let's store an object: { payment_status, status }
+        map[e.course_id] = {
+          payment_status: e.payment_status,
+          status: e.status
+        };
+      });
+    }
+    return map;
+  },
+
   // Enroll a student in a course
   async enrollStudent(userId, courseId) {
     const { data, error } = await window.supabaseClient
