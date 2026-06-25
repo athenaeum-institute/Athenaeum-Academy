@@ -1,0 +1,26 @@
+# Athenaeum Academy
+> Pakistan's leading online academy for O Levels, A Levels, Matric, Intermediate, MDCAT and ECAT. Based in Lahore, Pakistan.
+
+## What We Offer
+- O Level courses: Mathematics, Physics, Chemistry, Biology, English
+- A Level courses: all major subjects
+- Matric Science: 9th and 10th grade
+- FSc/Intermediate: 11th and 12th grade
+- MDCAT preparation
+- ECAT preparation
+- Live online classes with expert Pakistani teachers
+- Free trial for all courses
+- Parent dashboard for progress tracking
+- Ustad AI: Gemini-powered personal tutor
+
+## Contact
+Email: support@athenaeumacademy.com
+WhatsApp: +92 328 6715408
+Location: Lahore, Pakistan
+
+## Key Pages
+Homepage: https://athenaeumacademy.com/
+Courses: https://athenaeumacademy.com/courses.html
+About: https://athenaeumacademy.com/about.html
+Contact: https://athenaeumacademy.com/contact.html
+Education Guide: https://athenaeumacademy.com/about/pakistan-education-guide.html
