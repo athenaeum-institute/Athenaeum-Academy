@@ -343,11 +343,19 @@
         const isTrial = enrollRecord && enrollRecord.payment_status === 'free';
 
         if (isPaid) {
-          buttonsHtml = `<a href="video-player.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Continue Learning &rarr;</a>`;
+          buttonsHtml = `
+            <div class="course-card-buttons" style="padding: 0 1.2rem 1.2rem 1.2rem;">
+              <a href="video-player.html?course=${course.id}" class="btn" style="width:100%; justify-content:center; background:var(--green, #10b981); color:white; font-size:0.9rem; padding:0.6rem;">Continue Learning &rarr;</a>
+            </div>
+          `;
         } else if (isTrial) {
           buttonsHtml = `
-            <a href="video-player.html?course=${course.id}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
-            <a href="checkout.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Upgrade to Full Access</a>
+            <div class="course-card-buttons" style="padding: 0 1.2rem 1.2rem 1.2rem;">
+              <div class="row-1">
+                <a href="video-player.html?course=${course.id}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
+                <a href="checkout.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Upgrade</a>
+              </div>
+            </div>
           `;
         } else {
           let checkoutUrl = window.currentUser ? `checkout.html?course=${course.id}` : `auth.html?mode=register&redirect=checkout.html?course=${course.id}`;
@@ -355,15 +363,19 @@
           let cartBtnHtml = '';
           
           if (userCartItems.includes(course.id)) {
-            cartBtnHtml = `<button class="btn btn-ghost" disabled style="padding:0.6rem; opacity:0.6; cursor:not-allowed;" title="Already in Cart"><span class="material-symbols-outlined">shopping_bag</span></button>`;
+            cartBtnHtml = `<button class="add-to-cart-btn" disabled style="opacity:0.6; cursor:not-allowed;" title="Already in Cart"><span class="material-symbols-outlined">shopping_bag</span> Already in Cart</button>`;
           } else {
-            cartBtnHtml = `<button class="btn btn-outline" onclick="addToCart(event, '${course.id}')" style="padding:0.6rem; color:var(--clr-primary); border-color:var(--clr-primary);" title="Add to Cart"><span class="material-symbols-outlined">add_shopping_cart</span></button>`;
+            cartBtnHtml = `<button class="add-to-cart-btn" onclick="addToCart(event, '${course.id}')" title="Add to Cart"><span class="material-symbols-outlined">shopping_cart</span> Add to Cart</button>`;
           }
 
           buttonsHtml = `
-            <a href="${trialUrl}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Free Trial</a>
-            <a href="${checkoutUrl}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Enroll Now</a>
-            ${cartBtnHtml}
+            <div class="course-card-buttons" style="padding: 0 1.2rem 1.2rem 1.2rem;">
+              <div class="row-1">
+                <a href="${trialUrl}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Free Trial</a>
+                <a href="${checkoutUrl}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Enroll Now</a>
+              </div>
+              ${cartBtnHtml}
+            </div>
           `;
         }
 
@@ -385,9 +397,7 @@
                 </div>
               </div>
             </a>
-            <div style="display: flex; gap: 0.5rem; padding: 0 1.2rem 1.2rem 1.2rem;">
-              ${buttonsHtml}
-            </div>
+            ${buttonsHtml}
           </article>
         `;
       });
