@@ -646,12 +646,14 @@
         document.getElementById('content-area').style.display = 'block';
 
         // Render tabs
-        const tabsHtml = linkedChildren.map((c, idx) => `
+        const tabsHtml = linkedChildren.map((c, idx) => {
+          const safeName = sanitizeInput(c.full_name || 'Child');
+          return `
           <div class="child-tab ${idx === 0 ? 'active' : ''}" onclick="selectChild('${c.id}', this)">
-            <div style="width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px">${c.full_name.charAt(0)}</div>
-            ${c.full_name.split(' ')[0]}
+            <div style="width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px">${safeName.charAt(0)}</div>
+            ${safeName.split(' ')[0]}
           </div>
-        `).join('');
+        `}).join('');
         document.getElementById('child-tabs').innerHTML = tabsHtml;
 
         // Select first by default

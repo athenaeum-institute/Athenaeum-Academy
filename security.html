@@ -54,6 +54,21 @@
   <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"Athenaeum","item":"https://athenaeumacademy.com/security.html"}]}
   </script>
+
+  <!-- Security Headers -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://meet.jit.si https://cdn.emailjs.com https://www.googletagmanager.com https://apis.google.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com https://custom-images.strikinglycdn.com;
+    connect-src 'self' https://*.supabase.co https://api.emailjs.com https://meet.jit.si;
+    frame-src https://meet.jit.si https://hcaptcha.com https://*.hcaptcha.com;
+  ">
 </head>
 
 <body>
@@ -336,7 +351,7 @@
                 d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
             </svg>
           </a>
-          <a href="https://wa.me/923286715408" target="_blank" rel="noopener" class="social-btn social-btn--wa"
+          <a href="https://wa.me/923286715408" target="_blank" rel="noopener noreferrer" class="social-btn social-btn--wa"
             aria-label="WhatsApp" id="social-whatsapp">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path

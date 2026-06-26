@@ -453,8 +453,16 @@
             </form>
 
             <script>
+              let lastContactSubmit = 0;
               function handleContactSubmit(e) {
                 e.preventDefault();
+                const now = Date.now();
+                if (now - lastContactSubmit < 30000) {
+                  alert('Please wait 30 seconds before submitting again.');
+                  return;
+                }
+                lastContactSubmit = now;
+
                 const subject = document.getElementById("cf-subject").value;
                 let message = document.getElementById("cf-message").value;
                 let userEmail = 'Website visitor';

@@ -278,7 +278,7 @@ async function updateHeroSection() {
     // Smooth transition
     titleEl.style.opacity = '0';
     setTimeout(() => {
-      titleEl.innerHTML = `Welcome back, <span class="accent-text">${firstName}!</span> 👋<br><span style="font-size: 24px; color: var(--clr-on-surface-var); font-weight: 500; display:block; margin-top:10px;">Ready to continue your learning journey?</span>`;
+      titleEl.innerHTML = `Welcome back, <span class="accent-text">${sanitizeInput(firstName)}!</span> 👋<br><span style="font-size: 24px; color: var(--clr-on-surface-var); font-weight: 500; display:block; margin-top:10px;">Ready to continue your learning journey?</span>`;
       titleEl.style.transition = 'opacity 0.5s ease';
       titleEl.style.opacity = '1';
     }, 300);

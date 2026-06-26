@@ -112,8 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lbData.forEach((user, index) => {
           const rank = index + 1;
           const isMe = user.id === userId;
-          const nameStr = isMe ? `<span class="user-name-display">${user.full_name}</span> <span style="font-size:.65rem;color:var(--clr-secondary);font-weight:700;">YOU</span>` : user.full_name;
-          const avatarStr = user.full_name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+          const safeName = sanitizeInput(user.full_name || 'Student');
+          const nameStr = isMe ? `<span class="user-name-display">${safeName}</span> <span style="font-size:.65rem;color:var(--clr-secondary);font-weight:700;">YOU</span>` : safeName;
+          const avatarStr = safeName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
           
           let trendHtml = '';
           if (rank === 1) trendHtml = `<div class="lb-trend up"><span class="material-symbols-outlined">star</span></div>`;

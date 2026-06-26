@@ -647,8 +647,8 @@ Rules:
     const typing = document.getElementById('ustad-typing');
 
     const welcomeText = isIndex 
-      ? `Hello <strong>${name}</strong>! 👋<br><br>I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help you learn and grow! 😊`
-      : `Hello <strong>${name}</strong>! 👋<br><br>Need help about this page? I am your <strong>Athenaeum Assistant</strong>, here to help you on every page! 😊`;
+      ? `Hello <strong>${sanitizeInput(name)}</strong>! 👋<br><br>I am your <strong>Athenaeum Assistant</strong> — your personal teacher. Ask me anything, I am here to help you learn and grow! 😊`
+      : `Hello <strong>${sanitizeInput(name)}</strong>! 👋<br><br>Need help about this page? I am your <strong>Athenaeum Assistant</strong>, here to help you on every page! 😊`;
 
     // Show typing indicator
     typing.classList.add('visible');
