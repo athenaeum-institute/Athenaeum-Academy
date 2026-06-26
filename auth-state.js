@@ -135,6 +135,32 @@ window.handleLogout = async function() {
 }
 
 /**
+ * Fetch and update cart badge count
+ */
+window.updateCartBadge = async function(userId) {
+  if (!userId) {
+    const user = await getCurrentUser();
+    if (!user) return;
+    userId = user.id;
+  }
+  try {
+    const { count, error } = await window.supabaseClient
+      .from('cart_items')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+    
+    if (error) throw error;
+    
+    document.querySelectorAll('.cart-badge-count').forEach(badge => {
+      badge.textContent = count || '0';
+      badge.style.display = count > 0 ? 'flex' : 'none';
+    });
+  } catch (err) {
+    console.error("Error updating cart badge:", err);
+  }
+}
+
+/**
  * Update Navbar based on Auth State
  */
 async function updateNavbar() {
@@ -153,6 +179,9 @@ async function updateNavbar() {
     
     const dashboardUrl = redirectBasedOnRole(role);
     const badgeText = planType === 'paid' ? '✨ Premium Member' : '✨ Free Trial';
+
+    // Update cart badge
+    window.updateCartBadge(user.id);
 
     // Desktop Nav Update
     const loginBtn = document.getElementById('btn-login');

@@ -146,11 +146,15 @@
       </ul>
       <div class="nav-actions">
         <div class="header-actions">
-        <div id="notification-bell"></div>
-        <a href="auth.html" class="icon-btn" aria-label="Logout">
-          <span class="material-symbols-outlined">logout</span>
-        </a>
-      </div>    <button class="icon-btn cart-btn" aria-label="Notifications" id="btn-notifications">
+          <div id="notification-bell"></div>
+          <a href="cart.html" class="icon-btn" aria-label="Cart" style="position: relative;">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span class="cart-badge-count" style="display:none; position:absolute; top:-5px; right:-5px; background:#ef4444; color:white; font-size:10px; font-weight:bold; border-radius:50%; width:18px; height:18px; align-items:center; justify-content:center;">0</span>
+          </a>
+          <a href="auth.html" class="icon-btn" aria-label="Logout">
+            <span class="material-symbols-outlined">logout</span>
+          </a>
+          <button class="icon-btn cart-btn" aria-label="Notifications" id="btn-notifications">
             <span class="material-symbols-outlined">notifications</span><span class="cart-badge">0</span>
           </button>
         </div>
@@ -229,6 +233,7 @@
   <script>
     let allCourses = [];
     let userEnrollments = {};
+    let userCartItems = [];
 
     const formatPrice = (price) => {
       if (parseFloat(price) === 0) return 'FREE';
@@ -347,9 +352,18 @@
         } else {
           let checkoutUrl = window.currentUser ? `checkout.html?course=${course.id}` : `auth.html?mode=register&redirect=checkout.html?course=${course.id}`;
           let trialUrl = `trial-schedule.html?course=${course.id}`;
+          let cartBtnHtml = '';
+          
+          if (userCartItems.includes(course.id)) {
+            cartBtnHtml = `<button class="btn btn-ghost" disabled style="padding:0.6rem; opacity:0.6; cursor:not-allowed;" title="Already in Cart"><span class="material-symbols-outlined">shopping_bag</span></button>`;
+          } else {
+            cartBtnHtml = `<button class="btn btn-outline" onclick="addToCart(event, '${course.id}')" style="padding:0.6rem; color:var(--clr-primary); border-color:var(--clr-primary);" title="Add to Cart"><span class="material-symbols-outlined">add_shopping_cart</span></button>`;
+          }
+
           buttonsHtml = `
             <a href="${trialUrl}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Free Trial</a>
             <a href="${checkoutUrl}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Enroll Now</a>
+            ${cartBtnHtml}
           `;
         }
 
@@ -408,6 +422,8 @@
         window.currentUser = await getCurrentUser();
         if (window.currentUser) {
           userEnrollments = await window.AthenaeumCourses.getUserEnrollmentMap(window.currentUser.id);
+          const { data: cartData } = await window.supabaseClient.from('cart_items').select('course_id').eq('user_id', window.currentUser.id);
+          if (cartData) userCartItems = cartData.map(c => c.course_id);
         }
         allCourses = await window.AthenaeumCourses.fetchAllCourses();
         updateCounts();
@@ -423,6 +439,45 @@
         console.error('Render error:', err);
       }
     });
+    window.addToCart = async (e, courseId) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!window.currentUser) {
+        window.location.href = `auth.html?mode=login&redirect=courses.html`;
+        return;
+      }
+      try {
+        const { error } = await window.supabaseClient.from('cart_items').insert({
+          user_id: window.currentUser.id,
+          course_id: courseId
+        });
+        if (error) throw error;
+        
+        userCartItems.push(courseId);
+        if(window.updateCartBadge) window.updateCartBadge(window.currentUser.id);
+        
+        const toast = document.createElement('div');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.right = '20px';
+        toast.style.background = '#10b981';
+        toast.style.color = '#fff';
+        toast.style.padding = '12px 24px';
+        toast.style.borderRadius = '8px';
+        toast.style.zIndex = '10000';
+        toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        toast.innerHTML = '<span class="material-symbols-outlined" style="vertical-align:middle; margin-right:8px;">check_circle</span>Added to cart!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+        
+        const activeBtn = document.querySelector('#catalog-tabs .tab-btn.active');
+        const activeTab = activeBtn ? activeBtn.id.replace('tab-', '') : 'all';
+        filterCatalog(activeTab);
+      } catch (err) {
+        console.error('Error adding to cart:', err);
+        alert('Could not add to cart. Please try again.');
+      }
+    };
   </script>
 
 

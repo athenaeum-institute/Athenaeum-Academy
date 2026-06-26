@@ -416,10 +416,13 @@
     let isTrialMode = false;
     let basePrice = 2499;
     let currentPrice = 2499;
+    let isCartMode = false;
+    let cartItemsList = [];
 
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const courseId = urlParams.get('course');
+      const cartParam = urlParams.get('cart');
 
       try {
         const user = await getCurrentUser();
@@ -430,7 +433,32 @@
           document.getElementById('checkout-lname').value = nameParts.slice(1).join(" ") || "";
         }
 
-        if (courseId) {
+        if (cartParam === 'true') {
+          isCartMode = true;
+          const { data: cartItems, error } = await window.supabaseClient.from('cart_items').select('course_id, courses(*)').eq('user_id', user.id);
+          if (cartItems && cartItems.length > 0) {
+            cartItemsList = cartItems;
+            document.getElementById('course-name-disp').textContent = `Multiple Courses (${cartItems.length})`;
+            document.getElementById('receipt-course-name').textContent = `${cartItems.length} Courses`;
+            
+            basePrice = cartItems.reduce((sum, item) => sum + (item.courses.price || 0), 0);
+            currentPrice = basePrice;
+            
+            const priceSlider = document.getElementById('price-slider');
+            if (priceSlider) {
+              priceSlider.max = basePrice;
+              priceSlider.value = basePrice;
+              priceSlider.min = Math.floor(basePrice / 3);
+              document.getElementById('slider-min-disp').textContent = 'Rs. ' + priceSlider.min + ' (Min)';
+              document.getElementById('slider-max-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
+            }
+            document.getElementById('std-price-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
+            updateSliderPrice();
+          } else {
+            alert('Your cart is empty');
+            window.location.href = 'courses.html';
+          }
+        } else if (courseId) {
           const { data: course, error } = await window.supabaseClient.from('courses').select('*').eq('id', courseId).single();
           if (course) {
             document.getElementById('course-name-disp').textContent = course.title;
@@ -444,7 +472,7 @@
               priceSlider.value = basePrice;
               priceSlider.min = Math.floor(basePrice / 3);
               document.getElementById('slider-min-disp').textContent = 'Rs. ' + priceSlider.min + ' (Min)';
-              document.getElementById('slider-max-disp').textContent = 'Rs. ' + basePrice;
+              document.getElementById('slider-max-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
             }
             document.getElementById('std-price-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
             updateSliderPrice();
@@ -608,19 +636,35 @@
           const urlParams = new URLSearchParams(window.location.search);
           const courseId = urlParams.get('course');
 
-          if (user && courseId) {
-            const { error: enrollError } = await window.supabaseClient
-              .from('enrollments')
-              .upsert({
+          if (user) {
+            if (isCartMode) {
+              const enrollmentData = cartItemsList.map(item => ({
                 student_id: user.id,
-                course_id: courseId,
+                course_id: item.course_id,
                 payment_status: 'paid',
+                status: 'paid',
                 enrolled_at: new Date().toISOString()
-              }, {
-                onConflict: 'student_id,course_id'
-              });
-
-            if (enrollError) throw enrollError;
+              }));
+              const { error: enrollError } = await window.supabaseClient.from('enrollments').upsert(enrollmentData, { onConflict: 'student_id,course_id' });
+              if (enrollError) throw enrollError;
+              
+              await window.supabaseClient.from('cart_items').delete().eq('user_id', user.id);
+              if (window.updateCartBadge) window.updateCartBadge(user.id);
+              
+            } else if (courseId) {
+              const { error: enrollError } = await window.supabaseClient
+                .from('enrollments')
+                .upsert({
+                  student_id: user.id,
+                  course_id: courseId,
+                  payment_status: 'paid',
+                  status: 'paid',
+                  enrolled_at: new Date().toISOString()
+                }, {
+                  onConflict: 'student_id,course_id'
+                });
+              if (enrollError) throw enrollError;
+            }
 
             // Update plan_type to paid so the trial banner disappears
             await window.supabaseClient.from('profiles').update({ plan_type: 'paid' }).eq('id', user.id);
