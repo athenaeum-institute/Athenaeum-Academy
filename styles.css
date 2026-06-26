@@ -445,10 +445,15 @@ body {
 }
 
 /* Nav icons */
+.nav-actions, .nav-icons, .navbar-right, .header-actions, .navbar .right-section {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: nowrap !important;
+}
+
 .nav-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
   flex-shrink: 0;
 }
 
