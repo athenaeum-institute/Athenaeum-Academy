@@ -2247,6 +2247,8 @@
     let liveCoursesData = [];
 
     async function loadLiveClasses() {
+      const tb = document.getElementById('t-live-body');
+      tb.innerHTML = '<tr><td colspan="6" class="empty-state">Loading...</td></tr>';
       const res = await window.AthenaeumAdmin.getLiveClasses();
       if (res.status === 'success') {
         const tb = document.getElementById('t-live-body');
@@ -2305,6 +2307,9 @@
 
         document.getElementById('stat-live-today').textContent = liveToday;
         document.getElementById('stat-live-week').textContent = liveWeek;
+        document.getElementById('stat-live-now').textContent = liveNow;
+      } else {
+        document.getElementById('t-live-body').innerHTML = `<tr><td colspan="6" class="empty-state" style="color:red">Error: ${res.message}</td></tr>`;
       }
     }
 
