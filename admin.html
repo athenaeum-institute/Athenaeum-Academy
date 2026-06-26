@@ -2305,31 +2305,48 @@
 
         document.getElementById('stat-live-today').textContent = liveToday;
         document.getElementById('stat-live-week').textContent = liveWeek;
-        document.getElementById('stat-live-now').textContent = liveNow;
+      }
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = 'none';
+        el.classList.remove('open');
       }
     }
 
     async function openLiveClassModal(classId = null) {
-      document.getElementById('lc-id').value = classId || '';
-      document.getElementById('lc-title').value = '';
-      document.getElementById('lc-desc').value = '';
-      document.getElementById('lc-start').value = '';
-      document.getElementById('lc-end').value = '';
+      try {
+        const modal = document.getElementById('live-modal');
+        modal.classList.add('open');
+        modal.style.display = 'flex'; // Force display
 
-      if (liveTeachersData.length === 0) {
-        const tRes = await window.AthenaeumAdmin.getAllTeachers();
-        if (tRes.status === 'success') liveTeachersData = tRes.data;
+        document.getElementById('lc-id').value = classId || '';
+        document.getElementById('lc-title').value = '';
+        document.getElementById('lc-desc').value = '';
+        document.getElementById('lc-start').value = '';
+        document.getElementById('lc-end').value = '';
+
+        if (liveTeachersData.length === 0) {
+          const tRes = await window.AthenaeumAdmin.getAllTeachers();
+          if (tRes.status === 'success' && tRes.data) liveTeachersData = tRes.data;
+        }
+        if (liveCoursesData.length === 0) {
+          const cRes = await window.AthenaeumAdmin.getCourses();
+          if (cRes.status === 'success' && cRes.data) liveCoursesData = cRes.data;
+        }
+
+        document.getElementById('lc-teacher').innerHTML = (liveTeachersData || []).map(t => `<option value="${t.id}" data-name="${t.full_name}">${t.full_name}</option>`).join('');
+        document.getElementById('lc-course').innerHTML = (liveCoursesData || []).map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
+
+        document.getElementById('live-modal').classList.add('open');
+      } catch (err) {
+        console.error("openLiveClassModal error:", err);
+        alert("Error opening modal: " + err.message);
       }
-      if (liveCoursesData.length === 0) {
-        const cRes = await window.AthenaeumAdmin.getCourses();
-        if (cRes.status === 'success') liveCoursesData = cRes.data;
-      }
-
-      document.getElementById('lc-teacher').innerHTML = liveTeachersData.map(t => `<option value="${t.id}" data-name="${t.full_name}">${t.full_name}</option>`).join('');
-      document.getElementById('lc-course').innerHTML = liveCoursesData.map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
-
-      document.getElementById('live-modal').classList.add('open');
     }
+
 
     async function saveLiveClass() {
       const classId = document.getElementById('lc-id').value;
