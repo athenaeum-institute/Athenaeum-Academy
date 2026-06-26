@@ -162,6 +162,23 @@ class AthenaeumStudentService {
     }));
   }
 
+  // ── NOTIFICATIONS ──
+  async getNotifications() {
+    const { data, error } = await this.client.from('notifications')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data;
+  }
+
+  async markNotificationRead(id) {
+    const { error } = await this.client.from('notifications')
+      .update({ is_read: true })
+      .eq('id', id);
+    if (error) throw error;
+    return true;
+  }
+
 }
 
 // Initialize on window
