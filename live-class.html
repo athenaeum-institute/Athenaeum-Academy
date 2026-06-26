@@ -76,14 +76,8 @@
     </div>
 
     <div class="nav-right">
-      <span style="font-size:.8rem; color:rgba(255,255,255,.7);">
-        <span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">group</span> 48 attending
-      </span>
-      <button class="icon-btn" title="Raise Hand" id="raise-hand-nav">
-        <span class="material-symbols-outlined">front_hand</span>
-      </button>
-      <a href="dashboard-student.html" class="btn btn-ghost btn-sm">
-        <span class="material-symbols-outlined">arrow_back</span> Dashboard
+      <a href="javascript:history.back()" class="btn btn-ghost btn-sm">
+        <span class="material-symbols-outlined">arrow_back</span> Go Back
       </a>
     </div>
   </nav>
@@ -93,181 +87,11 @@
 
     <!-- Video Stage (Jitsi Meet Integration) -->
     <div class="video-stage"
-      style="padding: 0; background: transparent; border: none; display: flex; justify-content: center; align-items: center;">
+      style="width: 100%; padding: 0; background: transparent; border: none; display: flex; justify-content: center; align-items: center;">
       <div id="meet-container"
-        style="width: 100%; height: calc(100vh - 60px); min-height: 500px; border-radius: 12px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        style="width: 100%; height: calc(100vh - 60px); border: none;">
       </div>
     </div>
-
-    <!-- Control Bar -->
-    <div class="control-bar">
-      <button class="ctrl-btn active" id="btn-mic" onclick="toggleCtrl(this)">
-        <span class="material-symbols-outlined">mic</span>
-        Mute
-      </button>
-      <button class="ctrl-btn" id="btn-cam" onclick="toggleCtrl(this)">
-        <span class="material-symbols-outlined">videocam_off</span>
-        Camera
-      </button>
-      <div class="ctrl-separator"></div>
-      <button class="ctrl-btn" id="btn-screen" onclick="toggleCtrl(this)">
-        <span class="material-symbols-outlined">screen_share</span>
-        Share Screen
-      </button>
-      <button class="ctrl-btn" id="btn-whiteboard">
-        <span class="material-symbols-outlined">edit_square</span>
-        Whiteboard
-      </button>
-      <button class="ctrl-btn" id="btn-record">
-        <span class="material-symbols-outlined">radio_button_checked</span>
-        Record
-      </button>
-      <div class="ctrl-separator"></div>
-      <button class="ctrl-btn" id="btn-hand" onclick="raiseHand(this)">
-        <span class="material-symbols-outlined">front_hand</span>
-        Raise Hand
-      </button>
-      <button class="ctrl-btn" id="btn-react">
-        <span class="material-symbols-outlined">emoji_emotions</span>
-        React
-      </button>
-      <button class="ctrl-btn" id="btn-poll">
-        <span class="material-symbols-outlined">poll</span>
-        Poll
-      </button>
-      <div class="ctrl-separator"></div>
-      <button class="ctrl-btn danger" onclick="leaveClass()">
-        <span class="material-symbols-outlined">call_end</span>
-        Leave
-      </button>
-    </div>
-
-    <!-- Sidebar: Chat & Participants -->
-    <aside class="live-sidebar">
-      <!-- Tabs -->
-      <div class="sidebar-tabs">
-        <button class="s-tab active" id="tab-chat" onclick="switchTab('chat')">
-          <span class="material-symbols-outlined"
-            style="font-size:1rem; vertical-align:middle; margin-right:.3rem;">chat</span>
-          Chat
-        </button>
-        <button class="s-tab" id="tab-participants" onclick="switchTab('participants')">
-          <span class="material-symbols-outlined"
-            style="font-size:1rem; vertical-align:middle; margin-right:.3rem;">group</span>
-          Participants (48)
-        </button>
-      </div>
-
-      <!-- Chat Panel -->
-      <div class="tab-panel active" id="panel-chat">
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-msg">
-            <div class="cm-avatar" style="background:linear-gradient(135deg,#005088,#11CAA0);">FA</div>
-            <div class="cm-body">
-              <div><span class="cm-name">Fatima Anwar</span><span class="cm-time">2:05 PM</span></div>
-              <div class="cm-text">Professor, can you explain the difference between mitosis and meiosis?</div>
-            </div>
-          </div>
-          <div class="chat-msg">
-            <div class="cm-avatar" style="background:var(--clr-secondary);">MK</div>
-            <div class="cm-body">
-              <div><span class="cm-name" style="color:var(--clr-secondary);">Prof. Maria Khan</span><span
-                  class="cm-time">2:06 PM</span></div>
-              <div class="cm-text">Great question Fatima! Mitosis produces 2 identical diploid cells, while meiosis
-                produces 4 genetically unique haploid cells. I'll cover this on slide 12.</div>
-            </div>
-          </div>
-          <div class="chat-msg">
-            <div class="cm-avatar" style="background:linear-gradient(135deg,#FFD700,#005088);">AR</div>
-            <div class="cm-body">
-              <div><span class="cm-name">Ali Raza</span><span class="cm-time">2:08 PM</span></div>
-              <div class="cm-text">Thank you Professor 👍</div>
-            </div>
-          </div>
-          <div class="chat-msg">
-            <div class="cm-avatar" style="background:linear-gradient(135deg,#11CAA0,#FFD700);">ZK</div>
-            <div class="cm-body">
-              <div><span class="cm-name">Zara Khan</span><span class="cm-time">2:09 PM</span></div>
-              <div class="cm-text">Will this be on the O-Level exam? Which past papers cover this topic?</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Chat Input -->
-        <div class="chat-input-row">
-          <input type="text" id="chat-input" placeholder="Type a message…"
-            onkeydown="if(event.key==='Enter') sendChat()">
-          <button class="chat-send-btn" onclick="sendChat()">
-            <span class="material-symbols-outlined" style="font-size:1.1rem;">send</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Participants Panel -->
-      <div class="tab-panel" id="panel-participants">
-        <div class="participant-list">
-          <div class="p-item">
-            <div class="p-avatar-lg" style="background:var(--clr-secondary);">MK</div>
-            <div class="p-details">
-              <div class="p-nm">Prof. Maria Khan</div>
-              <div class="p-role">Host · Teacher</div>
-            </div>
-            <div class="p-icons">
-              <span class="material-symbols-outlined">mic</span>
-              <span class="material-symbols-outlined">videocam</span>
-            </div>
-          </div>
-          <div class="p-item">
-            <div class="p-avatar-lg" style="background:linear-gradient(135deg,#005088,#11CAA0);">FA</div>
-            <div class="p-details">
-              <div class="p-nm">Fatima Anwar</div>
-              <div class="p-role">Student</div>
-            </div>
-            <div class="p-icons">
-              <span class="material-symbols-outlined muted">mic_off</span>
-              <span class="material-symbols-outlined">videocam</span>
-            </div>
-          </div>
-          <div class="p-item">
-            <div class="p-avatar-lg" style="background:linear-gradient(135deg,#FFD700,#005088);">AR</div>
-            <div class="p-details">
-              <div class="p-nm">Ali Raza</div>
-              <div class="p-role">Student</div>
-            </div>
-            <div class="p-icons">
-              <span class="material-symbols-outlined">mic</span>
-              <span class="material-symbols-outlined muted">videocam_off</span>
-            </div>
-          </div>
-          <div class="p-item">
-            <div class="p-avatar-lg" style="background:linear-gradient(135deg,#11CAA0,#FFD700);">ZK</div>
-            <div class="p-details">
-              <div class="p-nm">Zara Khan</div>
-              <div class="p-role">Student ✋ Raised Hand</div>
-            </div>
-            <div class="p-icons">
-              <span class="material-symbols-outlined muted">mic_off</span>
-              <span class="material-symbols-outlined muted">videocam_off</span>
-            </div>
-          </div>
-          <div class="p-item">
-            <div class="p-avatar-lg" style="background:linear-gradient(135deg,#005088,#FFD700);">HS</div>
-            <div class="p-details">
-              <div class="p-nm">Hamza Siddiqui</div>
-              <div class="p-role">Student</div>
-            </div>
-            <div class="p-icons">
-              <span class="material-symbols-outlined muted">mic_off</span>
-              <span class="material-symbols-outlined">videocam</span>
-            </div>
-          </div>
-          <div class="p-item" style="justify-content:center; color:var(--clr-muted); font-size:.8rem; padding: 1rem;">
-            +43 more participants
-          </div>
-        </div>
-      </div>
-    </aside>
-
   </div>
 
   <script>
@@ -280,12 +104,28 @@
 
       if (!room) {
         alert("Invalid class link. Please go back to dashboard and click Join Class again.");
-        window.location.href = 'student-live-classes.html';
+        window.history.back();
         return;
       }
 
-      document.getElementById('header-title').innerText = title || 'Live Class';
-      document.getElementById('header-teacher').innerText = teacher ? '• ' + teacher : '';
+      // Fetch Real Data from Supabase
+      try {
+        const { data: classData, error } = await window.supabaseClient
+          .from('live_classes')
+          .select('title, teacher_name')
+          .eq('jitsi_room_name', room)
+          .single();
+
+        if (classData) {
+          document.getElementById('header-title').innerText = classData.title;
+          document.getElementById('header-teacher').innerText = '• ' + classData.teacher_name;
+        } else {
+          document.getElementById('header-title').innerText = 'Live Class';
+        }
+      } catch (err) {
+        console.error("Error fetching class data", err);
+        document.getElementById('header-title').innerText = 'Live Class';
+      }
 
       // Wait for supabase session
       const { data: { user } } = await window.supabaseClient.auth.getUser();
@@ -336,69 +176,7 @@
       api.addEventListener('readyToClose', () => {
         window.location.href = 'dashboard-student.html';
       });
-
-      api.addEventListener('participantJoined', () => {
-        const count = api.getNumberOfParticipants();
-        // Just an example, update if you have participant count element
-      });
     });
-
-    // Tab switching
-    function switchTab(tab) {
-      document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-' + tab).classList.add('active');
-      document.getElementById('panel-' + tab).classList.add('active');
-    }
-
-    // Control toggle
-    function toggleCtrl(btn) {
-      btn.classList.toggle('active');
-    }
-
-    // Raise hand
-    function raiseHand(btn) {
-      btn.classList.toggle('active');
-      const icon = btn.querySelector('.material-symbols-outlined');
-      const label = btn.childNodes[2];
-      if (btn.classList.contains('active')) {
-        icon.textContent = 'front_hand';
-        btn.style.color = '#FFD700';
-      } else {
-        btn.style.color = '';
-      }
-    }
-
-    // Leave class
-    function leaveClass() {
-      if (confirm('Are you sure you want to leave the class?')) {
-        window.location.href = 'dashboard-student.html';
-      }
-    }
-
-    // Send chat
-    function sendChat() {
-      const input = document.getElementById('chat-input');
-      const msg = input.value.trim();
-      if (!msg) return;
-
-      const container = document.getElementById('chat-messages');
-      const now = new Date();
-      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      const el = document.createElement('div');
-      el.className = 'chat-msg';
-      el.innerHTML = `
-        <div class="cm-avatar" style="background:linear-gradient(135deg,#005088,#11CAA0);">FA</div>
-        <div class="cm-body">
-          <div><span class="cm-name">Fatima Anwar (You)</span><span class="cm-time">${time}</span></div>
-          <div class="cm-text">${msg}</div>
-        </div>
-      `;
-      container.appendChild(el);
-      container.scrollTop = container.scrollHeight;
-      input.value = '';
-    }
   </script>
 
   <!-- Athenaeum Assistant Widget (with Supabase for auth check) -->
