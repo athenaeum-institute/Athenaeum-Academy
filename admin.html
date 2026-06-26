@@ -1594,7 +1594,8 @@
         <input type="hidden" id="lc-id">
         <div class="form-group">
           <label class="form-label">Select Teacher</label>
-          <select class="l-input" id="lc-teacher"></select>
+          <input type="text" class="l-input" id="lc-teacher-input" list="lc-teacher" placeholder="Select or type teacher name">
+          <datalist id="lc-teacher"></datalist>
         </div>
         <div class="form-group">
           <label class="form-label">Select Course</label>
@@ -2332,11 +2333,11 @@
           if (tRes.status === 'success' && tRes.data) liveTeachersData = tRes.data;
         }
         if (liveCoursesData.length === 0) {
-          const cRes = await window.AthenaeumAdmin.getCourses();
-          if (cRes.status === 'success' && cRes.data) liveCoursesData = cRes.data;
+          const cRes = await window.AthenaeumAdmin.fetchAllCourses();
+          if (cRes && Array.isArray(cRes)) liveCoursesData = cRes;
         }
 
-        document.getElementById('lc-teacher').innerHTML = (liveTeachersData || []).map(t => `<option value="${t.id}" data-name="${t.full_name}">${t.full_name}</option>`).join('');
+        document.getElementById('lc-teacher').innerHTML = (liveTeachersData || []).map(t => `<option data-id="${t.id}" value="${t.full_name}"></option>`).join('');
         document.getElementById('lc-course').innerHTML = (liveCoursesData || []).map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
 
         document.getElementById('live-modal').classList.add('open');
@@ -2349,12 +2350,15 @@
 
     async function saveLiveClass() {
       const classId = document.getElementById('lc-id').value;
-      const tSelect = document.getElementById('lc-teacher');
+      const teacherInput = document.getElementById('lc-teacher-input').value.trim();
+      let teacherId = null;
+      let teacherName = teacherInput;
+      const option = Array.from(document.getElementById('lc-teacher').options).find(o => o.value === teacherInput);
+      if (option) {
+        teacherId = option.getAttribute('data-id');
+      }
+      
       const cSelect = document.getElementById('lc-course');
-      
-      const teacherId = tSelect.value;
-      const teacherName = tSelect.options[tSelect.selectedIndex]?.getAttribute('data-name');
-      
       const courseId = cSelect.value;
       const subject = cSelect.options[cSelect.selectedIndex]?.getAttribute('data-subject');
       
@@ -2363,7 +2367,7 @@
       const start = document.getElementById('lc-start').value;
       const end = document.getElementById('lc-end').value;
 
-      if (!teacherId || !courseId || !title || !start || !end) {
+      if (!teacherName || !courseId || !title || !start || !end) {
         return showToast('Please fill all required fields.', 'error');
       }
 
