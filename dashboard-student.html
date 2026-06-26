@@ -809,7 +809,7 @@
         }
 
         // 3. Fetch Live Classes
-        loadLiveClasses();
+        loadLiveClasses(svc);
 
         // 3. Fetch Leaderboard
         const lb = await svc.getLeaderboard();
@@ -819,13 +819,15 @@
         document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
 
       } catch (e) {
-        console.error(e);
+        console.error("Init Error:", e);
+        alert("Error loading dashboard: " + e.message);
+        document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
       }
     }
 
-    async function loadLiveClasses() {
+    async function loadLiveClasses(svc) {
       try {
-        const classes = await window.svc.getLiveClasses();
+        const classes = await svc.getLiveClasses();
         const container = document.getElementById('student-live-container');
         if (!classes || classes.length === 0) {
           container.innerHTML = '<div style="color:var(--muted)">No upcoming live classes.</div>';
@@ -857,7 +859,7 @@
               <a href="${isLive ? 'live-class.html?room=' + encodeURIComponent(c.jitsi_room_name) : '#'}" 
                  class="btn ${isLive ? 'btn-primary' : 'btn-disabled'}" 
                  style="text-decoration:none; padding: 0.5rem 1rem;" 
-                 ${isLive ? '' : 'onclick="event.preventDefault(); showToast(\\'Class has not started yet.\\', \\'info\\')"'}>
+                 ${isLive ? '' : 'onclick="event.preventDefault(); showToast(&#39;Class has not started yet.&#39;, &#39;info&#39;)"'}>
                 ${isLive ? 'Join Now' : 'Scheduled'}
               </a>
             </div>
