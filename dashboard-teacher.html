@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Portal | Athenaeum</title>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+    rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth-state.js"></script>
@@ -37,110 +38,555 @@
       --radius: 10px;
       --sidebar-w: 240px;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Urbanist',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Urbanist', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
     /* SIDEBAR */
     .sidebar {
-      position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh;
-      background:var(--sidebar-bg); border-right:1px solid var(--border);
-      display:flex; flex-direction:column; z-index:100; overflow-y:auto;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      overflow-y: auto;
     }
-    .sidebar-logo { padding:1.5rem 1.25rem; border-bottom:1px solid var(--border); }
-    .sidebar-logo .brand { font-size:1.25rem; font-weight:800; color:var(--accent); font-family: 'Merriweather', serif;}
-    .sidebar-logo .role-tag { font-size:.7rem; background:rgba(0,80,136,.2); color:var(--accent); border-radius:20px; padding:.15rem .6rem; font-weight:700; }
-    .nav-section { padding:.75rem .75rem .25rem; font-size:.65rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo .brand {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Merriweather', serif;
+    }
+
+    .sidebar-logo .role-tag {
+      font-size: .7rem;
+      background: rgba(0, 80, 136, .2);
+      color: var(--accent);
+      border-radius: 20px;
+      padding: .15rem .6rem;
+      font-weight: 700;
+    }
+
+    .nav-section {
+      padding: .75rem .75rem .25rem;
+      font-size: .65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
     .nav-item {
-      display:flex; align-items:center; gap:.75rem;
-      padding:.7rem 1rem; border-radius:var(--radius); margin:.1rem .5rem;
-      cursor:pointer; font-size:.9rem; font-weight:600; color:var(--muted);
-      transition:.2s; text-decoration:none;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .7rem 1rem;
+      border-radius: var(--radius);
+      margin: .1rem .5rem;
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: .2s;
+      text-decoration: none;
     }
-    .nav-item:hover { background:var(--card2); color:var(--text); }
-    .nav-item.active { background:rgba(0,210,255,.1); color:var(--accent); }
-    .nav-item .material-symbols-outlined { font-size:1.2rem; }
-    .sidebar-footer { margin-top:auto; padding:1rem; border-top:1px solid var(--border); }
-    .admin-user { display:flex; align-items:center; gap:.75rem; }
-    .admin-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--accent)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.85rem; color:#fff;}
-    .admin-name { font-size:.85rem; font-weight:700; }
-    .admin-email { font-size:.7rem; color:var(--muted); }
-    .logout-btn { display:flex; align-items:center; gap:.5rem; margin-top:.75rem; padding:.5rem .75rem; border-radius:var(--radius); color:var(--red); font-size:.8rem; font-weight:600; cursor:pointer; border:1px solid rgba(248,81,73,.2); background:transparent; width:100%; transition:.2s; }
-    .logout-btn:hover { background:rgba(248,81,73,.1); }
+
+    .nav-item:hover {
+      background: var(--card2);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: rgba(0, 210, 255, .1);
+      color: var(--accent);
+    }
+
+    .nav-item .material-symbols-outlined {
+      font-size: 1.2rem;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .admin-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: .85rem;
+      color: #fff;
+    }
+
+    .admin-name {
+      font-size: .85rem;
+      font-weight: 700;
+    }
+
+    .admin-email {
+      font-size: .7rem;
+      color: var(--muted);
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: .75rem;
+      padding: .5rem .75rem;
+      border-radius: var(--radius);
+      color: var(--red);
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(248, 81, 73, .2);
+      background: transparent;
+      width: 100%;
+      transition: .2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(248, 81, 73, .1);
+    }
 
     /* MAIN CONTENT */
-    .main { margin-left:var(--sidebar-w); min-height:100vh; }
-    .topbar { padding:1rem 1.75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--sidebar-bg); position:sticky; top:0; z-index:50; }
-    .topbar-title { font-size:1.25rem; font-weight:800; }
-    .page-content { padding:1.75rem; }
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--sidebar-bg);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .page-content {
+      padding: 1.75rem;
+    }
 
     /* PANELS */
-    .panel { display:none; }
-    .panel.active { display:block; animation:fadeIn .3s ease; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+      animation: fadeIn .3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
 
     /* CARDS & GRIDS */
-    .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
-    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; display:flex; align-items:center; gap:1rem; }
-    .stat-icon { width:48px; height:48px; border-radius:10px; background:rgba(0,210,255,.1); color:var(--accent); display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
-    .stat-info p { font-size:.8rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin-bottom:.25rem; }
-    .stat-info h3 { font-size:1.75rem; font-weight:800; }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: rgba(0, 210, 255, .1);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .stat-info p {
+      font-size: .8rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: .25rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
 
     /* BUTTONS */
-    .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem 1rem; border-radius:8px; font-size:.85rem; font-weight:700; cursor:pointer; transition:.2s; border:none; font-family:'Urbanist',sans-serif; }
-    .btn-primary { background:var(--primary); color:#fff; }
-    .btn-primary:hover { background:#006bb3; }
-    .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
-    .btn-ghost:hover { background:var(--card2); }
-    .btn-sm { padding:.3rem .6rem; font-size:.75rem; border-radius:6px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem 1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+      border: none;
+      font-family: 'Urbanist', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #006bb3;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--card2);
+    }
+
+    .btn-sm {
+      padding: .3rem .6rem;
+      font-size: .75rem;
+      border-radius: 6px;
+    }
 
     /* TABLES */
-    .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; }
-    th, td { padding:1rem; text-align:left; border-bottom:1px solid var(--border); font-size:.9rem; }
-    th { background:var(--sidebar-bg); font-weight:700; color:var(--muted); font-size:.8rem; text-transform:uppercase; letter-spacing:.5px; }
-    tr:hover td { background:var(--card2); }
-    .badge { display:inline-block; padding:.2rem .5rem; border-radius:20px; font-size:.7rem; font-weight:800; text-transform:uppercase; }
-    .badge-green { background:rgba(63,185,80,.1); color:var(--green); border:1px solid rgba(63,185,80,.2); }
-    .badge-gray { background:rgba(125,133,144,.1); color:var(--muted); border:1px solid rgba(125,133,144,.2); }
-    .badge-gold { background:rgba(255,215,0,.1); color:var(--gold); border:1px solid rgba(255,215,0,.2); }
-    .badge-blue { background:rgba(0,210,255,.1); color:var(--accent); border:1px solid rgba(0,210,255,.2); }
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+    }
+
+    th {
+      background: var(--sidebar-bg);
+      font-weight: 700;
+      color: var(--muted);
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    tr:hover td {
+      background: var(--card2);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: .2rem .5rem;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .badge-green {
+      background: rgba(63, 185, 80, .1);
+      color: var(--green);
+      border: 1px solid rgba(63, 185, 80, .2);
+    }
+
+    .badge-gray {
+      background: rgba(125, 133, 144, .1);
+      color: var(--muted);
+      border: 1px solid rgba(125, 133, 144, .2);
+    }
+
+    .badge-gold {
+      background: rgba(255, 215, 0, .1);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .2);
+    }
+
+    .badge-blue {
+      background: rgba(0, 210, 255, .1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 210, 255, .2);
+    }
 
     /* MODALS */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:1000; opacity:0; pointer-events:none; transition:.2s; }
-    .modal-overlay.open { opacity:1; pointer-events:auto; }
-    .modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:90%; max-width:600px; max-height:90vh; overflow-y:auto; transform:translateY(20px); transition:.3s cubic-bezier(.175,.885,.32,1.275); }
-    .modal-overlay.open .modal { transform:translateY(0); }
-    .modal-header { padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-    .modal-title { font-size:1.1rem; font-weight:800; }
-    .modal-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.2rem; }
-    .modal-close:hover { color:var(--text); }
-    .modal-body { padding:1.5rem; }
-    .modal-footer { padding:1.25rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:.75rem; background:var(--sidebar-bg); }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: .3s cubic-bezier(.175, .885, .32, 1.275);
+    }
+
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: .75rem;
+      background: var(--sidebar-bg);
+    }
 
     /* FORMS */
-    .form-group { margin-bottom:1.25rem; }
-    .form-label { display:block; font-size:.8rem; font-weight:700; color:var(--muted); margin-bottom:.4rem; }
-    .form-input, .form-textarea, .form-select { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:.75rem 1rem; color:var(--text); font-family:'Urbanist',sans-serif; font-size:.9rem; outline:none; transition:.2s; }
-    .form-input:focus, .form-textarea:focus, .form-select:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(0,210,255,.1); }
-    .form-textarea { resize:vertical; min-height:80px; }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      color: var(--text);
+      font-family: 'Urbanist', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: .2s;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0, 210, 255, .1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
 
     /* TOAST */
-    #toast { position:fixed; bottom:20px; right:20px; background:var(--card); border:1px solid var(--border); padding:1rem 1.5rem; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5); font-weight:600; font-size:.9rem; display:flex; align-items:center; gap:.75rem; transform:translateY(100px); opacity:0; transition:.3s cubic-bezier(.175,.885,.32,1.275); z-index:9999; }
-    #toast.show { transform:translateY(0); opacity:1; }
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      font-weight: 600;
+      font-size: .9rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: .3s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 9999;
+    }
 
-    .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-    .section-title { font-size:1.2rem; font-weight:800; }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
 
     /* CONTENT EDITOR TREE */
-    .module-item { background:var(--card2); border:1px solid var(--border); border-radius:8px; margin-bottom:1rem; }
-    .module-header { padding:1rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); background:rgba(0,0,0,0.2); }
-    .module-title { font-weight:800; font-size:1.1rem; color:var(--accent); }
-    .lesson-list { padding:1rem; }
-    .lesson-item { display:flex; justify-content:space-between; align-items:center; padding:.75rem; background:var(--bg); border:1px solid var(--border); border-radius:6px; margin-bottom:.5rem; }
-    .lesson-info { display:flex; align-items:center; gap:1rem; }
-    .lesson-title { font-weight:600; font-size:.9rem; }
-    .lesson-meta { font-size:.75rem; color:var(--muted); }
+    .module-item {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
 
+    .module-header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .module-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .lesson-list {
+      padding: 1rem;
+    }
+
+    .lesson-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: .5rem;
+    }
+
+    .lesson-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .lesson-title {
+      font-weight: 600;
+      font-size: .9rem;
+    }
+
+    .lesson-meta {
+      font-size: .75rem;
+      color: var(--muted);
+    }
   </style>
 
   <!-- Vercel Speed Insights -->
@@ -160,6 +606,7 @@
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"Teacher Portal","item":"https://athenaeumacademy.com/dashboard-teacher.html"}]}
   </script>
 </head>
+
 <body>
 
   <!-- SIDEBAR -->
@@ -222,28 +669,45 @@
         <div class="grid-4">
           <div class="stat-card">
             <div class="stat-icon"><span class="material-symbols-outlined">menu_book</span></div>
-            <div class="stat-info"><p>My Courses</p><h3 id="stat-courses">0</h3></div>
+            <div class="stat-info">
+              <p>My Courses</p>
+              <h3 id="stat-courses">0</h3>
+            </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="color:var(--gold); background:rgba(255,215,0,.1)"><span class="material-symbols-outlined">groups</span></div>
-            <div class="stat-info"><p>Total Students</p><h3 id="stat-students">0</h3></div>
+            <div class="stat-icon" style="color:var(--gold); background:rgba(255,215,0,.1)"><span
+                class="material-symbols-outlined">groups</span></div>
+            <div class="stat-info">
+              <p>Total Students</p>
+              <h3 id="stat-students">0</h3>
+            </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="color:var(--green); background:rgba(63,185,80,.1)"><span class="material-symbols-outlined">play_circle</span></div>
-            <div class="stat-info"><p>Lessons Uploaded</p><h3 id="stat-lessons">0</h3></div>
+            <div class="stat-icon" style="color:var(--green); background:rgba(63,185,80,.1)"><span
+                class="material-symbols-outlined">play_circle</span></div>
+            <div class="stat-info">
+              <p>Lessons Uploaded</p>
+              <h3 id="stat-lessons">0</h3>
+            </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="color:var(--purple); background:rgba(163,113,247,.1)"><span class="material-symbols-outlined">star</span></div>
-            <div class="stat-info"><p>Avg Rating</p><h3 id="stat-rating">0.0</h3></div>
+            <div class="stat-icon" style="color:var(--purple); background:rgba(163,113,247,.1)"><span
+                class="material-symbols-outlined">star</span></div>
+            <div class="stat-info">
+              <p>Avg Rating</p>
+              <h3 id="stat-rating">0.0</h3>
+            </div>
           </div>
         </div>
-        
+
         <div class="section-header">
           <div class="section-title">Recent Activity</div>
         </div>
         <div class="table-wrap">
           <table style="width:100%; border-collapse:collapse; text-align:center;">
-            <tr><td style="padding:2rem; color:var(--muted);">More activity features coming soon...</td></tr>
+            <tr>
+              <td style="padding:2rem; color:var(--muted);">More activity features coming soon...</td>
+            </tr>
           </table>
         </div>
       </div>
@@ -268,7 +732,9 @@
               </tr>
             </thead>
             <tbody id="t-courses-body">
-              <tr><td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              <tr>
+                <td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -294,7 +760,8 @@
       <div id="panel-students" class="panel">
         <div class="section-header">
           <div class="section-title">My Students</div>
-          <button class="btn btn-ghost" onclick="loadStudents()"><span class="material-symbols-outlined">refresh</span> Refresh</button>
+          <button class="btn btn-ghost" onclick="loadStudents()"><span class="material-symbols-outlined">refresh</span>
+            Refresh</button>
         </div>
         <div class="table-wrap">
           <table>
@@ -307,7 +774,9 @@
               </tr>
             </thead>
             <tbody id="t-students-body">
-              <tr><td colspan="4" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              <tr>
+                <td colspan="4" style="text-align:center;color:var(--muted);">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -332,7 +801,9 @@
               </tr>
             </thead>
             <tbody id="t-live-body">
-              <tr><td colspan="4" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              <tr>
+                <td colspan="4" style="text-align:center;color:var(--muted);">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -356,7 +827,9 @@
               </tr>
             </thead>
             <tbody id="t-announcements-body">
-              <tr><td colspan="3" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              <tr>
+                <td colspan="3" style="text-align:center;color:var(--muted);">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -382,12 +855,14 @@
               </tr>
             </thead>
             <tbody id="t-exams-body">
-              <tr><td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              <tr>
+                <td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      
+
       <!-- EXAM EDITOR PANEL -->
       <div id="panel-exam-editor" class="panel">
         <div class="section-header">
@@ -411,7 +886,9 @@
               </tr>
             </thead>
             <tbody id="t-questions-body">
-              <tr><td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              <tr>
+                <td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -530,7 +1007,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Announcement Modal -->
   <div class="modal-overlay" id="announcement-modal">
     <div class="modal">
@@ -542,13 +1019,15 @@
         <form onsubmit="postAnnouncement(event)">
           <div style="margin-bottom:1rem">
             <label style="display:block;margin-bottom:0.5rem;color:var(--muted)">Target Course</label>
-            <select id="ann-course" style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)">
+            <select id="ann-course"
+              style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)">
               <!-- Injected via JS -->
             </select>
           </div>
           <div style="margin-bottom:1rem">
             <label style="display:block;margin-bottom:0.5rem;color:var(--muted)">Announcement Type</label>
-            <select id="ann-type" style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)">
+            <select id="ann-type"
+              style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)">
               <option value="info">Info (Blue)</option>
               <option value="success">Success (Green)</option>
               <option value="warning">Warning (Orange)</option>
@@ -557,11 +1036,15 @@
           </div>
           <div style="margin-bottom:1rem">
             <label style="display:block;margin-bottom:0.5rem;color:var(--muted)">Title</label>
-            <input type="text" id="ann-title" style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)" required>
+            <input type="text" id="ann-title"
+              style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)"
+              required>
           </div>
           <div style="margin-bottom:1rem">
             <label style="display:block;margin-bottom:0.5rem;color:var(--muted)">Message</label>
-            <textarea id="ann-msg" rows="4" style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)" required></textarea>
+            <textarea id="ann-msg" rows="4"
+              style="width:100%;padding:0.75rem;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)"
+              required></textarea>
           </div>
           <button type="submit" class="btn btn-primary" id="ann-btn">Post Announcement</button>
         </form>
@@ -719,7 +1202,7 @@
       document.getElementById('panel-' + id).classList.add('active');
       const nav = Array.from(document.querySelectorAll('.nav-item')).find(n => n.getAttribute('onclick').includes(id));
       if (nav) nav.classList.add('active');
-      
+
       const titles = {
         overview: 'Overview', courses: 'My Courses', editor: 'Course Editor',
         students: 'My Students', live: 'Live Classes', announcements: 'Announcements',
@@ -735,15 +1218,15 @@
       if (id === 'exams') loadExams();
     }
 
-    function showToast(msg, type='success') {
+    function showToast(msg, type = 'success') {
       const t = document.getElementById('toast');
       t.innerHTML = type === 'success' ? `<span style="color:var(--green)">✓</span> ${msg}` : `<span style="color:var(--red)">✕</span> ${msg}`;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3000);
     }
-    
+
     function closeModal(id) {
-        document.getElementById(id).classList.remove('open');
+      document.getElementById(id).classList.remove('open');
     }
 
     async function logout() {
@@ -784,14 +1267,14 @@
             <td><img src="${c.thumbnail_url || 'https://via.placeholder.com/80x50'}" style="width:80px;height:50px;object-fit:cover;border-radius:6px;" loading="lazy" decoding="async"></td>
             <td><strong>${c.title}</strong><br><span style="font-size:12px;color:var(--muted);">${c.subject}</span></td>
             <td>${c.enrollments[0]?.count || 0}</td>
-            <td><span class="badge ${c.is_published?'badge-green':'badge-gray'}">${c.is_published?'Published':'Draft'}</span></td>
+            <td><span class="badge ${c.is_published ? 'badge-green' : 'badge-gray'}">${c.is_published ? 'Published' : 'Draft'}</span></td>
             <td>
               <button class="btn btn-ghost btn-sm" onclick="editCourse('${c.id}')">Edit</button>
               <button class="btn btn-primary btn-sm" onclick="manageContent('${c.id}', '${c.title.replace(/'/g, "\\'")}')">Content</button>
             </td>
           </tr>
         `).join('');
-        
+
         // Populate selects
         const options = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
         document.getElementById('ann-course').innerHTML = options;
@@ -814,7 +1297,7 @@
 
     function editCourse(id) {
       const c = myCoursesData.find(x => x.id === id);
-      if(!c) return;
+      if (!c) return;
       document.getElementById('c-id').value = c.id;
       document.getElementById('c-title').value = c.title;
       document.getElementById('c-desc').value = c.description;
@@ -834,7 +1317,7 @@
         subject: document.getElementById('c-sub').value,
         thumbnail_url: document.getElementById('c-thumb').value
       };
-      if (!data.title) return showToast('Title is required','error');
+      if (!data.title) return showToast('Title is required', 'error');
       try {
         await svc.saveCourse(data);
         showToast('Course saved');
@@ -857,14 +1340,14 @@
       container.innerHTML = 'Loading...';
       try {
         const modules = await svc.getModules(currentCourseId);
-        if(!modules.length) {
-            container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted);">No modules yet. Add one above.</div>';
-            return;
+        if (!modules.length) {
+          container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted);">No modules yet. Add one above.</div>';
+          return;
         }
         let html = '';
         for (let m of modules) {
-            const lessons = await svc.getLessons(m.id);
-            let lHtml = lessons.length ? lessons.map(l => `
+          const lessons = await svc.getLessons(m.id);
+          let lHtml = lessons.length ? lessons.map(l => `
                 <div class="lesson-item">
                     <div class="lesson-info">
                         <span class="material-symbols-outlined" style="color:var(--muted)">play_circle</span>
@@ -874,19 +1357,19 @@
                         </div>
                     </div>
                     <div>
-                        <button class="btn btn-ghost btn-sm" onclick="editLesson('${l.id}','${l.module_id}','${l.title.replace(/'/g,"\\'")}','${l.video_url}','${l.duration_minutes}','${l.order_index}',${l.is_free_preview})">Edit</button>
+                        <button class="btn btn-ghost btn-sm" onclick="editLesson('${l.id}','${l.module_id}','${l.title.replace(/'/g, "\\'")}','${l.video_url}','${l.duration_minutes}','${l.order_index}',${l.is_free_preview})">Edit</button>
                         <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delLesson('${l.id}')">Del</button>
                     </div>
                 </div>
             `).join('') : '<div style="color:var(--muted); font-size:0.85rem; padding:1rem;">No lessons in this module.</div>';
 
-            html += `
+          html += `
             <div class="module-item">
                 <div class="module-header">
                     <div class="module-title">Module ${m.order_index}: ${m.title}</div>
                     <div style="display:flex;gap:.5rem;">
                         <button class="btn btn-ghost btn-sm" onclick="openLessonModal('${m.id}')">+ Lesson</button>
-                        <button class="btn btn-ghost btn-sm" onclick="editModule('${m.id}','${m.title.replace(/'/g,"\\'")}','${m.order_index}')">Edit</button>
+                        <button class="btn btn-ghost btn-sm" onclick="editModule('${m.id}','${m.title.replace(/'/g, "\\'")}','${m.order_index}')">Edit</button>
                         <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delModule('${m.id}')">Del</button>
                     </div>
                 </div>
@@ -900,111 +1383,111 @@
     }
 
     function openModuleModal() {
-        document.getElementById('m-id').value = '';
-        document.getElementById('m-title').value = '';
-        document.getElementById('m-order').value = '1';
-        document.getElementById('module-modal').classList.add('open');
+      document.getElementById('m-id').value = '';
+      document.getElementById('m-title').value = '';
+      document.getElementById('m-order').value = '1';
+      document.getElementById('module-modal').classList.add('open');
     }
     function editModule(id, title, order) {
-        document.getElementById('m-id').value = id;
-        document.getElementById('m-title').value = title;
-        document.getElementById('m-order').value = order;
-        document.getElementById('module-modal').classList.add('open');
+      document.getElementById('m-id').value = id;
+      document.getElementById('m-title').value = title;
+      document.getElementById('m-order').value = order;
+      document.getElementById('module-modal').classList.add('open');
     }
     async function saveModule() {
-        try {
-            await svc.saveModule(
-                document.getElementById('m-id').value,
-                currentCourseId,
-                document.getElementById('m-title').value,
-                document.getElementById('m-order').value
-            );
-            closeModal('module-modal'); showToast('Module saved'); loadEditorContent();
-        } catch (e) { showToast(e.message,'error'); }
+      try {
+        await svc.saveModule(
+          document.getElementById('m-id').value,
+          currentCourseId,
+          document.getElementById('m-title').value,
+          document.getElementById('m-order').value
+        );
+        closeModal('module-modal'); showToast('Module saved'); loadEditorContent();
+      } catch (e) { showToast(e.message, 'error'); }
     }
     async function delModule(id) {
-        if(!confirm('Delete this module?')) return;
-        try { await svc.deleteModule(id); showToast('Deleted'); loadEditorContent(); } catch(e){ showToast(e.message,'error'); }
+      if (!confirm('Delete this module?')) return;
+      try { await svc.deleteModule(id); showToast('Deleted'); loadEditorContent(); } catch (e) { showToast(e.message, 'error'); }
     }
 
     function openLessonModal(modId) {
-        document.getElementById('l-id').value = '';
-        document.getElementById('l-mod-id').value = modId;
-        document.getElementById('l-title').value = '';
-        document.getElementById('l-video').value = '';
-        document.getElementById('l-dur').value = '10';
-        document.getElementById('l-order').value = '1';
-        document.getElementById('l-free').checked = false;
-        document.getElementById('lesson-modal').classList.add('open');
+      document.getElementById('l-id').value = '';
+      document.getElementById('l-mod-id').value = modId;
+      document.getElementById('l-title').value = '';
+      document.getElementById('l-video').value = '';
+      document.getElementById('l-dur').value = '10';
+      document.getElementById('l-order').value = '1';
+      document.getElementById('l-free').checked = false;
+      document.getElementById('lesson-modal').classList.add('open');
     }
     function editLesson(id, modId, title, vid, dur, order, free) {
-        document.getElementById('l-id').value = id;
-        document.getElementById('l-mod-id').value = modId;
-        document.getElementById('l-title').value = title;
-        document.getElementById('l-video').value = vid;
-        document.getElementById('l-dur').value = dur;
-        document.getElementById('l-order').value = order;
-        document.getElementById('l-free').checked = free;
-        document.getElementById('lesson-modal').classList.add('open');
+      document.getElementById('l-id').value = id;
+      document.getElementById('l-mod-id').value = modId;
+      document.getElementById('l-title').value = title;
+      document.getElementById('l-video').value = vid;
+      document.getElementById('l-dur').value = dur;
+      document.getElementById('l-order').value = order;
+      document.getElementById('l-free').checked = free;
+      document.getElementById('lesson-modal').classList.add('open');
     }
     async function saveLesson() {
-        try {
-            await svc.saveLesson({
-                id: document.getElementById('l-id').value,
-                module_id: document.getElementById('l-mod-id').value,
-                title: document.getElementById('l-title').value,
-                video_url: document.getElementById('l-video').value,
-                duration_minutes: document.getElementById('l-dur').value,
-                order_index: document.getElementById('l-order').value,
-                is_free_preview: document.getElementById('l-free').checked
-            });
-            closeModal('lesson-modal'); showToast('Lesson saved'); loadEditorContent();
-        } catch (e) { showToast(e.message,'error'); }
+      try {
+        await svc.saveLesson({
+          id: document.getElementById('l-id').value,
+          module_id: document.getElementById('l-mod-id').value,
+          title: document.getElementById('l-title').value,
+          video_url: document.getElementById('l-video').value,
+          duration_minutes: document.getElementById('l-dur').value,
+          order_index: document.getElementById('l-order').value,
+          is_free_preview: document.getElementById('l-free').checked
+        });
+        closeModal('lesson-modal'); showToast('Lesson saved'); loadEditorContent();
+      } catch (e) { showToast(e.message, 'error'); }
     }
     async function delLesson(id) {
-        if(!confirm('Delete lesson?')) return;
-        try { await svc.deleteLesson(id); showToast('Deleted'); loadEditorContent(); } catch(e){ showToast(e.message,'error'); }
+      if (!confirm('Delete lesson?')) return;
+      try { await svc.deleteLesson(id); showToast('Deleted'); loadEditorContent(); } catch (e) { showToast(e.message, 'error'); }
     }
 
     // ── STUDENTS ──
     async function loadStudents() {
-        const tb = document.getElementById('t-students-body');
-        tb.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
-        try {
-            const data = await svc.getMyStudents();
-            if(!data.length) return tb.innerHTML = '<tr><td colspan="4">No students enrolled yet.</td></tr>';
-            tb.innerHTML = data.map(s => `
+      const tb = document.getElementById('t-students-body');
+      tb.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+      try {
+        const data = await svc.getMyStudents();
+        if (!data.length) return tb.innerHTML = '<tr><td colspan="4">No students enrolled yet.</td></tr>';
+        tb.innerHTML = data.map(s => `
                 <tr>
                     <td><strong>${s.student?.full_name || 'Unknown'}</strong></td>
                     <td>${s.course_title}</td>
-                    <td><span class="badge ${s.student?.plan_type==='paid'?'badge-gold':'badge-blue'}">${s.student?.plan_type||'trial'}</span></td>
+                    <td><span class="badge ${s.student?.plan_type === 'paid' ? 'badge-gold' : 'badge-blue'}">${s.student?.plan_type || 'trial'}</span></td>
                     <td>${new Date(s.enrolled_at).toLocaleDateString()}</td>
                 </tr>
             `).join('');
-        } catch(e) { tb.innerHTML = '<tr><td colspan="4">Error</td></tr>'; }
+      } catch (e) { tb.innerHTML = '<tr><td colspan="4">Error</td></tr>'; }
     }
 
     // ── ANNOUNCEMENTS ──
     async function loadAnnouncements() {
-        const tb = document.getElementById('t-announcements-body');
-        try {
-            const data = await svc.getAnnouncements();
-            if(!data.length) return tb.innerHTML = '<tr><td colspan="3">No announcements.</td></tr>';
-            tb.innerHTML = data.map(a => `
+      const tb = document.getElementById('t-announcements-body');
+      try {
+        const data = await svc.getAnnouncements();
+        if (!data.length) return tb.innerHTML = '<tr><td colspan="3">No announcements.</td></tr>';
+        tb.innerHTML = data.map(a => `
                 <tr>
                     <td><span class="badge badge-gray">${a.courses?.title || a.target.toUpperCase()}</span></td>
                     <td><strong>${a.title}</strong><br><span style="font-size:12px;color:var(--muted)">${a.message}</span></td>
                     <td>${new Date(a.created_at).toLocaleDateString()}</td>
                 </tr>
             `).join('');
-        } catch(e) { tb.innerHTML = '<tr><td colspan="3">Error</td></tr>'; }
+      } catch (e) { tb.innerHTML = '<tr><td colspan="3">Error</td></tr>'; }
     }
     function openAnnouncementModal() {
-        document.getElementById('ann-msg').value = '';
-        document.getElementById('ann-title').value = '';
-        document.getElementById('announcement-modal').classList.add('open');
+      document.getElementById('ann-msg').value = '';
+      document.getElementById('ann-title').value = '';
+      document.getElementById('announcement-modal').classList.add('open');
     }
-    
+
     async function postAnnouncement(e) {
       e.preventDefault();
       const courseId = document.getElementById('ann-course').value;
@@ -1012,7 +1495,7 @@
       const type = document.getElementById('ann-type').value;
       const title = document.getElementById('ann-title').value;
       const btn = document.getElementById('ann-btn');
-      
+
       btn.innerText = 'Posting...'; btn.disabled = true;
       try {
         const { error } = await svc.client.from('announcements').insert([{
@@ -1022,11 +1505,11 @@
           type: type,
           target: 'all'
         }]);
-        if(error) throw error;
-        closeModal('announcement-modal'); 
-        showToast('Posted!'); 
+        if (error) throw error;
+        closeModal('announcement-modal');
+        showToast('Posted!');
         loadAnnouncements();
-      } catch(err){ showToast(err.message,'error'); }
+      } catch (err) { showToast(err.message, 'error'); }
       finally {
         btn.innerText = 'Post Announcement'; btn.disabled = false;
       }
@@ -1034,54 +1517,54 @@
 
     // ── EXAMS ──
     async function loadExams() {
-        const tb = document.getElementById('t-exams-body');
-        try {
-            const data = await svc.getMyExams();
-            if(!data.length) return tb.innerHTML = '<tr><td colspan="5">No exams created.</td></tr>';
-            tb.innerHTML = data.map(e => `
+      const tb = document.getElementById('t-exams-body');
+      try {
+        const data = await svc.getMyExams();
+        if (!data.length) return tb.innerHTML = '<tr><td colspan="5">No exams created.</td></tr>';
+        tb.innerHTML = data.map(e => `
                 <tr>
                     <td><strong>${e.title}</strong></td>
                     <td>${e.courses?.title || 'Unknown'}</td>
                     <td>${e.duration_minutes} mins</td>
-                    <td><span class="badge ${e.is_published?'badge-green':'badge-gray'}">${e.is_published?'Published':'Draft'}</span></td>
+                    <td><span class="badge ${e.is_published ? 'badge-green' : 'badge-gray'}">${e.is_published ? 'Published' : 'Draft'}</span></td>
                     <td>
-                        <button class="btn btn-ghost btn-sm" onclick="manageExamContent('${e.id}','${e.title.replace(/'/g,"\\'")}('${e.id}')">Questions</button>
+                        <button class="btn btn-ghost btn-sm" onclick="manageExamContent('${e.id}','${e.title.replace(/'/g, "\\'")}('${e.id}')">Questions</button>
                     </td>
                 </tr>
             `).join('');
-        } catch(e) { tb.innerHTML = '<tr><td colspan="5">Error</td></tr>'; }
+      } catch (e) { tb.innerHTML = '<tr><td colspan="5">Error</td></tr>'; }
     }
     function openExamModal() {
-        document.getElementById('e-id').value = '';
-        document.getElementById('e-title').value = '';
-        document.getElementById('exam-modal').classList.add('open');
+      document.getElementById('e-id').value = '';
+      document.getElementById('e-title').value = '';
+      document.getElementById('exam-modal').classList.add('open');
     }
     async function saveExam() {
-        try {
-            await svc.saveExam({
-                id: document.getElementById('e-id').value,
-                course_id: document.getElementById('e-course').value,
-                title: document.getElementById('e-title').value,
-                duration_minutes: document.getElementById('e-dur').value,
-                total_marks: document.getElementById('e-marks').value,
-            });
-            closeModal('exam-modal'); showToast('Saved'); loadExams();
-        } catch(e) { showToast(e.message,'error'); }
+      try {
+        await svc.saveExam({
+          id: document.getElementById('e-id').value,
+          course_id: document.getElementById('e-course').value,
+          title: document.getElementById('e-title').value,
+          duration_minutes: document.getElementById('e-dur').value,
+          total_marks: document.getElementById('e-marks').value,
+        });
+        closeModal('exam-modal'); showToast('Saved'); loadExams();
+      } catch (e) { showToast(e.message, 'error'); }
     }
-    
+
     async function manageExamContent(eid, title) {
-        currentExamId = eid;
-        document.getElementById('exam-editor-title').innerText = title + ' - Questions';
-        showPanel('exam-editor');
-        loadQuestions();
+      currentExamId = eid;
+      document.getElementById('exam-editor-title').innerText = title + ' - Questions';
+      showPanel('exam-editor');
+      loadQuestions();
     }
-    
+
     async function loadQuestions() {
-        const tb = document.getElementById('t-questions-body');
-        try {
-            const data = await svc.getExamQuestions(currentExamId);
-            if(!data.length) return tb.innerHTML = '<tr><td colspan="5">No questions.</td></tr>';
-            tb.innerHTML = data.map(q => `
+      const tb = document.getElementById('t-questions-body');
+      try {
+        const data = await svc.getExamQuestions(currentExamId);
+        if (!data.length) return tb.innerHTML = '<tr><td colspan="5">No questions.</td></tr>';
+        tb.innerHTML = data.map(q => `
                 <tr>
                     <td>${q.order_index}</td>
                     <td>${q.question_text}</td>
@@ -1092,41 +1575,41 @@
                     </td>
                 </tr>
             `).join('');
-        } catch(e) {}
+      } catch (e) { }
     }
-    
+
     function openQuestionModal() {
-        document.getElementById('q-id').value = '';
-        document.getElementById('q-exam-id').value = currentExamId;
-        document.getElementById('q-text').value = '';
-        document.getElementById('q-a').value = '';
-        document.getElementById('q-b').value = '';
-        document.getElementById('q-c').value = '';
-        document.getElementById('q-d').value = '';
-        document.getElementById('question-modal').classList.add('open');
+      document.getElementById('q-id').value = '';
+      document.getElementById('q-exam-id').value = currentExamId;
+      document.getElementById('q-text').value = '';
+      document.getElementById('q-a').value = '';
+      document.getElementById('q-b').value = '';
+      document.getElementById('q-c').value = '';
+      document.getElementById('q-d').value = '';
+      document.getElementById('question-modal').classList.add('open');
     }
-    
+
     async function saveQuestion() {
-        try {
-            await svc.saveQuestion({
-                id: document.getElementById('q-id').value,
-                exam_id: document.getElementById('q-exam-id').value,
-                question_text: document.getElementById('q-text').value,
-                option_a: document.getElementById('q-a').value,
-                option_b: document.getElementById('q-b').value,
-                option_c: document.getElementById('q-c').value,
-                option_d: document.getElementById('q-d').value,
-                correct_option: document.getElementById('q-correct').value,
-                marks: document.getElementById('q-marks').value,
-                order_index: document.getElementById('q-order').value
-            });
-            closeModal('question-modal'); showToast('Question Added'); loadQuestions();
-        } catch(e) { showToast(e.message, 'error'); }
+      try {
+        await svc.saveQuestion({
+          id: document.getElementById('q-id').value,
+          exam_id: document.getElementById('q-exam-id').value,
+          question_text: document.getElementById('q-text').value,
+          option_a: document.getElementById('q-a').value,
+          option_b: document.getElementById('q-b').value,
+          option_c: document.getElementById('q-c').value,
+          option_d: document.getElementById('q-d').value,
+          correct_option: document.getElementById('q-correct').value,
+          marks: document.getElementById('q-marks').value,
+          order_index: document.getElementById('q-order').value
+        });
+        closeModal('question-modal'); showToast('Question Added'); loadQuestions();
+      } catch (e) { showToast(e.message, 'error'); }
     }
-    
+
     async function delQuestion(id) {
-        if(!confirm('Delete question?')) return;
-        try { await svc.deleteQuestion(id); loadQuestions(); } catch(e){}
+      if (!confirm('Delete question?')) return;
+      try { await svc.deleteQuestion(id); loadQuestions(); } catch (e) { }
     }
 
     // ── LIVE CLASSES ──
@@ -1148,7 +1631,7 @@
           if (now >= start && now <= end) { status = 'live'; badge = 'badge-green'; }
           else if (now > end) { status = 'ended'; badge = 'badge-gray'; }
 
-          const timeStr = `${start.toLocaleDateString()} ${start.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
+          const timeStr = `${start.toLocaleDateString()} ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
           return `
             <tr>
@@ -1171,22 +1654,22 @@
       // Populate course dropdown
       const courseSelect = document.getElementById('lc-course');
       courseSelect.innerHTML = myCoursesData.map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
-      
+
       document.getElementById('lc-id').value = '';
       document.getElementById('lc-title').value = '';
       document.getElementById('lc-desc').value = '';
-      
+
       // Default times to tomorrow
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(10, 0, 0, 0);
-      const startStr = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
+      const startStr = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
       tomorrow.setHours(11, 0, 0, 0);
-      const endStr = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
-      
+      const endStr = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+
       document.getElementById('lc-start').value = startStr;
       document.getElementById('lc-end').value = endStr;
-      
+
       document.getElementById('live-modal').classList.add('open');
     }
 
@@ -1241,4 +1724,5 @@
   </script>
   <script src="athenaeum-assistant.js?v=2" defer></script>
 </body>
+
 </html>

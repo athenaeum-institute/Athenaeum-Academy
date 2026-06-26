@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
   <title>About Athenaeum | Pakistan's Trusted Online Academy</title>
-  <meta name="description" content="Learn about Athenaeum Academy — our mission, teachers, and commitment to quality education for Pakistani students from O Levels to university entrance exams.">
+  <meta name="description"
+    content="Learn about Athenaeum Academy — our mission, teachers, and commitment to quality education for Pakistani students from O Levels to university entrance exams.">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Vercel Speed Insights -->
@@ -32,7 +34,8 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Athenaeum Academy">
   <meta property="og:title" content="About Athenaeum | Pakistan's Trusted Online Academy">
-  <meta property="og:description" content="Learn about Athenaeum Academy — our mission, teachers, and commitment to quality education for Pakistani students from O Levels to university entrance exams.">
+  <meta property="og:description"
+    content="Learn about Athenaeum Academy — our mission, teachers, and commitment to quality education for Pakistani students from O Levels to university entrance exams.">
   <meta property="og:image" content="https://athenaeumacademy.com/assets/logo.png">
   <meta property="og:locale" content="en_PK">
   <meta name="twitter:card" content="summary_large_image">
@@ -42,393 +45,436 @@
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"About Athenaeum","item":"https://athenaeumacademy.com/about.html"}]}
   </script>
 
-<style>
-.page-hero {
-  background: linear-gradient(135deg, 
-    #0a0f2e 0%, 
-    #0d1b4b 40%, 
-    #1a1060 70%, 
-    #0f0a3a 100%);
-  position: relative;
-  overflow: hidden;
-  padding: 60px 20px;        /* smaller than contact page */
-  min-height: 200px;          /* compact height */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg,
+          #0a0f2e 0%,
+          #0d1b4b 40%,
+          #1a1060 70%,
+          #0f0a3a 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 60px 20px;
+      /* smaller than contact page */
+      min-height: 200px;
+      /* compact height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
 
-/* Subtle dot grid pattern overlay */
-.page-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    rgba(255,255,255,0.06) 1px, 
-    transparent 1px
-  );
-  background-size: 28px 28px;
-  pointer-events: none;
-}
+    /* Subtle dot grid pattern overlay */
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px,
+          transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
 
-/* Glowing orb top right */
-.page-hero::after {
-  content: '';
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(
-    circle, 
-    rgba(99, 102, 241, 0.25) 0%, 
-    transparent 70%
-  );
-  pointer-events: none;
-}
+    /* Glowing orb top right */
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle,
+          rgba(99, 102, 241, 0.25) 0%,
+          transparent 70%);
+      pointer-events: none;
+    }
 
-.page-hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 700px;
-  margin: 0 auto;
-}
+    .page-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      margin: 0 auto;
+    }
 
-.page-hero h1 {
-  color: #ffffff;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 700;
-  margin-bottom: 12px;
-  line-height: 1.2;
-}
+    .page-hero h1 {
+      color: #ffffff;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
 
-.page-hero p {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  line-height: 1.6;
-  margin: 0;
-}
+    .page-hero p {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      line-height: 1.6;
+      margin: 0;
+    }
 
-@media (max-width: 768px) {
-  .page-hero {
-    padding: 40px 16px;
-    min-height: 160px;
-  }
-}
+    @media (max-width: 768px) {
+      .page-hero {
+        padding: 40px 16px;
+        min-height: 160px;
+      }
+    }
 
-/* Custom CSS for About Page Redesign */
-.about-page {
-  background-color: #F8F9FA;
-  padding-bottom: 0;
-}
+    /* Custom CSS for About Page Redesign */
+    .about-page {
+      background-color: #F8F9FA;
+      padding-bottom: 0;
+    }
 
-/* Hero Section */
-.about-hero {
-  position: relative;
-  min-height: 300px;
-  background: linear-gradient(135deg, #0b1120 0%, #172554 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 80px 20px;
-  overflow: hidden;
-}
-.about-hero::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-  pointer-events: none;
-  opacity: 0.5;
-}
-.about-hero-content {
-  position: relative;
-  z-index: 10;
-  max-width: 800px;
-}
-.about-hero-title {
-  color: #ffffff;
-  font-family: var(--font-heading);
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-}
-.about-hero-subtitle {
-  color: #CBD5E1;
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
+    /* Hero Section */
+    .about-hero {
+      position: relative;
+      min-height: 300px;
+      background: linear-gradient(135deg, #0b1120 0%, #172554 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 20px;
+      overflow: hidden;
+    }
 
-/* Sections */
-.about-section {
-  padding: 80px 20px;
-}
-.about-container {
-  max-width: 1100px;
-  margin: 0 auto;
-}
+    .about-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      opacity: 0.5;
+    }
 
-/* Mission Section */
-.mission-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-@media(min-width: 860px) {
-  .mission-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-  }
-}
-.mission-label {
-  color: var(--clr-secondary);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 0.75rem;
-  display: block;
-}
-.mission-title {
-  color: var(--clr-primary-dark);
-  font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
-}
-.mission-text {
-  color: #64748B;
-  font-size: 1.1rem;
-  line-height: 1.8;
-}
-.stats-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-  border: 1px solid rgba(0,0,0,0.02);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
-}
-.stat-item h3 {
-  color: var(--clr-secondary);
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 0.25rem;
-}
-.stat-item p {
-  color: #64748B;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+    .about-hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+    }
 
-/* Team Section */
-.team-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-.team-title {
-  color: var(--clr-primary-dark);
-  font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-}
-.team-subtitle {
-  color: #64748B;
-  font-size: 1.1rem;
-}
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-}
-@media(min-width: 768px) {
-  .team-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-  }
-}
-.team-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 2rem 1rem;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0,0,0,0.02);
-}
-.team-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.08);
-}
-.team-photo {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 1rem;
-  border: 3px solid #F8F9FA;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.team-name {
-  color: var(--clr-primary-dark);
-  font-weight: 800;
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
-}
-.team-subject {
-  color: var(--clr-secondary);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
+    .about-hero-title {
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
 
-/* Values Section */
-.values-section {
-  background-color: #F1F5F9;
-}
-.values-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-@media(min-width: 640px) {
-  .values-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media(min-width: 1024px) {
-  .values-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-.value-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  text-align: left;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-  transition: all 0.3s ease;
-}
-.value-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-}
-.value-icon-wrapper {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(0, 210, 255, 0.1);
-  color: var(--clr-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-.value-icon-wrapper .material-symbols-outlined {
-  font-size: 28px;
-}
-.value-title {
-  color: var(--clr-primary-dark);
-  font-weight: 800;
-  font-size: 1.2rem;
-  margin-bottom: 0.75rem;
-}
-.value-desc {
-  color: #64748B;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
+    .about-hero-subtitle {
+      color: #CBD5E1;
+      font-size: 1.25rem;
+      line-height: 1.6;
+    }
 
-/* Bottom CTA Banner */
-.cta-banner-wrapper {
-  padding: 80px 20px;
-}
-.cta-banner {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-radius: 24px;
-  padding: 4rem 2rem;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
-}
-.cta-title {
-  color: #ffffff;
-  font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-}
-.cta-subtitle {
-  color: #CBD5E1;
-  font-size: 1.15rem;
-  margin-bottom: 2.5rem;
-}
-.cta-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  justify-content: center;
-}
-@media(min-width: 480px) {
-  .cta-buttons {
-    flex-direction: row;
-    gap: 1.5rem;
-  }
-}
-.cta-btn-primary {
-  background: var(--clr-secondary);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1.05rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 2px solid var(--clr-secondary);
-}
-.cta-btn-primary:hover {
-  background: #00b8e6;
-  border-color: #00b8e6;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
-}
-.cta-btn-outline {
-  background: transparent;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1.05rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 2px solid white;
-}
-.cta-btn-outline:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-</style>
+    /* Sections */
+    .about-section {
+      padding: 80px 20px;
+    }
+
+    .about-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Mission Section */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media(min-width: 860px) {
+      .mission-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+    }
+
+    .mission-label {
+      color: var(--clr-secondary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .mission-title {
+      color: var(--clr-primary-dark);
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .mission-text {
+      color: #64748B;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .stats-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.02);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+
+    .stat-item h3 {
+      color: var(--clr-secondary);
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-item p {
+      color: #64748B;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Team Section */
+    .team-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .team-title {
+      color: var(--clr-primary-dark);
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .team-subtitle {
+      color: #64748B;
+      font-size: 1.1rem;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media(min-width: 768px) {
+      .team-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+      }
+    }
+
+    .team-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    .team-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .team-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #F8F9FA;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-name {
+      color: var(--clr-primary-dark);
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .team-subject {
+      color: var(--clr-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Values Section */
+    .values-section {
+      background-color: #F1F5F9;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media(min-width: 640px) {
+      .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(min-width: 1024px) {
+      .values-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .value-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: left;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s ease;
+    }
+
+    .value-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .value-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(0, 210, 255, 0.1);
+      color: var(--clr-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .value-icon-wrapper .material-symbols-outlined {
+      font-size: 28px;
+    }
+
+    .value-title {
+      color: var(--clr-primary-dark);
+      font-weight: 800;
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .value-desc {
+      color: #64748B;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Bottom CTA Banner */
+    .cta-banner-wrapper {
+      padding: 80px 20px;
+    }
+
+    .cta-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 24px;
+      padding: 4rem 2rem;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+    }
+
+    .cta-title {
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .cta-subtitle {
+      color: #CBD5E1;
+      font-size: 1.15rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media(min-width: 480px) {
+      .cta-buttons {
+        flex-direction: row;
+        gap: 1.5rem;
+      }
+    }
+
+    .cta-btn-primary {
+      background: var(--clr-secondary);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid var(--clr-secondary);
+    }
+
+    .cta-btn-primary:hover {
+      background: #00b8e6;
+      border-color: #00b8e6;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
+    }
+
+    .cta-btn-outline {
+      background: transparent;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid white;
+    }
+
+    .cta-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+  </style>
 </head>
+
 <body>
   <header id="navbar" class="navbar">
     <nav class="container nav-inner">
       <a href="index.html" class="logo" id="nav-logo">
-        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;"
+          loading="lazy" decoding="async" />
         <span class="logo-text">Athenaeum</span>
       </a>
       <ul class="nav-links" id="nav-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown">
-          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined"
+              style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
           <ul class="dropdown-menu">
             <li><a href="oa-levels.html">O/A Levels</a></li>
             <li><a href="matric-inter.html">Matric/Inter</a></li>
@@ -451,7 +497,8 @@
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown" style="padding-left:1rem;">
           <strong style="color:var(--clr-primary);">Academics</strong>
-          <ul style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+          <ul
+            style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
             <li><a href="oa-levels.html" class="nav-link" style="font-size:0.9em;">O/A Levels</a></li>
             <li><a href="matric-inter.html" class="nav-link" style="font-size:0.9em;">Matric/Inter</a></li>
           </ul>
@@ -483,7 +530,8 @@
           <span class="mission-label">OUR MISSION</span>
           <h2 class="mission-title">Empowering the Next Generation</h2>
           <p class="mission-text">
-            We are Pakistan's premier online educational platform, democratizing elite education for O/A Levels, Matriculation, and Intermediate boards. No fluff. Just results.
+            We are Pakistan's premier online educational platform, democratizing elite education for O/A Levels,
+            Matriculation, and Intermediate boards. No fluff. Just results.
           </p>
         </div>
         <div class="stats-card">
@@ -519,28 +567,32 @@
               <span class="material-symbols-outlined">verified</span>
             </div>
             <h3 class="value-title">Accredited Faculty</h3>
-            <p class="value-desc">Learn directly from elite educators and industry professionals who are experts in their subjects.</p>
+            <p class="value-desc">Learn directly from elite educators and industry professionals who are experts in
+              their subjects.</p>
           </div>
           <div class="value-card">
             <div class="value-icon-wrapper">
               <span class="material-symbols-outlined">schedule</span>
             </div>
             <h3 class="value-title">Flexible Schedule</h3>
-            <p class="value-desc">Study at your own pace with 24/7 access to recorded lectures and interactive live sessions.</p>
+            <p class="value-desc">Study at your own pace with 24/7 access to recorded lectures and interactive live
+              sessions.</p>
           </div>
           <div class="value-card">
             <div class="value-icon-wrapper">
               <span class="material-symbols-outlined">trending_up</span>
             </div>
             <h3 class="value-title">Result-Oriented</h3>
-            <p class="value-desc">Our proven methodologies and rigorous testing ensure you're fully prepared to achieve top grades.</p>
+            <p class="value-desc">Our proven methodologies and rigorous testing ensure you're fully prepared to achieve
+              top grades.</p>
           </div>
           <div class="value-card">
             <div class="value-icon-wrapper">
               <span class="material-symbols-outlined">support_agent</span>
             </div>
             <h3 class="value-title">24/7 Support</h3>
-            <p class="value-desc">Never get stuck. Our dedicated academic support team is always available to help you succeed.</p>
+            <p class="value-desc">Never get stuck. Our dedicated academic support team is always available to help you
+              succeed.</p>
           </div>
         </div>
       </div>
@@ -556,25 +608,33 @@
         <div class="team-grid">
           <!-- Profile 1 -->
           <div class="team-card">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Maria Khan" class="team-photo" loading="lazy" decoding="async">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc"
+              alt="Maria Khan" class="team-photo" loading="lazy" decoding="async">
             <h4 class="team-name">Maria Khan</h4>
             <p class="team-subject">Sciences</p>
           </div>
           <!-- Profile 2 -->
           <div class="team-card">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Sir Ali Raza" class="team-photo" loading="lazy" decoding="async">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc"
+              alt="Sir Ali Raza" class="team-photo" loading="lazy" decoding="async">
             <h4 class="team-name">Sir Ali Raza</h4>
             <p class="team-subject">Mathematics</p>
           </div>
           <!-- Profile 3 -->
           <div class="team-card">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Dr. Usman" class="team-photo" loading="lazy" decoding="async">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc"
+              alt="Dr. Usman" class="team-photo" loading="lazy" decoding="async">
             <h4 class="team-name">Dr. Usman</h4>
             <p class="team-subject">Physics</p>
           </div>
           <!-- Profile 4 -->
           <div class="team-card">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc" alt="Zara Malik" class="team-photo" loading="lazy" decoding="async">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4kNe2toxyjE5ZBGUbLnYb8xkq2BU7IbNMtDZE-pbnobo0WqMzpw2OUzQUbffyND0mJZcNBTSXKCg-X6KWGllujYqfy8TCA3TTj2kSqZDerkTgRZW5tTw1x-kKeG69wbtvAksylDZQYAZdMoOqksE-reVaqT8MUVuXE6fEcDjtYCmOBd8-fYOMkX7XhdNShwyUKKMKWyymjZrdb6CmUv-p5VXTCshdJzl2q-FVxhoCU0Fw_I4nk6juz8DyHxk1DUbi2HKfzu2_-wc"
+              alt="Zara Malik" class="team-photo" loading="lazy" decoding="async">
             <h4 class="team-name">Zara Malik</h4>
             <p class="team-subject">English</p>
           </div>
@@ -597,12 +657,13 @@
 
   <script src="main.js"></script>
 
-<!-- Floating Glass Back Button -->
-<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 12H5M12 19l-7-7 7-7" />
-  </svg>
-</button>
+  <!-- Floating Glass Back Button -->
+  <button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  </button>
   <script src="athenaeum-assistant.js?v=2" defer></script>
 </body>
+
 </html>

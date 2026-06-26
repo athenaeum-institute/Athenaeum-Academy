@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
   <title>Student Portal | Athenaeum</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+    rel="stylesheet" />
+
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="engagement.css">
   <link rel="stylesheet" href="athenaeum-assistant.css?v=2">
@@ -25,9 +26,9 @@
   <script src="supabase-student.js"></script>
   <script src="announcements.js"></script>
   <script src="security.js"></script>
-  
+
   <style>
-        /* ── CUSTOM UI MODS FOR STUDENT DASHBOARD (REDESIGNED) ── */
+    /* ── CUSTOM UI MODS FOR STUDENT DASHBOARD (REDESIGNED) ── */
     :root {
       --primary: #005088;
       --accent: #00D2FF;
@@ -42,98 +43,451 @@
       --orange: #F97316;
       --purple: #8B5CF6;
     }
-    
-    body { background-color: var(--bg); color: var(--text); }
-    
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
     /* Animations */
-    .fade-in { animation: fadeIn 0.4s ease forwards; opacity: 0; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-    
+    .fade-in {
+      animation: fadeIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
     /* Glass Button */
-    .glass-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 50px; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 0.85rem; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.2s ease; }
-    .glass-btn:hover { background: rgba(0, 210, 255, 0.1); border-color: rgba(0, 210, 255, 0.4); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 210, 255, 0.15); }
-    .glass-btn .material-symbols-outlined { font-size: 1.1rem; }
-    
+    .glass-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: rgba(0, 210, 255, 0.05);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      border-radius: 50px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+
+    .glass-btn:hover {
+      background: rgba(0, 210, 255, 0.1);
+      border-color: rgba(0, 210, 255, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 210, 255, 0.15);
+    }
+
+    .glass-btn .material-symbols-outlined {
+      font-size: 1.1rem;
+    }
+
     /* Skeletons */
-    .skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; color:transparent!important; min-height: 20px;}
-    .skeleton * { visibility: hidden; }
-    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    
+    .skeleton {
+      background: linear-gradient(90deg, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 8px;
+      color: transparent !important;
+      min-height: 20px;
+    }
+
+    .skeleton * {
+      visibility: hidden;
+    }
+
+    @keyframes loading {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
     /* Custom XP Progress */
-    .xp-progress-bar { width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
-    .xp-progress-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--accent)); transition: width 1s cubic-bezier(.175,.885,.32,1.275); width: 0%; }
-    
+    .xp-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--bg);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .xp-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--accent));
+      transition: width 1s cubic-bezier(.175, .885, .32, 1.275);
+      width: 0%;
+    }
+
     /* Badges */
-    .badge-premium { background: rgba(255,215,0,0.15); color: #d97706; border: 1px solid rgba(255,215,0,0.3); }
-    .badge-trial { background: rgba(210,153,34,0.15); color: #d29922; border: 1px solid rgba(210,153,34,0.3); }
-    .badge-level { background: rgba(139,92,246,0.1); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); padding: 2px 8px; font-size: 0.75rem; border-radius: 12px; font-weight:700;}
-    
+    .badge-premium {
+      background: rgba(255, 215, 0, 0.15);
+      color: #d97706;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .badge-trial {
+      background: rgba(210, 153, 34, 0.15);
+      color: #d29922;
+      border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .badge-level {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--purple);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
     /* Grid Layouts - Micro Cards */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.25rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02); position: relative; overflow:hidden; }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); }
-    .stat-val { font-size: 1.6rem; font-weight: 800; font-family: 'Urbanist', sans-serif; color: var(--text); line-height: 1.1; }
-    .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'Urbanist', sans-serif;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
     /* Glowing Bottom Accent Lines */
-    .stat-card::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:3px; }
-    .stat-card:nth-child(1)::after { background: var(--purple); box-shadow: 0 -2px 10px rgba(139,92,246,0.4); }
-    .stat-card:nth-child(2)::after { background: var(--accent); box-shadow: 0 -2px 10px rgba(0,210,255,0.4); }
-    .stat-card:nth-child(3)::after { background: var(--green); box-shadow: 0 -2px 10px rgba(16,185,129,0.4); }
-    .stat-card:nth-child(4)::after { background: var(--orange); box-shadow: 0 -2px 10px rgba(249,115,22,0.4); }
-    
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+    }
+
+    .stat-card:nth-child(1)::after {
+      background: var(--purple);
+      box-shadow: 0 -2px 10px rgba(139, 92, 246, 0.4);
+    }
+
+    .stat-card:nth-child(2)::after {
+      background: var(--accent);
+      box-shadow: 0 -2px 10px rgba(0, 210, 255, 0.4);
+    }
+
+    .stat-card:nth-child(3)::after {
+      background: var(--green);
+      box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .stat-card:nth-child(4)::after {
+      background: var(--orange);
+      box-shadow: 0 -2px 10px rgba(249, 115, 22, 0.4);
+    }
+
     /* Trial Banner */
-    .trial-banner { background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(249,115,22,0.02)); border: 1px solid var(--orange); border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; }
-    
+    .trial-banner {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(249, 115, 22, 0.02));
+      border: 1px solid var(--orange);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
     /* Continue Learning Hero */
-    .hero-resume { background: linear-gradient(135deg, var(--primary), #003355); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; position: relative; overflow: hidden; }
-    .hero-resume::after { content: ''; position: absolute; right: -50px; bottom: -50px; width: 150px; height: 150px; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); opacity: 0.2; border-radius: 50%; }
-    
+    .hero-resume {
+      background: linear-gradient(135deg, var(--primary), #003355);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-resume::after {
+      content: '';
+      position: absolute;
+      right: -50px;
+      bottom: -50px;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      opacity: 0.2;
+      border-radius: 50%;
+    }
+
     /* Leaderboard & Results Layout */
-    .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
-    
-    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .panel-title { font-size: 1rem; font-weight: 800; color: var(--text); }
-    
+    .two-col {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
     /* Lists - Compact */
-    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
-    .list-item:last-child { border-bottom: none; }
-    .list-item:hover { background: var(--bg); border-radius: 6px; border-bottom-color: transparent; }
-    
-    .rank-num { font-size: 1rem; font-weight: 800; color: var(--muted); width: 24px; text-align: center; }
-    .rank-1 { color: var(--gold); } .rank-2 { color: #94a3b8; } .rank-3 { color: #cd7f32; }
-    .lb-highlight { background: rgba(0,210,255,0.05); border: 1px solid rgba(0,210,255,0.2); border-radius: 6px; }
-    
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-item:hover {
+      background: var(--bg);
+      border-radius: 6px;
+      border-bottom-color: transparent;
+    }
+
+    .rank-num {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--muted);
+      width: 24px;
+      text-align: center;
+    }
+
+    .rank-1 {
+      color: var(--gold);
+    }
+
+    .rank-2 {
+      color: #94a3b8;
+    }
+
+    .rank-3 {
+      color: #cd7f32;
+    }
+
+    .lb-highlight {
+      background: rgba(0, 210, 255, 0.05);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      border-radius: 6px;
+    }
+
     /* Avatar inside leaderboard */
-    .lb-avatar-wrap { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); display: grid; place-items:center; font-size:0.7rem; font-weight:bold; color:var(--primary); border: 1px solid var(--border); }
+    .lb-avatar-wrap {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg);
+      display: grid;
+      place-items: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
 
     /* Courses Row */
-    .course-row { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: thin; }
-    .course-card { min-width: 220px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: .2s; }
-    .course-card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 4px 12px rgba(0,210,255,0.1); }
-    .course-img { width: 100%; height: 100px; object-fit: cover; background: var(--bg); }
-    .course-body { padding: 0.75rem; }
-    
-    /* Announcements */
-    .ann-card { background: #eff6ff; border-left: 3px solid var(--accent); padding: 0.75rem 1rem; border-radius: 4px 8px 8px 4px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: flex-start; color: var(--text); }
-    .ann-close { background: none; border: none; color: var(--muted); cursor: pointer; }
-    .ann-close:hover { color: var(--text); }
-    
-    /* Quick Actions - Pill Grid */
-    .qa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .qa-btn { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 50px; padding: 0.5rem 1rem; color: var(--text); text-decoration: none; transition: .2s; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-    .qa-btn:hover { background: #f8fafc; border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,210,255,0.1); }
-    
-    .qa-icon-wrap { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items:center; }
-    .qa-btn:nth-child(1) .qa-icon-wrap { background: rgba(16,185,129,0.1); color: var(--green); }
-    .qa-btn:nth-child(2) .qa-icon-wrap { background: rgba(249,115,22,0.1); color: var(--orange); }
-    .qa-btn:nth-child(3) .qa-icon-wrap { background: rgba(0,210,255,0.1); color: var(--accent); }
-    .qa-btn:nth-child(4) .qa-icon-wrap { background: rgba(139,92,246,0.1); color: var(--purple); }
-    
-    .qa-btn .material-symbols-outlined { font-size: 1.2rem; }
+    .course-row {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      scrollbar-width: thin;
+    }
 
+    .course-card {
+      min-width: 220px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: .2s;
+    }
+
+    .course-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0, 210, 255, 0.1);
+    }
+
+    .course-img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      background: var(--bg);
+    }
+
+    .course-body {
+      padding: 0.75rem;
+    }
+
+    /* Announcements */
+    .ann-card {
+      background: #eff6ff;
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 1rem;
+      border-radius: 4px 8px 8px 4px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      color: var(--text);
+    }
+
+    .ann-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .ann-close:hover {
+      color: var(--text);
+    }
+
+    /* Quick Actions - Pill Grid */
+    .qa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .qa-btn {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      color: var(--text);
+      text-decoration: none;
+      transition: .2s;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .qa-btn:hover {
+      background: #f8fafc;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 210, 255, 0.1);
+    }
+
+    .qa-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+
+    .qa-btn:nth-child(1) .qa-icon-wrap {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--green);
+    }
+
+    .qa-btn:nth-child(2) .qa-icon-wrap {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--orange);
+    }
+
+    .qa-btn:nth-child(3) .qa-icon-wrap {
+      background: rgba(0, 210, 255, 0.1);
+      color: var(--accent);
+    }
+
+    .qa-btn:nth-child(4) .qa-icon-wrap {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--purple);
+    }
+
+    .qa-btn .material-symbols-outlined {
+      font-size: 1.2rem;
+    }
   </style>
 
   <!-- Vercel Speed Insights -->
@@ -152,14 +506,19 @@
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"Student Portal","item":"https://athenaeumacademy.com/dashboard-student.html"}]}
   </script>
 </head>
+
 <body>
 
   <!-- ── Trial Expiration Overlay ─────────────────────────── -->
-  <div id="trial-expired-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:99999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem;">
-    <h2 style="color:var(--primary); font-size:2rem; margin-bottom:1rem; font-family: 'Merriweather', serif;">⏰ Your Free Trial Has Ended!</h2>
+  <div id="trial-expired-overlay"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:99999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem;">
+    <h2 style="color:var(--primary); font-size:2rem; margin-bottom:1rem; font-family: 'Merriweather', serif;">⏰ Your
+      Free Trial Has Ended!</h2>
     <p id="expired-name" style="font-size:1.2rem; margin-bottom:1rem; color:var(--text);"></p>
-    <p style="color:var(--muted); margin-bottom:2rem;">Purchase a course to continue your learning journey without any interruptions.</p>
-    <a href="courses.html" class="btn btn-primary btn-lg" style="margin-bottom:1rem; font-size: 1.1rem; padding: 1rem 2rem;">Browse Courses 🚀</a>
+    <p style="color:var(--muted); margin-bottom:2rem;">Purchase a course to continue your learning journey without any
+      interruptions.</p>
+    <a href="courses.html" class="btn btn-primary btn-lg"
+      style="margin-bottom:1rem; font-size: 1.1rem; padding: 1rem 2rem;">Browse Courses 🚀</a>
     <a href="courses.html" class="btn btn-ghost" style="color:var(--muted);">View All Courses</a>
   </div>
 
@@ -169,9 +528,11 @@
       <a href="index.html" class="sidebar-brand" style="font-family:'Merriweather',serif">🎓 Athenaeum</a>
     </div>
     <div class="sidebar-nav">
-      <a href="dashboard-student.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span> Overview</a>
+      <a href="dashboard-student.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span>
+        Overview</a>
       <a href="courses.html" class="nav-item"><span class="material-symbols-outlined">menu_book</span> My Courses</a>
-      <a href="student-live-classes.html" class="nav-item"><span class="material-symbols-outlined">videocam</span> Live Classes</a>
+      <a href="student-live-classes.html" class="nav-item"><span class="material-symbols-outlined">videocam</span> Live
+        Classes</a>
       <a href="mock-exam.html" class="nav-item"><span class="material-symbols-outlined">quiz</span> Mock Exams</a>
     </div>
     <div class="sidebar-footer">
@@ -189,26 +550,29 @@
   <main class="main-content">
     <header class="top-header">
       <div class="header-left">
-        <button class="icon-btn mobile-toggle" id="mobile-toggle"><span class="material-symbols-outlined">menu</span></button>
+        <button class="icon-btn mobile-toggle" id="mobile-toggle"><span
+            class="material-symbols-outlined">menu</span></button>
         <h1>Student Portal</h1>
       </div>
       <div class="header-actions" style="display:flex; align-items:center; gap:1rem;">
-        
+
         <!-- Glass Home Button -->
         <a href="index.html" class="glass-btn">
           <span class="material-symbols-outlined">home</span> Home
         </a>
 
         <!-- Streak -->
-        <div id="streak-badge" class="badge" style="display:none; border:1px solid rgba(255,87,34,0.3); background:rgba(255,87,34,0.1); color:#ff5722; font-size:.9rem">
+        <div id="streak-badge" class="badge"
+          style="display:none; border:1px solid rgba(255,87,34,0.3); background:rgba(255,87,34,0.1); color:#ff5722; font-size:.9rem">
           🔥 <span id="streak-val">1 Day</span>
         </div>
         <!-- Plan Badge -->
         <div id="plan-badge" class="badge">Loading...</div>
-        
+
         <div id="notification-bell"></div>
-        
-        <button class="icon-btn" title="Setup Fingerprint/Passkey" onclick="registerPasskey()" style="color: var(--accent);">
+
+        <button class="icon-btn" title="Setup Fingerprint/Passkey" onclick="registerPasskey()"
+          style="color: var(--accent);">
           <span class="material-symbols-outlined">fingerprint</span>
         </button>
 
@@ -219,10 +583,11 @@
     </header>
 
     <div class="dashboard-body">
-      
+
       <!-- HEADER / GREETING -->
       <div style="margin-bottom: 2rem;" class="fade-in">
-        <h1 id="greeting" class="skeleton" style="font-family:'Merriweather',serif; font-size:2.5rem; margin-bottom:0.5rem">Loading Greeting...</h1>
+        <h1 id="greeting" class="skeleton"
+          style="font-family:'Merriweather',serif; font-size:2.5rem; margin-bottom:0.5rem">Loading Greeting...</h1>
         <p style="color:var(--muted); font-size:1.1rem;">Ready to learn something new today?</p>
       </div>
 
@@ -235,16 +600,21 @@
           <h3 style="color:#d29922; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem">
             <span class="material-symbols-outlined">hourglass_empty</span> Free Trial Active
           </h3>
-          <p style="color:var(--text); font-size:0.9rem">You are experiencing limited access. Purchase a course to unlock Unlimited Exams, AI, and Live Classes for that subject!</p>
+          <p style="color:var(--text); font-size:0.9rem">You are experiencing limited access. Purchase a course to
+            unlock Unlimited Exams, AI, and Live Classes for that subject!</p>
         </div>
-        <button class="btn btn-primary" onclick="window.location.href='courses.html'" style="white-space:nowrap; background:#d29922; color:#000">Browse Courses</button>
+        <button class="btn btn-primary" onclick="window.location.href='courses.html'"
+          style="white-space:nowrap; background:#d29922; color:#000">Browse Courses</button>
       </div>
 
       <!-- CONTINUE LEARNING HERO -->
       <div id="hero-resume" class="hero-resume fade-in" style="display:none;">
         <div style="z-index:2">
-          <span style="text-transform:uppercase; font-size:0.8rem; font-weight:800; letter-spacing:1px; color:var(--accent); margin-bottom:0.5rem; display:block;">Recent Class Recording</span>
-          <h2 id="hero-lesson-title" style="font-family:'Merriweather',serif; margin-bottom:0.5rem; font-size:2rem;">Lesson Title</h2>
+          <span
+            style="text-transform:uppercase; font-size:0.8rem; font-weight:800; letter-spacing:1px; color:var(--accent); margin-bottom:0.5rem; display:block;">Recent
+            Class Recording</span>
+          <h2 id="hero-lesson-title" style="font-family:'Merriweather',serif; margin-bottom:0.5rem; font-size:2rem;">
+            Lesson Title</h2>
           <p id="hero-course-title" style="color:rgba(255,255,255,0.7); margin-bottom:1.5rem">Course Title</p>
           <a href="video-player.html" class="btn" style="background:#fff; color:var(--primary)">
             <span class="material-symbols-outlined">play_arrow</span> Watch Recording
@@ -260,8 +630,11 @@
             <div id="xp-badge" class="badge badge-level skeleton">Level --</div>
           </div>
           <div class="stat-val skeleton" id="stat-xp">0</div>
-          <div class="xp-progress-bar"><div class="xp-progress-fill" id="xp-fill"></div></div>
-          <div style="text-align:right; font-size:0.75rem; color:var(--muted); margin-top:0.25rem" id="xp-next">-- to next level</div>
+          <div class="xp-progress-bar">
+            <div class="xp-progress-fill" id="xp-fill"></div>
+          </div>
+          <div style="text-align:right; font-size:0.75rem; color:var(--muted); margin-top:0.25rem" id="xp-next">-- to
+            next level</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Courses Enrolled</div>
@@ -280,17 +653,21 @@
       <!-- QUICK ACTIONS -->
       <h3 style="margin-bottom:1rem; font-size:1.1rem">Quick Actions</h3>
       <div class="qa-grid fade-in">
-        <a href="courses.html" class="qa-btn"><span class="material-symbols-outlined">library_books</span> Browse Courses</a>
+        <a href="courses.html" class="qa-btn"><span class="material-symbols-outlined">library_books</span> Browse
+          Courses</a>
         <a href="mock-exam.html" class="qa-btn"><span class="material-symbols-outlined">quiz</span> Take Mock Exam</a>
-        <a href="student-live-classes.html" class="qa-btn"><span class="material-symbols-outlined">co_present</span> Live Classes</a>
-        <a href="javascript:void(0)" onclick="alert('Coming Soon!')" class="qa-btn" onclick="openUstadAI(true)"><span class="material-symbols-outlined">smart_toy</span> Ask Athenaeum Assistant</a>
+        <a href="student-live-classes.html" class="qa-btn"><span class="material-symbols-outlined">co_present</span>
+          Live Classes</a>
+        <a href="javascript:void(0)" onclick="alert('Coming Soon!')" class="qa-btn" onclick="openUstadAI(true)"><span
+            class="material-symbols-outlined">smart_toy</span> Ask Athenaeum Assistant</a>
       </div>
 
       <!-- COURSES ROW -->
       <div class="panel fade-in" style="margin-bottom:2rem;">
         <div class="panel-header">
           <div class="panel-title">My Courses</div>
-          <a href="courses.html" style="color:var(--accent); text-decoration:none; font-size:0.9rem; font-weight:700">View All →</a>
+          <a href="courses.html"
+            style="color:var(--accent); text-decoration:none; font-size:0.9rem; font-weight:700">View All →</a>
         </div>
         <div class="course-row" id="courses-row">
           <div class="skeleton" style="width:250px; height:200px; border-radius:12px"></div>
@@ -300,7 +677,7 @@
 
       <!-- LEADERBOARD & RECENT EXAMS -->
       <div class="two-col fade-in">
-        
+
         <!-- Leaderboard -->
         <div class="panel">
           <div class="panel-header">
@@ -314,7 +691,8 @@
             <div class="skeleton" style="height:40px; margin-bottom:10px"></div>
             <div class="skeleton" style="height:40px; margin-bottom:10px"></div>
           </div>
-          <div id="lb-own-rank" style="margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--border); text-align:center; font-weight:800; color:var(--accent); display:none;">
+          <div id="lb-own-rank"
+            style="margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--border); text-align:center; font-weight:800; color:var(--accent); display:none;">
             Your Rank: #--
           </div>
         </div>
@@ -325,8 +703,8 @@
             <div class="panel-title">Recent Exams</div>
           </div>
           <div id="recent-exams-list">
-             <div class="skeleton" style="height:50px; margin-bottom:10px"></div>
-             <div class="skeleton" style="height:50px; margin-bottom:10px"></div>
+            <div class="skeleton" style="height:50px; margin-bottom:10px"></div>
+            <div class="skeleton" style="height:50px; margin-bottom:10px"></div>
           </div>
         </div>
 
@@ -337,16 +715,21 @@
 
   <!-- USTAD AI WIDGET -->
   <div id="ustad-widget" style="position:fixed; bottom:20px; right:20px; z-index:1000; display:none;">
-    <div style="background:var(--card); border:1px solid var(--accent); border-radius:16px; width:320px; box-shadow:0 10px 40px rgba(0,0,0,0.5); overflow:hidden;">
-      <div style="background:linear-gradient(135deg,var(--primary),var(--accent)); padding:1rem; color:#fff; display:flex; justify-content:space-between; align-items:center;">
-        <div style="display:flex; align-items:center; gap:.5rem; font-weight:700;"><span class="material-symbols-outlined">smart_toy</span> Athenaeum Assistant</div>
-        <button onclick="document.getElementById('ustad-widget').style.display='none'" style="background:none;border:none;color:#fff;cursor:pointer">✕</button>
+    <div
+      style="background:var(--card); border:1px solid var(--accent); border-radius:16px; width:320px; box-shadow:0 10px 40px rgba(0,0,0,0.5); overflow:hidden;">
+      <div
+        style="background:linear-gradient(135deg,var(--primary),var(--accent)); padding:1rem; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:.5rem; font-weight:700;"><span
+            class="material-symbols-outlined">smart_toy</span> Athenaeum Assistant</div>
+        <button onclick="document.getElementById('ustad-widget').style.display='none'"
+          style="background:none;border:none;color:#fff;cursor:pointer">✕</button>
       </div>
       <div style="padding:1.5rem; font-size:.95rem; line-height:1.5;" id="ustad-msg">
         <!-- Message -->
       </div>
       <div style="padding:1rem; border-top:1px solid var(--border); background:var(--bg)">
-        <input type="text" placeholder="Type your question..." style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--card); color:white; outline:none; font-family:'Urbanist'; margin-bottom:0.5rem;">
+        <input type="text" placeholder="Type your question..."
+          style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--card); color:white; outline:none; font-family:'Urbanist'; margin-bottom:0.5rem;">
         <button class="btn btn-primary" style="width:100%; justify-content:center">Ask Ustad</button>
       </div>
     </div>
@@ -372,7 +755,7 @@
         if (xp >= LEVELS[i].xp) {
           lvl = i + 1;
           name = LEVELS[i].name;
-          nextXp = LEVELS[i+1] ? LEVELS[i+1].xp : null;
+          nextXp = LEVELS[i + 1] ? LEVELS[i + 1].xp : null;
         }
       }
       return { lvl, name, nextXp };
@@ -384,7 +767,7 @@
         const streakData = await svc.updateStreak();
         if (streakData && streakData.streak > 0) {
           document.getElementById('streak-badge').style.display = 'inline-flex';
-          document.getElementById('streak-val').innerText = `${streakData.streak} Day${streakData.streak>1?'s':''}`;
+          document.getElementById('streak-val').innerText = `${streakData.streak} Day${streakData.streak > 1 ? 's' : ''}`;
           if (streakData.is_milestone) {
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             alert(`🎉 Milestone reached! ${streakData.streak} Day Streak. You earned +${streakData.bonus} XP!`);
@@ -432,8 +815,8 @@
 
     function renderProfile(profile) {
       document.getElementById('greeting').innerText = getGreeting(profile.full_name || 'Student');
-      
-      const initials = (profile.full_name || 'S').substring(0,2).toUpperCase();
+
+      const initials = (profile.full_name || 'S').substring(0, 2).toUpperCase();
       document.getElementById('sb-initials').innerText = initials;
       document.getElementById('sb-name').innerText = profile.full_name || 'Student';
 
@@ -444,7 +827,7 @@
       } else {
         planBadge.className = 'badge badge-trial';
         planBadge.innerHTML = 'FREE TRIAL';
-        
+
         // Check if trial is expired using the global robust function
         const trialStatus = window.checkTrialStatus(profile);
         if (!trialStatus.active) {
@@ -466,7 +849,7 @@
       const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        obj.innerHTML = Math.floor(progress * (end - start) + start) + (obj.id==='stat-exams'?'%':'');
+        obj.innerHTML = Math.floor(progress * (end - start) + start) + (obj.id === 'stat-exams' ? '%' : '');
         if (progress < 1) window.requestAnimationFrame(step);
       };
       window.requestAnimationFrame(step);
@@ -483,13 +866,13 @@
       const lInfo = getLevelInfo(xp);
       document.getElementById('sb-level').innerText = `Lvl ${lInfo.lvl} · ${xp} XP`;
       document.getElementById('xp-badge').innerText = `Lvl ${lInfo.lvl}: ${lInfo.name}`;
-      
+
       if (lInfo.nextXp) {
         const prevXp = LEVELS[lInfo.lvl - 1].xp;
         const totalReq = lInfo.nextXp - prevXp;
         const currentProg = xp - prevXp;
         const pct = Math.round((currentProg / totalReq) * 100);
-        
+
         setTimeout(() => { document.getElementById('xp-fill').style.width = pct + '%'; }, 100);
         document.getElementById('xp-next').innerText = `${lInfo.nextXp - xp} XP to Level ${lInfo.lvl + 1}`;
       } else {
@@ -540,7 +923,7 @@
             <div style="font-size:0.8rem; color:var(--muted)">${new Date(e.completed_at).toLocaleDateString()}</div>
           </div>
           <div style="text-align:right">
-            <div style="font-weight:800; color:${e.percentage>=50?'var(--green)':'var(--red)'}">${e.percentage}%</div>
+            <div style="font-weight:800; color:${e.percentage >= 50 ? 'var(--green)' : 'var(--red)'}">${e.percentage}%</div>
             <div style="font-size:0.75rem; color:var(--muted)">${e.score}/${e.total_marks}</div>
           </div>
         </div>
@@ -557,10 +940,10 @@
         const isMe = p.id === lb.studentId;
         const lInfo = getLevelInfo(p.xp);
         return `
-          <div class="list-item ${isMe?'lb-highlight':''}">
+          <div class="list-item ${isMe ? 'lb-highlight' : ''}">
             <div style="display:flex; align-items:center; gap:0.75rem;">
-              <div class="rank-num rank-${idx+1}">${idx+1}</div>
-              <div class="lb-avatar-wrap">${p.full_name.substring(0,1)}</div>
+              <div class="rank-num rank-${idx + 1}">${idx + 1}</div>
+              <div class="lb-avatar-wrap">${p.full_name.substring(0, 1)}</div>
               <div>
                 <div style="font-weight:700; font-size:0.9rem;">${isMe ? 'You' : p.full_name.split(' ')[0]}</div>
                 <div style="font-size:0.7rem; color:var(--muted)">${lInfo.name}</div>
@@ -582,7 +965,7 @@
       const container = document.getElementById('ann-section');
       const dismissed = JSON.parse(localStorage.getItem('dismissed_ann') || '[]');
       const visible = ann.filter(a => !dismissed.includes(a.id));
-      
+
       container.innerHTML = visible.map(a => `
         <div class="ann-card" id="ann-${a.id}">
           <div>
@@ -601,7 +984,7 @@
       localStorage.setItem('dismissed_ann', JSON.stringify(d));
     }
 
-    function openUstadAI(defaultMsg=true, customMsg=null) {
+    function openUstadAI(defaultMsg = true, customMsg = null) {
       const w = document.getElementById('ustad-widget');
       if (customMsg) {
         document.getElementById('ustad-msg').innerText = customMsg;
@@ -632,4 +1015,5 @@
   </script>
   <script src="athenaeum-assistant.js?v=2" defer></script>
 </body>
+
 </html>

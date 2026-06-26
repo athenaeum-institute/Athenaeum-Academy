@@ -28,6 +28,17 @@ JSON_LD_1 = """
   </script>
 """
 
+JSON_LD_WEBSITE = """
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Athenaeum Academy",
+    "url": "https://athenaeumacademy.com/"
+  }
+  </script>
+"""
+
 JSON_LD_2 = """
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What courses does Athenaeum offer?","acceptedAnswer":{"@type":"Answer","text":"Athenaeum offers online courses for O Levels, A Levels, Matric Science, FSc, MDCAT and ECAT with live classes and expert Pakistani teachers."}},{"@type":"Question","name":"How much do Athenaeum courses cost?","acceptedAnswer":{"@type":"Answer","text":"Courses start from Rs 2,999. Free trial available. Payment via JazzCash, Easypaisa, Bank Transfer, Visa or Mastercard."}},{"@type":"Question","name":"Can parents track their child's progress?","acceptedAnswer":{"@type":"Answer","text":"Yes, Athenaeum has a dedicated Parent Dashboard for real-time tracking of progress, scores and attendance."}}]}
@@ -68,6 +79,8 @@ for filepath in html_files:
             insertion += JSON_LD_1
         if "FAQPage" not in content:
             insertion += JSON_LD_2
+        if "WebSite" not in content:
+            insertion += JSON_LD_WEBSITE
 
     new_content = content[:head_end_idx] + insertion + content[head_end_idx:]
 

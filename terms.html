@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
@@ -7,11 +7,7 @@
   <title>Athenaeum | Master O/A Levels, Matric &amp; Inter</title>
   <meta name="description"
     content="Athenaeum — Pakistan's premier online academy for O/A Levels, Matric and Intermediate. Learn from accredited faculty with flexible schedules and result-oriented programs." />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,7 +21,7 @@
 
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="athenaeum-assistant.css?v=2" />
-  
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth-state.js"></script>
@@ -45,7 +41,8 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Athenaeum Academy">
   <meta property="og:title" content="Athenaeum | Master O/A Levels, Matric &amp; Inter">
-  <meta property="og:description" content="Athenaeum — Pakistan's premier online academy for O/A Levels, Matric and Intermediate. Learn from accredited faculty with flexible schedules and result-oriented programs.">
+  <meta property="og:description"
+    content="Athenaeum — Pakistan's premier online academy for O/A Levels, Matric and Intermediate. Learn from accredited faculty with flexible schedules and result-oriented programs.">
   <meta property="og:image" content="https://athenaeumacademy.com/assets/logo.png">
   <meta property="og:locale" content="en_PK">
   <meta name="twitter:card" content="summary_large_image">
@@ -66,7 +63,8 @@
 
       <!-- Logo -->
       <a href="index.html" class="logo" id="nav-logo">
-        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;"
+          loading="lazy" decoding="async" />
         <span class="logo-text">Athenaeum</span>
       </a>
 
@@ -74,7 +72,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown">
-          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined"
+              style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
           <ul class="dropdown-menu">
             <li><a href="oa-levels.html">O/A Levels</a></li>
             <li><a href="matric-inter.html">Matric/Inter</a></li>
@@ -109,9 +108,11 @@
       </button>
 
       <!-- Search Overlay -->
-      <div class="search-overlay" id="search-overlay" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--clr-surface); padding: 1rem 24px; border-bottom: 1px solid var(--clr-border); box-shadow: var(--shadow-md); z-index: 999;">
+      <div class="search-overlay" id="search-overlay"
+        style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--clr-surface); padding: 1rem 24px; border-bottom: 1px solid var(--clr-border); box-shadow: var(--shadow-md); z-index: 999;">
         <div style="max-width: 800px; margin: 0 auto; display: flex; gap: 10px;">
-          <input type="text" id="global-search-input" placeholder="Search courses, skills, and resources..." style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--clr-border); border-radius: var(--radius-full); font-size: 1rem; outline: none;">
+          <input type="text" id="global-search-input" placeholder="Search courses, skills, and resources..."
+            style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--clr-border); border-radius: var(--radius-full); font-size: 1rem; outline: none;">
           <button class="btn btn-primary" onclick="executeGlobalSearch()">Search</button>
         </div>
       </div>
@@ -123,7 +124,8 @@
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown" style="padding-left:1rem;">
           <strong style="color:var(--clr-primary);">Academics</strong>
-          <ul style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+          <ul
+            style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
             <li><a href="oa-levels.html" class="nav-link" style="font-size:0.9em;">O/A Levels</a></li>
             <li><a href="matric-inter.html" class="nav-link" style="font-size:0.9em;">Matric/Inter</a></li>
           </ul>
@@ -138,127 +140,137 @@
       </div>
     </div>
   </header>
-<style>
-  .legal-container {
-    max-width: 760px;
-    margin: 80px auto 100px;
-    padding: 0 20px;
-  }
-  .legal-page-title {
-    font-family: 'Merriweather', serif;
-    font-size: 32px;
-    font-weight: 900;
-    color: #005088;
-    margin-bottom: 8px;
-    line-height: 1.2;
-  }
-  .legal-date {
-    font-family: 'Urbanist', sans-serif;
-    font-size: 14px;
-    color: #64748B;
-    margin-bottom: 40px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #E2E8F0;
-  }
-  .legal-section {
-    margin-bottom: 28px;
-  }
-  .legal-heading {
-    font-family: 'Merriweather', serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: #005088;
-    margin-bottom: 12px;
-    line-height: 1.4;
-  }
-  .legal-body {
-    font-family: 'Urbanist', sans-serif;
-    font-size: 15px;
-    line-height: 1.7;
-    color: #333;
-    margin: 0;
-  }
-  ul.legal-body {
-    padding-left: 20px;
-    margin-top: 8px;
-  }
-  ul.legal-body li {
-    margin-bottom: 8px;
-  }
-  ul.legal-body li:last-child {
-    margin-bottom: 0;
-  }
-</style>
+  <style>
+    .legal-container {
+      max-width: 760px;
+      margin: 80px auto 100px;
+      padding: 0 20px;
+    }
 
-<main class="legal-container">
-  <h1 class="legal-page-title">Terms of Service</h1>
-  <div class="legal-date">Last Updated: June 2026</div>
-  
-<section class="legal-section">
-<h3 class="legal-heading">1. Acceptance of Terms</h3>
-<p class="legal-body">By creating an account on Athenaeum, you agree to these Terms of Service. Please read them carefully before using the platform.</p>
-</section>
+    .legal-page-title {
+      font-family: 'Merriweather', serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: #005088;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">2. Account Responsibilities</h3>
-<ul class="legal-body">
-  <li>You must provide accurate information during registration</li>
-  <li>You are responsible for keeping your password secure</li>
-  <li>One account per student — sharing accounts is not permitted</li>
-  <li>You must be at least 10 years old to create an account</li>
-</ul>
-</section>
+    .legal-date {
+      font-family: 'Urbanist', sans-serif;
+      font-size: 14px;
+      color: #64748B;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #E2E8F0;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">3. Free Trial</h3>
-<ul class="legal-body">
-  <li>New students receive a 3-day free trial</li>
-  <li>Free trial includes limited Athenaeum Assistant access (5 questions per day)</li>
-  <li>Free trial includes limited mock exams (2 per day)</li>
-  <li>Trial expires automatically after 72 hours</li>
-</ul>
-</section>
+    .legal-section {
+      margin-bottom: 28px;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">4. Paid Subscription</h3>
-<ul class="legal-body">
-  <li>Paid plans unlock unlimited access to all features</li>
-  <li>Subscriptions are billed as per selected plan</li>
-  <li>Payments processed via Stripe (international) and JazzCash (Pakistan)</li>
-</ul>
-</section>
+    .legal-heading {
+      font-family: 'Merriweather', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #005088;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">5. Acceptable Use</h3>
-<ul class="legal-body">
-  <li>Do not share course content outside the platform</li>
-  <li>Do not attempt to bypass trial or payment limits</li>
-  <li>Do not misuse Athenaeum Assistant for non-academic purposes</li>
-  <li>Respectful behavior is expected at all times</li>
-</ul>
-</section>
+    .legal-body {
+      font-family: 'Urbanist', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #333;
+      margin: 0;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">6. Intellectual Property</h3>
-<ul class="legal-body">
-  <li>All course content is owned by Athenaeum</li>
-  <li>Athenaeum Assistant responses are for personal learning only</li>
-  <li>You may not reproduce or distribute any content</li>
-</ul>
-</section>
+    ul.legal-body {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">7. Termination</h3>
-<p class="legal-body">We reserve the right to suspend or terminate accounts that violate these terms without notice.</p>
-</section>
+    ul.legal-body li {
+      margin-bottom: 8px;
+    }
 
-<section class="legal-section">
-<h3 class="legal-heading">8. Contact Us</h3>
-<p class="legal-body">Questions about our terms?<br>Email: support@athenaeumacademy.com</p>
-</section>
+    ul.legal-body li:last-child {
+      margin-bottom: 0;
+    }
+  </style>
 
-</main>
-<footer class="footer">
+  <main class="legal-container">
+    <h1 class="legal-page-title">Terms of Service</h1>
+    <div class="legal-date">Last Updated: June 2026</div>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">1. Acceptance of Terms</h3>
+      <p class="legal-body">By creating an account on Athenaeum, you agree to these Terms of Service. Please read them
+        carefully before using the platform.</p>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">2. Account Responsibilities</h3>
+      <ul class="legal-body">
+        <li>You must provide accurate information during registration</li>
+        <li>You are responsible for keeping your password secure</li>
+        <li>One account per student — sharing accounts is not permitted</li>
+        <li>You must be at least 10 years old to create an account</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">3. Free Trial</h3>
+      <ul class="legal-body">
+        <li>New students receive a 3-day free trial</li>
+        <li>Free trial includes limited Athenaeum Assistant access (5 questions per day)</li>
+        <li>Free trial includes limited mock exams (2 per day)</li>
+        <li>Trial expires automatically after 72 hours</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">4. Paid Subscription</h3>
+      <ul class="legal-body">
+        <li>Paid plans unlock unlimited access to all features</li>
+        <li>Subscriptions are billed as per selected plan</li>
+        <li>Payments processed via Stripe (international) and JazzCash (Pakistan)</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">5. Acceptable Use</h3>
+      <ul class="legal-body">
+        <li>Do not share course content outside the platform</li>
+        <li>Do not attempt to bypass trial or payment limits</li>
+        <li>Do not misuse Athenaeum Assistant for non-academic purposes</li>
+        <li>Respectful behavior is expected at all times</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">6. Intellectual Property</h3>
+      <ul class="legal-body">
+        <li>All course content is owned by Athenaeum</li>
+        <li>Athenaeum Assistant responses are for personal learning only</li>
+        <li>You may not reproduce or distribute any content</li>
+      </ul>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">7. Termination</h3>
+      <p class="legal-body">We reserve the right to suspend or terminate accounts that violate these terms without
+        notice.</p>
+    </section>
+
+    <section class="legal-section">
+      <h3 class="legal-heading">8. Contact Us</h3>
+      <p class="legal-body">Questions about our terms?<br>Email: support@athenaeumacademy.com</p>
+    </section>
+
+  </main>
+  <footer class="footer">
 
     <!-- Payment trust strip -->
     <div class="footer-payment-strip">
@@ -326,25 +338,29 @@
 
       <div class="footer-brand">
         <a href="index.html" class="logo footer-logo">
-          <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 50px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+          <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 50px; width: auto; object-fit: contain;"
+            loading="lazy" decoding="async" />
           <span class="logo-text">Athenaeum</span>
         </a>
         <p>Empowering the next generation with quality education and expert guidance across all academic levels.
           Pakistan's most trusted online academy.</p>
         <div class="social-links">
-          <a href="https://www.facebook.com/athenaeumacademy" class="social-btn" aria-label="Facebook" id="social-facebook">
+          <a href="https://www.facebook.com/athenaeumacademy" class="social-btn" aria-label="Facebook"
+            id="social-facebook">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path
                 d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
           </a>
-          <a href="https://www.instagram.com/athenaeumacademy" class="social-btn" aria-label="Instagram" id="social-instagram">
+          <a href="https://www.instagram.com/athenaeumacademy" class="social-btn" aria-label="Instagram"
+            id="social-instagram">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path
                 d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
             </svg>
           </a>
-          <a href="https://www.youtube.com/@athenaeumacademy" class="social-btn" aria-label="YouTube" id="social-youtube">
+          <a href="https://www.youtube.com/@athenaeumacademy" class="social-btn" aria-label="YouTube"
+            id="social-youtube">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path
                 d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
@@ -379,7 +395,9 @@
           <li><a href="auth.html?mode=register">Free Trial</a></li>
           <li><a href="live-class.html">Live Classes</a></li>
           <li><a href="mock-exam.html">Mock Exams</a></li>
-          <li><a href="#" onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum Assistant Tutor</a></li>
+          <li><a href="#"
+              onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum
+              Assistant Tutor</a></li>
           <li><a href="become-a-teacher.html">Become a Teacher</a></li>
         </ul>
       </div>
@@ -395,8 +413,10 @@
           <li><a href="press.html">Press & Media</a></li>
         </ul>
         <div class="footer-contact-mini">
-          <p><a href="mailto:support@athenaeumacademy.com" style="display:flex; align-items:center; gap:0.5rem;"><span class="material-symbols-outlined">mail</span> support@athenaeumacademy.com</a></p>
-          <p><a href="tel:+923286715408" style="display:flex; align-items:center; gap:0.5rem;"><span class="material-symbols-outlined">call</span> +92 328 6715408</a></p>
+          <p><a href="mailto:support@athenaeumacademy.com" style="display:flex; align-items:center; gap:0.5rem;"><span
+                class="material-symbols-outlined">mail</span> support@athenaeumacademy.com</a></p>
+          <p><a href="tel:+923286715408" style="display:flex; align-items:center; gap:0.5rem;"><span
+                class="material-symbols-outlined">call</span> +92 328 6715408</a></p>
           <p><span class="material-symbols-outlined">location_on</span> Lahore, Pakistan</p>
         </div>
       </div>
@@ -417,17 +437,17 @@
 
   <script src="main.js"></script>
 
-<!-- Athenaeum Assistant Widget (shows teaser for guests, full chat for logged-in users) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-client.js"></script>
-<script src="athenaeum-assistant.js?v=2" defer></script>
+  <!-- Athenaeum Assistant Widget (shows teaser for guests, full chat for logged-in users) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="athenaeum-assistant.js?v=2" defer></script>
 
-<!-- Floating Glass Back Button -->
-<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 12H5M12 19l-7-7 7-7" />
-  </svg>
-</button>
+  <!-- Floating Glass Back Button -->
+  <button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  </button>
 
   <!-- Add Auth State Checker -->
   <script>

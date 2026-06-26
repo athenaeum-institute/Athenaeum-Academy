@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
   <title>Class Recording | Athenaeum</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&family=Merriweather:ital,wght@0,700;1,300&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&family=Merriweather:ital,wght@0,700;1,300&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="lms.css">
   <link rel="stylesheet" href="engagement.css">
   <link rel="stylesheet" href="athenaeum-assistant.css?v=2">
@@ -48,6 +49,7 @@
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://athenaeumacademy.com/"},{"@type":"ListItem","position":2,"name":"Class Recording","item":"https://athenaeumacademy.com/video-player.html"}]}
   </script>
 </head>
+
 <body>
 
   <!-- ── Top Nav ──────────────────────────────────────────── -->
@@ -61,7 +63,8 @@
       <div class="nav-actions">
         <div class="header-actions">
           <div id="notification-bell"></div>
-          <button class="icon-btn" aria-label="Search" id="btn-search"><span class="material-symbols-outlined">search</span></button>
+          <button class="icon-btn" aria-label="Search" id="btn-search"><span
+              class="material-symbols-outlined">search</span></button>
         </div>
       </div>
     </div>
@@ -111,9 +114,11 @@
         </div>
 
         <!-- Fake "playing" indicator overlay -->
-        <div id="playing-indicator" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; z-index:4;">
+        <div id="playing-indicator"
+          style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; z-index:4;">
           <div style="text-align:center; color:#fff;">
-            <div style="font-size:4rem; opacity:.15; font-weight:900; font-family:var(--font-heading); letter-spacing:-.02em; line-height:1;">
+            <div
+              style="font-size:4rem; opacity:.15; font-weight:900; font-family:var(--font-heading); letter-spacing:-.02em; line-height:1;">
               Cell Biology<br><span style="color:var(--clr-secondary);">Chapter 5</span>
             </div>
             <p style="opacity:.4; font-size:.8rem; margin-top:1rem;">Simulated Video Content</p>
@@ -206,7 +211,8 @@
             <div style="width:75%; height:100%; background:var(--clr-secondary); border-radius:3px;"></div>
           </div>
         </div>
-        <a href="live-class.html" class="btn" style="width: 100%; margin-top: 1rem; background: #ef4444; color: white; justify-content: center; font-weight: bold; border: none; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); text-decoration: none;">
+        <a href="live-class.html" class="btn"
+          style="width: 100%; margin-top: 1rem; background: #ef4444; color: white; justify-content: center; font-weight: bold; border: none; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); text-decoration: none;">
           🔴 Join Live Class Now
         </a>
       </div>
@@ -214,8 +220,8 @@
       <div class="lesson-list" id="lesson-list-container">
         <!-- Lessons will be dynamically injected here via JS -->
       </div>
-      </div>
-    </aside>
+  </div>
+  </aside>
 
   </div><!-- /.player-layout -->
 
@@ -279,11 +285,13 @@
         <!-- ── Thread 1: Answered by Instructor ──────────── -->
         <div class="forum-post">
           <div class="post-top">
-            <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-primary),var(--clr-secondary));">FA</div>
+            <div class="post-avatar"
+              style="background:linear-gradient(135deg,var(--clr-primary),var(--clr-secondary));">FA</div>
             <div>
               <div class="post-meta-row">
                 <span class="post-author">Fatima Anwar</span>
-                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span>
+                  Student</span>
                 <span class="post-time">2 hours ago</span>
                 <span class="answered-badge"><span class="material-symbols-outlined">check_circle</span> Answered</span>
               </div>
@@ -294,7 +302,8 @@
             <span class="post-tag">Chromosome</span>
           </div>
           <div class="post-text">
-            During which phase do chromosomes first become visible? My textbook says prophase but I'm not sure if that means they're actually forming or just becoming visible under a microscope. Can someone clarify?
+            During which phase do chromosomes first become visible? My textbook says prophase but I'm not sure if that
+            means they're actually forming or just becoming visible under a microscope. Can someone clarify?
           </div>
           <div class="post-actions">
             <button class="post-action-btn" onclick="likePost(this)">
@@ -305,7 +314,11 @@
               <span class="material-symbols-outlined">reply</span> Reply
             </button>
           </div>
-          <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+          <div class="reply-input-row">
+            <div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text"
+              class="reply-input" placeholder="Write a reply…"><button class="reply-send"
+              onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button>
+          </div>
 
           <!-- Replies -->
           <button class="replies-toggle" onclick="toggleReplies(this)">
@@ -316,7 +329,9 @@
             <!-- Instructor reply -->
             <div class="forum-reply instructor-reply">
               <div class="post-top">
-                <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-secondary),#0da882);width:34px;height:34px;">MK</div>
+                <div class="post-avatar"
+                  style="background:linear-gradient(135deg,var(--clr-secondary),#0da882);width:34px;height:34px;">MK
+                </div>
                 <div>
                   <div class="post-meta-row">
                     <span class="post-author">Prof. Maria Khan</span>
@@ -328,7 +343,10 @@
                 </div>
               </div>
               <div class="post-text" style="margin-left:0;margin-top:.75rem;">
-                Great question Fatima! Chromosomes are present in the nucleus throughout the cell cycle — during Interphase they appear as chromatin (long, thin threads). In <strong>Prophase</strong>, the chromatin condenses and coils tightly, making the chromosomes visible under a microscope. So they don't "form" in prophase — they become <em>visible</em>. This distinction is important for Cambridge marking schemes! 📌
+                Great question Fatima! Chromosomes are present in the nucleus throughout the cell cycle — during
+                Interphase they appear as chromatin (long, thin threads). In <strong>Prophase</strong>, the chromatin
+                condenses and coils tightly, making the chromosomes visible under a microscope. So they don't "form" in
+                prophase — they become <em>visible</em>. This distinction is important for Cambridge marking schemes! 📌
               </div>
               <div class="post-actions" style="margin-left:0;margin-top:.5rem;">
                 <button class="post-action-btn" onclick="likePost(this)">
@@ -341,17 +359,20 @@
             <!-- Student reply -->
             <div class="forum-reply">
               <div class="post-top">
-                <div class="post-avatar" style="background:linear-gradient(135deg,#FFD700,#005088);width:34px;height:34px;">AR</div>
+                <div class="post-avatar"
+                  style="background:linear-gradient(135deg,#FFD700,#005088);width:34px;height:34px;">AR</div>
                 <div>
                   <div class="post-meta-row">
                     <span class="post-author">Ali Raza</span>
-                    <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                    <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span>
+                      Student</span>
                     <span class="post-time">45 min ago</span>
                   </div>
                 </div>
               </div>
               <div class="post-text" style="margin-left:0;margin-top:.75rem;">
-                Thank you Professor, that really cleared it up! So the chromosomes are always there, they just become <em>distinguishable</em> in prophase. Makes so much sense now.
+                Thank you Professor, that really cleared it up! So the chromosomes are always there, they just become
+                <em>distinguishable</em> in prophase. Makes so much sense now.
               </div>
             </div>
 
@@ -365,7 +386,8 @@
             <div>
               <div class="post-meta-row">
                 <span class="post-author">Zara Khan</span>
-                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span>
+                  Student</span>
                 <span class="post-time">3 hours ago</span>
               </div>
             </div>
@@ -375,7 +397,8 @@
             <span class="post-tag">Exam Tip</span>
           </div>
           <div class="post-text">
-            Can someone explain the difference between crossing over in Meiosis I and Meiosis II? I always get confused about which stage the genetic variation actually occurs in the past papers.
+            Can someone explain the difference between crossing over in Meiosis I and Meiosis II? I always get confused
+            about which stage the genetic variation actually occurs in the past papers.
           </div>
           <div class="post-actions">
             <button class="post-action-btn" onclick="likePost(this)">
@@ -389,7 +412,11 @@
               <span class="material-symbols-outlined">share</span> Share
             </button>
           </div>
-          <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+          <div class="reply-input-row">
+            <div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text"
+              class="reply-input" placeholder="Write a reply…"><button class="reply-send"
+              onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button>
+          </div>
 
           <button class="replies-toggle" onclick="toggleReplies(this)">
             <span class="material-symbols-outlined">unfold_more</span> Show 1 reply
@@ -397,15 +424,20 @@
           <div class="replies-list" style="display:none;">
             <div class="forum-reply">
               <div class="post-top">
-                <div class="post-avatar" style="background:linear-gradient(135deg,#005088,#11CAA0);width:34px;height:34px;">HS</div>
-                <div><div class="post-meta-row">
-                  <span class="post-author">Hamza Siddiqui</span>
-                  <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
-                  <span class="post-time">2 hours ago</span>
-                </div></div>
+                <div class="post-avatar"
+                  style="background:linear-gradient(135deg,#005088,#11CAA0);width:34px;height:34px;">HS</div>
+                <div>
+                  <div class="post-meta-row">
+                    <span class="post-author">Hamza Siddiqui</span>
+                    <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span>
+                      Student</span>
+                    <span class="post-time">2 hours ago</span>
+                  </div>
+                </div>
               </div>
               <div class="post-text" style="margin-left:0;margin-top:.75rem;">
-                From what I remember, crossing over (chiasmata formation) happens during Prophase I of Meiosis I. Meiosis II is more similar to mitosis — it just separates the sister chromatids. But Prof. can confirm!
+                From what I remember, crossing over (chiasmata formation) happens during Prophase I of Meiosis I.
+                Meiosis II is more similar to mitosis — it just separates the sister chromatids. But Prof. can confirm!
               </div>
             </div>
           </div>
@@ -418,7 +450,8 @@
             <div>
               <div class="post-meta-row">
                 <span class="post-author">Nadia Khan</span>
-                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span> Student</span>
+                <span class="role-badge role-badge-student"><span class="material-symbols-outlined">school</span>
+                  Student</span>
                 <span class="post-time">5 hours ago</span>
                 <span class="answered-badge"><span class="material-symbols-outlined">check_circle</span> Answered</span>
               </div>
@@ -429,7 +462,8 @@
             <span class="post-tag">Anaphase</span>
           </div>
           <div class="post-text">
-            What exactly causes the spindle fibres to shorten during anaphase? Is it an active or passive process? I need this for a 6-mark answer.
+            What exactly causes the spindle fibres to shorten during anaphase? Is it an active or passive process? I
+            need this for a 6-mark answer.
           </div>
           <div class="post-actions">
             <button class="post-action-btn" onclick="likePost(this)">
@@ -440,7 +474,11 @@
               <span class="material-symbols-outlined">reply</span> Reply
             </button>
           </div>
-          <div class="reply-input-row"><div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text" class="reply-input" placeholder="Write a reply…"><button class="reply-send" onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button></div>
+          <div class="reply-input-row">
+            <div class="ask-bar-avatar" style="width:30px;height:30px;font-size:.65rem;">FA</div><input type="text"
+              class="reply-input" placeholder="Write a reply…"><button class="reply-send"
+              onclick="submitReply(this)"><span class="material-symbols-outlined">send</span></button>
+          </div>
 
           <button class="replies-toggle" onclick="toggleReplies(this)">
             <span class="material-symbols-outlined">unfold_more</span> Show 1 reply
@@ -448,17 +486,25 @@
           <div class="replies-list" style="display:none;">
             <div class="forum-reply instructor-reply">
               <div class="post-top">
-                <div class="post-avatar" style="background:linear-gradient(135deg,var(--clr-secondary),#0da882);width:34px;height:34px;">MK</div>
-                <div><div class="post-meta-row">
-                  <span class="post-author">Prof. Maria Khan</span>
-                  <span class="role-badge role-badge-instructor">
-                    <span class="material-symbols-outlined">verified</span> Instructor
-                  </span>
-                  <span class="post-time">4 hours ago</span>
-                </div></div>
+                <div class="post-avatar"
+                  style="background:linear-gradient(135deg,var(--clr-secondary),#0da882);width:34px;height:34px;">MK
+                </div>
+                <div>
+                  <div class="post-meta-row">
+                    <span class="post-author">Prof. Maria Khan</span>
+                    <span class="role-badge role-badge-instructor">
+                      <span class="material-symbols-outlined">verified</span> Instructor
+                    </span>
+                    <span class="post-time">4 hours ago</span>
+                  </div>
+                </div>
               </div>
               <div class="post-text" style="margin-left:0;margin-top:.75rem;">
-                Excellent question for a 6-marker! Spindle fibre shortening is an <strong>active process</strong> driven by motor proteins (dynein and kinesin) that "walk" along microtubules. The kinetochore fibres depolymerise (lose tubulin subunits) at the kinetochore end, pulling the chromatids poleward. For full marks, mention: (1) motor proteins, (2) ATP hydrolysis, (3) depolymerisation of microtubules, (4) movement toward opposite poles. 📚
+                Excellent question for a 6-marker! Spindle fibre shortening is an <strong>active process</strong> driven
+                by motor proteins (dynein and kinesin) that "walk" along microtubules. The kinetochore fibres
+                depolymerise (lose tubulin subunits) at the kinetochore end, pulling the chromatids poleward. For full
+                marks, mention: (1) motor proteins, (2) ATP hydrolysis, (3) depolymerisation of microtubules, (4)
+                movement toward opposite poles. 📚
               </div>
               <div class="post-actions" style="margin-left:0;margin-top:.5rem;">
                 <button class="post-action-btn" onclick="likePost(this)">
@@ -478,7 +524,7 @@
     // ── Forum Interactions ───────────────────────────────────
     function likePost(btn) {
       const votesEl = btn.querySelector('.post-votes');
-      const liked   = btn.classList.toggle('liked');
+      const liked = btn.classList.toggle('liked');
       votesEl.textContent = parseInt(votesEl.textContent) + (liked ? 1 : -1);
       const icon = btn.querySelector('.material-symbols-outlined');
       icon.textContent = liked ? 'thumb_up' : 'thumb_up';
@@ -486,18 +532,18 @@
 
     function toggleReplyBox(btn) {
       const post = btn.closest('.forum-post');
-      const box  = post.querySelector('.reply-input-row');
+      const box = post.querySelector('.reply-input-row');
       box.classList.toggle('open');
       if (box.classList.contains('open')) box.querySelector('input').focus();
     }
 
     function submitReply(btn) {
-      const row   = btn.closest('.reply-input-row');
+      const row = btn.closest('.reply-input-row');
       const input = row.querySelector('input');
-      const text  = input.value.trim();
+      const text = input.value.trim();
       if (!text) return;
 
-      const post    = btn.closest('.forum-post');
+      const post = btn.closest('.forum-post');
       const replies = post.querySelector('.replies-list');
 
       // Show replies list if hidden
@@ -536,7 +582,7 @@
 
     function postDoubt() {
       const input = document.getElementById('ask-input');
-      const text  = input.value.trim();
+      const text = input.value.trim();
       if (!text) return;
 
       const threads = document.getElementById('forum-threads');
@@ -599,8 +645,8 @@
 
     // ── Fake Player State ─────────────────────────────────────
     let isPlaying = false;
-    let isMuted   = false;
-    let progress  = 24; // fake start at 24%
+    let isMuted = false;
+    let progress = 24; // fake start at 24%
     let timer;
 
     function startPlaying() {
@@ -639,14 +685,14 @@
 
     function updateSeek() {
       document.getElementById('seek-progress').style.width = progress + '%';
-      document.getElementById('seek-thumb').style.left   = progress + '%';
+      document.getElementById('seek-thumb').style.left = progress + '%';
     }
 
     function updateTime() {
-      const total   = 1125; // 18:45 in seconds
+      const total = 1125; // 18:45 in seconds
       const current = Math.floor((progress / 100) * total);
-      const m = Math.floor(current / 60).toString().padStart(2,'0');
-      const s = (current % 60).toString().padStart(2,'0');
+      const m = Math.floor(current / 60).toString().padStart(2, '0');
+      const s = (current % 60).toString().padStart(2, '0');
       document.getElementById('time-display').textContent = `${m}:${s} / 18:45`;
     }
 
@@ -698,35 +744,35 @@
       if (!window.supabaseClient || !window.AthenaeumCourses) return;
       const { data: { session } } = await window.supabaseClient.auth.getSession();
       if (!session) return;
-      
+
       const urlParams = new URLSearchParams(window.location.search);
       const courseId = urlParams.get('courseId');
       currentLessonId = urlParams.get('lessonId');
-      
+
       if (!courseId) return; // Fallback to mockup if no ID
-      
+
       try {
         const course = await window.AthenaeumCourses.fetchCourseById(courseId);
         completedLessonsIds = await window.AthenaeumCourses.fetchCompletedLessons(session.user.id);
-        
+
         // Render sidebar
         const listContainer = document.getElementById('lesson-list-container');
         listContainer.innerHTML = '';
-        
+
         let totalLessons = 0;
         let completedCount = 0;
-        
+
         course.modules?.forEach((mod, mIdx) => {
           mod.lessons?.forEach((lesson, lIdx) => {
             totalLessons++;
             const isCompleted = completedLessonsIds.includes(lesson.id);
             if (isCompleted) completedCount++;
-            
+
             const isCurrent = lesson.id === currentLessonId;
-            const iconHtml = isCompleted 
+            const iconHtml = isCompleted
               ? `<span class="material-symbols-outlined" style="font-size:.9rem; color: #10b981;">check</span>`
               : `${lIdx + 1}`;
-              
+
             listContainer.innerHTML += `
               <a href="?courseId=${course.id}&lessonId=${lesson.id}" class="lesson-item ${isCompleted ? 'done' : ''} ${isCurrent ? 'active' : ''}" style="text-decoration:none; color:inherit; display:flex;">
                 <div class="l-num">${iconHtml}</div>
@@ -738,12 +784,12 @@
             `;
           });
         });
-        
+
         // Default to first lesson if none selected
         if (!currentLessonId && course.modules?.[0]?.lessons?.[0]) {
           currentLessonId = course.modules[0].lessons[0].id;
         }
-        
+
       } catch (err) {
         console.error('Error loading course data:', err);
       }
@@ -769,14 +815,15 @@
     loadCourseData();
   </script>
 
-<!-- Athenaeum Assistant Widget -->
-<script src="athenaeum-assistant.js?v=2" defer></script>
+  <!-- Athenaeum Assistant Widget -->
+  <script src="athenaeum-assistant.js?v=2" defer></script>
 
-<!-- Floating Glass Back Button -->
-<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 12H5M12 19l-7-7 7-7" />
-  </svg>
-</button>
+  <!-- Floating Glass Back Button -->
+  <button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  </button>
 </body>
+
 </html>

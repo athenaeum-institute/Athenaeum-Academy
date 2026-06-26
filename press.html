@@ -7,11 +7,7 @@
   <title>About Athenaeum Academy - Press & Media</title>
   <meta name="description"
     content="Information for press and media about Athenaeum Academy, Pakistan's premier digital-first educational institution for O Levels, A Levels, Matric, FSc, MDCAT, and ECAT." />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" href="logo_transparent.png" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,7 +21,7 @@
 
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="athenaeum-assistant.css?v=2" />
-  
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth-state.js"></script>
@@ -43,14 +39,16 @@
   <header id="navbar" class="navbar">
     <nav class="container nav-inner">
       <a href="index.html" class="logo" id="nav-logo">
-        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+        <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;"
+          loading="lazy" decoding="async" />
         <span class="logo-text">Athenaeum</span>
       </a>
 
       <ul class="nav-links" id="nav-links">
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown">
-          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
+          <a href="javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined"
+              style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
           <ul class="dropdown-menu">
             <li><a href="oa-levels.html">O/A Levels</a></li>
             <li><a href="matric-inter.html">Matric/Inter</a></li>
@@ -82,9 +80,11 @@
         <span></span><span></span><span></span>
       </button>
 
-      <div class="search-overlay" id="search-overlay" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--clr-surface); padding: 1rem 24px; border-bottom: 1px solid var(--clr-border); box-shadow: var(--shadow-md); z-index: 999;">
+      <div class="search-overlay" id="search-overlay"
+        style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--clr-surface); padding: 1rem 24px; border-bottom: 1px solid var(--clr-border); box-shadow: var(--shadow-md); z-index: 999;">
         <div style="max-width: 800px; margin: 0 auto; display: flex; gap: 10px;">
-          <input type="text" id="global-search-input" placeholder="Search courses, skills, and resources..." style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--clr-border); border-radius: var(--radius-full); font-size: 1rem; outline: none;">
+          <input type="text" id="global-search-input" placeholder="Search courses, skills, and resources..."
+            style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--clr-border); border-radius: var(--radius-full); font-size: 1rem; outline: none;">
           <button class="btn btn-primary" onclick="executeGlobalSearch()">Search</button>
         </div>
       </div>
@@ -95,7 +95,8 @@
         <li><a href="courses.html" class="nav-link">Courses</a></li>
         <li class="nav-dropdown" style="padding-left:1rem;">
           <strong style="color:var(--clr-primary);">Academics</strong>
-          <ul style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+          <ul
+            style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
             <li><a href="oa-levels.html" class="nav-link" style="font-size:0.9em;">O/A Levels</a></li>
             <li><a href="matric-inter.html" class="nav-link" style="font-size:0.9em;">Matric/Inter</a></li>
           </ul>
@@ -120,12 +121,23 @@
     <section class="section container" style="padding-top: 40px;">
       <div class="section-header">
       </div>
-      
+
       <div style="max-width: 800px; margin: 0 auto; line-height: 1.8; color: var(--clr-text);">
-        <p style="font-size: 1.1rem; margin-bottom: 2rem;">Athenaeum Academy is Pakistan's premier digital-first educational institution, dedicated to democratizing access to high-quality tuition. Founded in 2024 and headquartered in Lahore, Pakistan, the academy provides specialized preparation for O Levels, A Levels, Matriculation, Intermediate (FSc), and competitive university entrance exams including MDCAT and ECAT. By bridging the gap between traditional schooling and modern digital needs, Athenaeum equips students with expert-led live interactive classes, comprehensive study materials, and rigorous mock assessments. The institution leverages a state-of-the-art Learning Management System complete with transparent progress tracking for parents and students alike. Driven by a mission to elevate academic standards nationwide, Athenaeum Academy continuously innovates its curriculum and teaching methodologies, employing highly qualified Pakistani educators to foster academic excellence and empower the next generation of leaders in an increasingly competitive global landscape.</p>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem;">Athenaeum Academy is Pakistan's premier digital-first
+          educational institution, dedicated to democratizing access to high-quality tuition. Founded in 2024 and
+          headquartered in Lahore, Pakistan, the academy provides specialized preparation for O Levels, A Levels,
+          Matriculation, Intermediate (FSc), and competitive university entrance exams including MDCAT and ECAT. By
+          bridging the gap between traditional schooling and modern digital needs, Athenaeum equips students with
+          expert-led live interactive classes, comprehensive study materials, and rigorous mock assessments. The
+          institution leverages a state-of-the-art Learning Management System complete with transparent progress
+          tracking for parents and students alike. Driven by a mission to elevate academic standards nationwide,
+          Athenaeum Academy continuously innovates its curriculum and teaching methodologies, employing highly qualified
+          Pakistani educators to foster academic excellence and empower the next generation of leaders in an
+          increasingly competitive global landscape.</p>
 
         <div class="course-card" style="padding: 2rem; margin-top: 3rem;">
-          <h2 style="margin-bottom: 1.5rem; color: var(--clr-text-dark); font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <h2
+            style="margin-bottom: 1.5rem; color: var(--clr-text-dark); font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
             <span class="material-symbols-outlined" style="color: var(--clr-primary);">info</span>
             Key Facts
           </h2>
@@ -231,25 +243,29 @@
 
       <div class="footer-brand">
         <a href="index.html" class="logo footer-logo">
-          <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 50px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+          <img src="logo_transparent.png" alt="Athenaeum Logo" style="height: 50px; width: auto; object-fit: contain;"
+            loading="lazy" decoding="async" />
           <span class="logo-text">Athenaeum</span>
         </a>
         <p>Empowering the next generation with quality education and expert guidance across all academic levels.
           Pakistan's most trusted online academy.</p>
         <div class="social-links">
-          <a href="https://www.facebook.com/athenaeumacademy" class="social-btn" aria-label="Facebook" id="social-facebook">
+          <a href="https://www.facebook.com/athenaeumacademy" class="social-btn" aria-label="Facebook"
+            id="social-facebook">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path
                 d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
           </a>
-          <a href="https://www.instagram.com/athenaeumacademy" class="social-btn" aria-label="Instagram" id="social-instagram">
+          <a href="https://www.instagram.com/athenaeumacademy" class="social-btn" aria-label="Instagram"
+            id="social-instagram">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path
                 d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
             </svg>
           </a>
-          <a href="https://www.youtube.com/@athenaeumacademy" class="social-btn" aria-label="YouTube" id="social-youtube">
+          <a href="https://www.youtube.com/@athenaeumacademy" class="social-btn" aria-label="YouTube"
+            id="social-youtube">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path
                 d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
@@ -284,7 +300,9 @@
           <li><a href="auth.html?mode=register">Free Trial</a></li>
           <li><a href="live-class.html">Live Classes</a></li>
           <li><a href="mock-exam.html">Mock Exams</a></li>
-          <li><a href="#" onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum Assistant Tutor</a></li>
+          <li><a href="#"
+              onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum
+              Assistant Tutor</a></li>
           <li><a href="become-a-teacher.html">Become a Teacher</a></li>
         </ul>
       </div>
@@ -300,8 +318,10 @@
           <li><a href="press.html">Press & Media</a></li>
         </ul>
         <div class="footer-contact-mini">
-          <p><a href="mailto:support@athenaeumacademy.com" style="display:flex; align-items:center; gap:0.5rem;"><span class="material-symbols-outlined">mail</span> support@athenaeumacademy.com</a></p>
-          <p><a href="tel:+923286715408" style="display:flex; align-items:center; gap:0.5rem;"><span class="material-symbols-outlined">call</span> +92 328 6715408</a></p>
+          <p><a href="mailto:support@athenaeumacademy.com" style="display:flex; align-items:center; gap:0.5rem;"><span
+                class="material-symbols-outlined">mail</span> support@athenaeumacademy.com</a></p>
+          <p><a href="tel:+923286715408" style="display:flex; align-items:center; gap:0.5rem;"><span
+                class="material-symbols-outlined">call</span> +92 328 6715408</a></p>
           <p><span class="material-symbols-outlined">location_on</span> Lahore, Pakistan</p>
         </div>
       </div>
@@ -321,80 +341,79 @@
   </footer>
 
   <script src="main.js"></script>
-<style>
-.page-hero {
-  background: linear-gradient(135deg, 
-    #0a0f2e 0%, 
-    #0d1b4b 40%, 
-    #1a1060 70%, 
-    #0f0a3a 100%);
-  position: relative;
-  overflow: hidden;
-  padding: 60px 20px;        /* smaller than contact page */
-  min-height: 200px;          /* compact height */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg,
+          #0a0f2e 0%,
+          #0d1b4b 40%,
+          #1a1060 70%,
+          #0f0a3a 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 60px 20px;
+      /* smaller than contact page */
+      min-height: 200px;
+      /* compact height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
 
-/* Subtle dot grid pattern overlay */
-.page-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    rgba(255,255,255,0.06) 1px, 
-    transparent 1px
-  );
-  background-size: 28px 28px;
-  pointer-events: none;
-}
+    /* Subtle dot grid pattern overlay */
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px,
+          transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
 
-/* Glowing orb top right */
-.page-hero::after {
-  content: '';
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(
-    circle, 
-    rgba(99, 102, 241, 0.25) 0%, 
-    transparent 70%
-  );
-  pointer-events: none;
-}
+    /* Glowing orb top right */
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle,
+          rgba(99, 102, 241, 0.25) 0%,
+          transparent 70%);
+      pointer-events: none;
+    }
 
-.page-hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 700px;
-  margin: 0 auto;
-}
+    .page-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      margin: 0 auto;
+    }
 
-.page-hero h1 {
-  color: #ffffff;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 700;
-  margin-bottom: 12px;
-  line-height: 1.2;
-}
+    .page-hero h1 {
+      color: #ffffff;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
 
-.page-hero p {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  line-height: 1.6;
-  margin: 0;
-}
+    .page-hero p {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      line-height: 1.6;
+      margin: 0;
+    }
 
-@media (max-width: 768px) {
-  .page-hero {
-    padding: 40px 16px;
-    min-height: 160px;
-  }
-}
-</style>
+    @media (max-width: 768px) {
+      .page-hero {
+        padding: 40px 16px;
+        min-height: 160px;
+      }
+    }
+  </style>
 </body>
+
 </html>
