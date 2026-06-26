@@ -521,6 +521,12 @@
               const allCourses = await window.AthenaeumCourses.fetchAllCourses();
               const userEnrollments = window.currentUser ? await window.AthenaeumCourses.getUserEnrollmentMap(window.currentUser.id) : {};
               
+              let userCartItems = [];
+              if (window.currentUser && window.supabaseClient) {
+                const { data: cartData } = await window.supabaseClient.from('cart_items').select('course_id').eq('user_id', window.currentUser.id);
+                if (cartData) userCartItems = cartData.map(c => c.course_id);
+              }
+
               const oLevels = allCourses.filter(c => c.category === 'o_levels').slice(0, 2);
               const matric = allCourses.filter(c => c.category === 'matric').slice(0, 2);
               const inter = allCourses.filter(c => c.category === 'inter').slice(0, 2);
@@ -659,12 +665,55 @@
                   </article>
                 `;
               });
-              
               grid.innerHTML = html;
             } catch (err) {
               console.error('Featured courses render error:', err);
               grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Failed to load featured courses.</p>';
             }
+            
+            window.addToCart = async (e, courseId) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!window.currentUser) {
+                window.location.href = `auth.html?mode=login&redirect=index.html`;
+                return;
+              }
+              try {
+                const { error } = await window.supabaseClient.from('cart_items').insert({
+                  user_id: window.currentUser.id,
+                  course_id: courseId
+                });
+                if (error) throw error;
+                
+                if (typeof userCartItems !== 'undefined') userCartItems.push(courseId);
+                if(window.updateCartBadge) window.updateCartBadge(window.currentUser.id);
+                
+                const toast = document.createElement('div');
+                toast.style.position = 'fixed';
+                toast.style.bottom = '20px';
+                toast.style.right = '20px';
+                toast.style.background = '#10b981';
+                toast.style.color = '#fff';
+                toast.style.padding = '12px 24px';
+                toast.style.borderRadius = '8px';
+                toast.style.zIndex = '10000';
+                toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                toast.innerHTML = '<span class="material-symbols-outlined" style="vertical-align:middle; margin-right:8px;">check_circle</span>Added to cart!';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => toast.remove(), 3000);
+                
+                // Update button state visually
+                const btn = e.currentTarget;
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+                btn.style.cursor = 'not-allowed';
+                btn.innerHTML = '<span class="material-symbols-outlined">shopping_bag</span> Already in Cart';
+              } catch (err) {
+                console.error(err);
+                alert('Failed to add to cart. ' + err.message);
+              }
+            };
           });
         </script>
 
