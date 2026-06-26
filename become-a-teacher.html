@@ -25,7 +25,7 @@
   <script src="auth-state.js"></script>
   
   <!-- EmailJS Script -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
   <style>
     /* Teacher Form Styles */
@@ -422,104 +422,65 @@
 
   <script>
     // --- EmailJS Configuration ---
-    const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
-    const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';  
-    const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+    const EMAILJS_PUBLIC_KEY = 'a-OveV3kaoWp2uMgf';
+    const EMAILJS_SERVICE_ID = 'service_kzzgnik';  
+    const EMAILJS_TEACHER_TEMPLATE_ID = 'template_hnh6mv7';
     
     // Initialize EmailJS
     (function() {
-      if(EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
-        emailjs.init(EMAILJS_PUBLIC_KEY);
-      }
+      emailjs.init(EMAILJS_PUBLIC_KEY);
     })();
 
     document.getElementById('teacher-form').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      const form = this;
-      const btn = document.getElementById('submit-btn');
-      const globalError = document.getElementById('form-error-global');
-      const levelError = document.getElementById('level-error');
-      const introError = document.getElementById('intro-error');
-      
-      // Reset errors
-      globalError.style.display = 'none';
-      levelError.style.display = 'none';
-      introError.style.display = 'none';
-      
-      // Validation: Levels (at least 1 checkbox)
-      const levels = Array.from(document.querySelectorAll('input[name="levels"]:checked')).map(el => el.value);
-      if (levels.length === 0) {
-        levelError.style.display = 'block';
-        return;
-      }
-      
-      // Validation: Introduction length
-      const intro = document.getElementById('introduction').value;
-      if (intro.trim().length < 100) {
-        introError.style.display = 'block';
-        return;
-      }
+      const requiredFields = ['fullName','email','phone','city','subjects','qualification','introduction'];
+      let valid = true;
+      requiredFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) {
+          el.style.border = '2px solid red';
+          valid = false;
+        } else {
+          el.style.border = '';
+        }
+      });
+      if (!valid) return;
 
-      const fullName = document.getElementById('fullName').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const city = document.getElementById('city').value;
-      const subjects = document.getElementById('subjects').value;
-      const qualification = document.getElementById('qualification').value;
-      const experience = document.getElementById('experience').value;
-      const teachingMode = document.querySelector('input[name="teachingMode"]:checked').value;
-      
-      // Note: File attachments require multipart form data handling in EmailJS, 
-      // or sending the base64 encoded file string.
-      // For simplicity in this implementation, we will log the filename and rely on EmailJS settings.
-      const cvFile = document.getElementById('cv').files[0];
-      const cvName = cvFile ? cvFile.name : 'No file attached';
+      // Send email silently in background
+      emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEACHER_TEMPLATE_ID,
+        {
+          from_name: document.getElementById('fullName').value,
+          from_email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          city: document.getElementById('city').value,
+          subjects: document.getElementById('subjects').value,
+          education_level: Array.from(document.querySelectorAll('input[name="level"]:checked')).map(el => el.value).join(', '),
+          qualification: document.getElementById('qualification').value,
+          experience: document.getElementById('experience').value,
+          teaching_mode: document.querySelector('input[name="mode"]:checked')?.value || 'Not specified',
+          message: document.getElementById('introduction').value
+        }
+      )
+      .then(() => console.log('Teacher application email sent'))
+      .catch(err => {
+        console.error('EmailJS error:', err);
+        alert('Something went wrong. Please email us directly at support@athenaeumacademy.com');
+      });
 
-      const templateParams = {
-        fullName: fullName,
-        email: email,
-        phone: phone,
-        city: city,
-        subjects: subjects,
-        levels: levels.join(', '),
-        qualification: qualification,
-        experience: experience,
-        teachingMode: teachingMode,
-        introduction: intro,
-        cvName: cvName
-      };
-
-      if(EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') {
-        // Mock success for development if keys aren't set
-        console.log("EmailJS keys not set. Mocking success for:", templateParams);
-        showSuccess(fullName);
-        return;
-      }
-
-      btn.innerHTML = 'Submitting...';
-      btn.disabled = true;
-
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-        .then(function(response) {
-          console.log('SUCCESS!', response.status, response.text);
-          showSuccess(fullName);
-        }, function(error) {
-          console.error('FAILED...', error);
-          globalError.textContent = "Something went wrong. Please email us directly at support@athenaeumacademy.com";
-          globalError.style.display = 'block';
-          btn.innerHTML = 'Submit Application';
-          btn.disabled = false;
-        });
-    });
-
-    function showSuccess(name) {
+      // Show success immediately without blocking
       document.getElementById('teacher-form').style.display = 'none';
       const successDiv = document.getElementById('application-success');
-      const textEl = document.getElementById('success-text');
-      textEl.textContent = `Thank you ${name}! Your application has been submitted. Our team will review it and contact you within 3-5 business days.`;
+      successDiv.innerHTML = `
+        <div style="text-align:center;padding:60px 20px;">
+          <h3>✅ Application Submitted!</h3>
+          <p>Thank you! Our team will review and contact you within 3-5 business days at your email.</p>
+        </div>
+      `;
       successDiv.style.display = 'block';
-    }
+    });
   </script>
 </body>
 </html>

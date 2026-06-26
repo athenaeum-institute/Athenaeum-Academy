@@ -32,7 +32,18 @@
   <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="athenaeum-assistant.css?v=2">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="athenaeum-assistant.css?v=2" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init('a-OveV3kaoWp2uMgf');
+    })();
+  </script>
   <meta name="author" content="Athenaeum Academy">
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
@@ -446,20 +457,48 @@
                 e.preventDefault();
                 const subject = document.getElementById("cf-subject").value;
                 let message = document.getElementById("cf-message").value;
+                let userEmail = 'Website visitor';
 
                 const sessionStr = localStorage.getItem("supabase.auth.token");
                 if (sessionStr) {
                   try {
                     const session = JSON.parse(sessionStr);
-                    const userEmail = session.currentSession?.user?.email;
-                    if (userEmail) {
+                    if (session.currentSession?.user?.email) {
+                      userEmail = session.currentSession.user.email;
                       message = message + "\n\n---\nSent by logged-in user: " + userEmail;
                     }
                   } catch (err) { }
                 }
 
-                const mailtoLink = "mailto:support@athenaeumacademy.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(message);
-                window.location.href = mailtoLink;
+                const submitBtn = document.querySelector('#contact-form .submit-btn');
+                const originalText = submitBtn.innerText;
+                
+                emailjs.send(
+                  'service_kzzgnik',
+                  'template_vpoq0ne',
+                  {
+                    subject: subject,
+                    message: message,
+                    from_email: userEmail
+                  }
+                )
+                .then(() => {
+                  const form = document.getElementById('contact-form');
+                  // Remove existing success messages if any
+                  const existing = form.querySelector('.success-msg');
+                  if(existing) existing.remove();
+                  
+                  const successDiv = document.createElement('div');
+                  successDiv.className = 'success-msg';
+                  successDiv.innerHTML = '✅ Message sent! We will reply within 24 hours.';
+                  successDiv.style.cssText = 'color:green;padding:12px;margin-top:12px;font-weight:600;';
+                  form.appendChild(successDiv);
+                  form.reset();
+                })
+                .catch(err => {
+                  alert('Failed to send message. Please WhatsApp us at +92 328 6715408');
+                  console.error(err);
+                });
               }
             </script>
           </div>

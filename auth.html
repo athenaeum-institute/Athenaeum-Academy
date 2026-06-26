@@ -17,6 +17,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
   
   <link rel="stylesheet" href="auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init('a-OveV3kaoWp2uMgf');
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth-state.js"></script>
@@ -460,6 +466,46 @@
 
     document.getElementById('login-form').addEventListener('submit', (e) => handleAuthSubmit(e, 'login-form'));
     document.getElementById('register-form').addEventListener('submit', (e) => handleAuthSubmit(e, 'register-form'));
+
+    // Welcome Email Logic (runs on OAuth or successful login/signup)
+    window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        try {
+          const user = session.user;
+          const { data: profile } = await window.supabaseClient
+            .from('profiles')
+            .select('welcome_sent, full_name, role')
+            .eq('id', user.id)
+            .single();
+
+          if (profile && !profile.welcome_sent) {
+            const studentName = profile.full_name 
+              || user.user_metadata?.full_name 
+              || user.email.split('@')[0] 
+              || 'Student';
+
+            emailjs.send(
+              'service_kzzgnik',
+              'YOUR_WELCOME_TEMPLATE_ID',
+              {
+                student_name: studentName,
+                student_email: user.email
+              }
+            )
+            .then(() => {
+              window.supabaseClient
+                .from('profiles')
+                .update({ welcome_sent: true })
+                .eq('id', user.id)
+                .then(() => console.log('Welcome email status updated'));
+            })
+            .catch(err => console.error('Welcome email failed:', err));
+          }
+        } catch (err) {
+          console.error('Error checking welcome email status:', err);
+        }
+      }
+    });
   </script>
 
 <!-- Floating Glass Back Button -->
