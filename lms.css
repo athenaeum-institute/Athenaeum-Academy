@@ -127,9 +127,8 @@ input, select, textarea { font-family: var(--font-main); }
    LIVE CLASS ROOM STYLES
 ============================================================ */
 .live-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  grid-template-rows: calc(100vh - 64px - 80px) 80px;
+  display: block;
+  width: 100%;
   height: calc(100vh - 64px);
 }
 
@@ -903,7 +902,7 @@ input, select, textarea { font-family: var(--font-main); }
 
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .live-layout   { grid-template-columns: 1fr; grid-template-rows: auto auto 80px; }
+  .live-layout   { display: block; }
   .live-sidebar  { grid-row: auto; max-height: 320px; }
   .control-bar   { grid-column: 1; }
   .player-layout { grid-template-columns: 1fr; }
