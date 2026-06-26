@@ -278,6 +278,53 @@ window.AthenaeumAdmin = (function() {
         console.error("Error toggling announcement:", err);
         return { status: 'error', message: err.message };
       }
+    },
+
+    // -----------------------------------------------------
+    // LIVE CLASSES
+    // -----------------------------------------------------
+    async getLiveClasses() {
+      const sb = getClient();
+      if (!sb) return { status: 'error' };
+      try {
+        const { data, error } = await sb.from('live_classes').select('*, courses(title)').order('start_time', { ascending: false });
+        if (error) throw error;
+        return { status: 'success', data };
+      } catch (err) {
+        console.error("Error fetching live classes:", err);
+        return { status: 'error', message: err.message };
+      }
+    },
+    
+    async saveLiveClass(classData) {
+      const sb = getClient();
+      if (!sb) return { status: 'error' };
+      try {
+        let result;
+        if (classData.id) {
+          result = await sb.from('live_classes').update(classData).eq('id', classData.id).select().single();
+        } else {
+          result = await sb.from('live_classes').insert([classData]).select().single();
+        }
+        if (result.error) throw result.error;
+        return { status: 'success', data: result.data };
+      } catch (err) {
+        console.error("Error saving live class:", err);
+        return { status: 'error', message: err.message };
+      }
+    },
+
+    async getAllTeachers() {
+      const sb = getClient();
+      if (!sb) return { status: 'error' };
+      try {
+        const { data, error } = await sb.from('profiles').select('id, full_name').eq('role', 'teacher');
+        if (error) throw error;
+        return { status: 'success', data };
+      } catch (err) {
+        console.error("Error fetching teachers:", err);
+        return { status: 'error', message: err.message };
+      }
     }
 
   };

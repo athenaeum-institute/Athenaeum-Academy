@@ -1127,6 +1127,10 @@
         <span class="material-symbols-outlined">menu_book</span>
         <span>Courses</span>
       </div>
+      <div class="nav-item" onclick="showPanel('live')">
+        <span class="material-symbols-outlined">co_present</span>
+        <span>Live Classes</span>
+      </div>
       <div class="nav-item" onclick="showPanel('announcements')">
         <span class="material-symbols-outlined">campaign</span>
         <span>Announcements</span>
@@ -1281,6 +1285,51 @@
         </div>
 
         <!-- ── COURSES PANEL ── -->
+        <!-- LIVE CLASSES PANEL -->
+        <div id="panel-live" class="panel">
+          <div class="section-header">
+            <div class="section-title">🎥 Live Classes</div>
+            <button class="btn btn-primary" onclick="openLiveClassModal()">
+              <span class="material-symbols-outlined">add</span> Schedule Class (Admin)
+            </button>
+          </div>
+          
+          <div class="stats-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+              <div class="stat-label">Total Classes Today</div>
+              <div class="stat-val" id="stat-live-today">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total Classes This Week</div>
+              <div class="stat-val" id="stat-live-week">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label" style="color:var(--red);">Live Right Now</div>
+              <div class="stat-val" id="stat-live-now" style="color:var(--red);">0</div>
+            </div>
+          </div>
+          
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Class Title</th>
+                  <th>Course</th>
+                  <th>Teacher</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="t-live-body">
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--muted);">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <div id="panel-courses" class="panel">
           <div class="section-header">
             <div class="section-title">📚 Course Management</div>
@@ -1491,14 +1540,12 @@
                 </tr>
               </thead>
               <tbody id="teachers-body">
-                <tr>
-                  <td colspan="5" class="empty-state">Loading from Supabase...</td>
-                </tr>
               </tbody>
             </table>
           </div>
         </div>
 
+        <div id="panel-courses" class="panel">
         <!-- ── ANNOUNCEMENTS PANEL ── -->
         <div id="panel-announcements" class="panel">
           <div class="section-header">
@@ -1536,6 +1583,49 @@
       </div><!-- /page-content -->
     </div><!-- /main -->
   </div><!-- /admin-app -->
+
+  <!-- Live Class Modal -->
+  <div class="modal-overlay" id="live-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="live-modal-title">Schedule Live Class</div>
+        <button class="modal-close" onclick="closeModal('live-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="lc-id">
+        <div class="form-group">
+          <label class="form-label">Select Teacher</label>
+          <select class="l-input" id="lc-teacher"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select Course</label>
+          <select class="l-input" id="lc-course"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Class Title</label>
+          <input class="l-input" type="text" id="lc-title" placeholder="e.g. Mitosis Deep Dive">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="l-input" id="lc-desc" placeholder="What will be covered?" style="min-height:80px;"></textarea>
+        </div>
+        <div style="display:flex; gap:1rem;">
+          <div class="form-group" style="flex:1">
+            <label class="form-label">Date & Start Time</label>
+            <input class="l-input" type="datetime-local" id="lc-start">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label class="form-label">End Time</label>
+            <input class="l-input" type="datetime-local" id="lc-end">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('live-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveLiveClass()">Schedule</button>
+      </div>
+    </div>
+  </div>
 
   <!-- COURSE MODAL -->
   <div class="modal-overlay" id="course-modal">
@@ -2150,6 +2240,156 @@
       }
     }
 
+    // -----------------------------------------
+    // LIVE CLASSES
+    // -----------------------------------------
+    let liveTeachersData = [];
+    let liveCoursesData = [];
+
+    async function loadLiveClasses() {
+      const res = await window.AthenaeumAdmin.getLiveClasses();
+      if (res.status === 'success') {
+        const tb = document.getElementById('t-live-body');
+        if (res.data.length === 0) {
+          tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No Live Classes found.</td></tr>';
+          return;
+        }
+
+        const now = new Date();
+        let liveToday = 0;
+        let liveWeek = 0;
+        let liveNow = 0;
+
+        tb.innerHTML = res.data.map(c => {
+          const start = new Date(c.start_time);
+          const end = new Date(c.end_time);
+
+          // Calculate stats
+          if (start.toDateString() === now.toDateString()) liveToday++;
+          const weekFromNow = new Date(now);
+          weekFromNow.setDate(weekFromNow.getDate() + 7);
+          if (start >= now && start <= weekFromNow) liveWeek++;
+          
+          let status = c.status || 'scheduled';
+          let badge = 'badge-blue';
+          
+          // Auto-calculate live state if scheduled
+          if (status === 'scheduled') {
+            if (now >= start && now <= end) status = 'live';
+            else if (now > end) status = 'ended';
+          }
+          
+          if (status === 'live') {
+            badge = 'badge-green';
+            liveNow++;
+          }
+          if (status === 'ended' || status === 'cancelled') badge = 'badge-gray';
+
+          const timeStr = `${start.toLocaleDateString()} ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+          const courseTitle = c.courses ? c.courses.title : 'Unknown Course';
+
+          return `
+            <tr>
+              <td><strong>${c.title}</strong></td>
+              <td>${courseTitle}</td>
+              <td>${c.teacher_name}</td>
+              <td>${timeStr}</td>
+              <td><span class="badge ${badge}">${status.toUpperCase()}</span></td>
+              <td>
+                <button class="btn btn-ghost btn-sm" onclick="openLiveClassModal('${c.id}')">Edit</button>
+                ${status === 'scheduled' ? `<button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="cancelLiveClass('${c.id}')">Cancel</button>` : ''}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        document.getElementById('stat-live-today').textContent = liveToday;
+        document.getElementById('stat-live-week').textContent = liveWeek;
+        document.getElementById('stat-live-now').textContent = liveNow;
+      }
+    }
+
+    async function openLiveClassModal(classId = null) {
+      document.getElementById('lc-id').value = classId || '';
+      document.getElementById('lc-title').value = '';
+      document.getElementById('lc-desc').value = '';
+      document.getElementById('lc-start').value = '';
+      document.getElementById('lc-end').value = '';
+
+      if (liveTeachersData.length === 0) {
+        const tRes = await window.AthenaeumAdmin.getAllTeachers();
+        if (tRes.status === 'success') liveTeachersData = tRes.data;
+      }
+      if (liveCoursesData.length === 0) {
+        const cRes = await window.AthenaeumAdmin.getCourses();
+        if (cRes.status === 'success') liveCoursesData = cRes.data;
+      }
+
+      document.getElementById('lc-teacher').innerHTML = liveTeachersData.map(t => `<option value="${t.id}" data-name="${t.full_name}">${t.full_name}</option>`).join('');
+      document.getElementById('lc-course').innerHTML = liveCoursesData.map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
+
+      document.getElementById('live-modal').classList.add('open');
+    }
+
+    async function saveLiveClass() {
+      const classId = document.getElementById('lc-id').value;
+      const tSelect = document.getElementById('lc-teacher');
+      const cSelect = document.getElementById('lc-course');
+      
+      const teacherId = tSelect.value;
+      const teacherName = tSelect.options[tSelect.selectedIndex]?.getAttribute('data-name');
+      
+      const courseId = cSelect.value;
+      const subject = cSelect.options[cSelect.selectedIndex]?.getAttribute('data-subject');
+      
+      const title = document.getElementById('lc-title').value;
+      const desc = document.getElementById('lc-desc').value;
+      const start = document.getElementById('lc-start').value;
+      const end = document.getElementById('lc-end').value;
+
+      if (!teacherId || !courseId || !title || !start || !end) {
+        return showToast('Please fill all required fields.', 'error');
+      }
+
+      const payload = {
+        teacher_id: teacherId,
+        teacher_name: teacherName,
+        course_id: courseId,
+        title: title,
+        subject: subject,
+        description: desc,
+        start_time: new Date(start).toISOString(),
+        end_time: new Date(end).toISOString()
+      };
+      
+      if (classId) {
+        payload.id = classId;
+      } else {
+        payload.jitsi_room_name = 'athenaeum-' + courseId.slice(0,8) + '-' + Date.now();
+        payload.status = 'scheduled';
+      }
+
+      const res = await window.AthenaeumAdmin.saveLiveClass(payload);
+      if (res.status === 'success') {
+        showToast(classId ? 'Class Updated' : 'Class Scheduled');
+        closeModal('live-modal');
+        loadLiveClasses();
+      } else {
+        showToast(res.message, 'error');
+      }
+    }
+
+    async function cancelLiveClass(id) {
+      if (!confirm('Are you sure you want to cancel this class?')) return;
+      const res = await window.AthenaeumAdmin.saveLiveClass({ id: id, status: 'cancelled' });
+      if (res.status === 'success') {
+        showToast('Class Cancelled');
+        loadLiveClasses();
+      } else {
+        showToast(res.message, 'error');
+      }
+    }
+
     // ── ANNOUNCEMENTS ──
     async function loadAnnouncements() {
       const tbody = document.getElementById('announcements-body');
@@ -2348,6 +2588,7 @@
       loadStudents();
       loadTeachers();
       loadAnnouncements();
+      loadLiveClasses();
       showToast('Auto-logged in as Admin 👋', 'success');
     });
   </script>

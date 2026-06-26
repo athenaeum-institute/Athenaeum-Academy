@@ -679,6 +679,18 @@
         </div>
       </div>
 
+      <!-- LIVE CLASSES -->
+      <div class="panel fade-in" style="margin-bottom:2rem;">
+        <div class="panel-header">
+          <div class="panel-title" style="display:flex; align-items:center; gap:0.5rem">
+            <span class="material-symbols-outlined" style="color:var(--red)">co_present</span> Live Classes
+          </div>
+        </div>
+        <div id="student-live-container">
+          <div class="skeleton" style="width:100%; height:150px; border-radius:12px"></div>
+        </div>
+      </div>
+
       <!-- LEADERBOARD & RECENT EXAMS -->
       <div class="two-col fade-in">
 
@@ -795,6 +807,9 @@
             sessionStorage.setItem('ai_welcomed', 'true');
           }, 2000);
         }
+
+        // 3. Fetch Live Classes
+        loadLiveClasses();
 
         // 3. Fetch Leaderboard
         const lb = await svc.getLeaderboard();
@@ -913,10 +928,9 @@
         </div>
       `).join('');
     }
-
     function renderRecentExams(exams) {
       const container = document.getElementById('recent-exams-list');
-      if (!exams.length) {
+      if (!exams || !exams.length) {
         container.innerHTML = '<div style="color:var(--muted)">No exams taken yet.</div>';
         return;
       }

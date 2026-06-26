@@ -794,22 +794,8 @@
             <span class="material-symbols-outlined">add</span> Schedule Class
           </button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Title & Course</th>
-                <th>Status</th>
-                <th>Time</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="t-live-body">
-              <tr>
-                <td colspan="4" style="text-align:center;color:var(--muted);">Loading...</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="live-classes-grid" id="t-live-body" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+          <div style="text-align:center;color:var(--muted); grid-column: 1/-1;">Loading...</div>
         </div>
       </div>
 
@@ -1622,7 +1608,7 @@
         const classes = await svc.getMyLiveClasses();
         const tb = document.getElementById('t-live-body');
         if (!classes.length) {
-          tb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);">No live classes scheduled.</td></tr>';
+          tb.innerHTML = '<div style="text-align:center;color:var(--muted); grid-column: 1/-1;">No live classes scheduled.</div>';
           return;
         }
 
@@ -1630,23 +1616,53 @@
         tb.innerHTML = classes.map(c => {
           const start = new Date(c.start_time);
           const end = new Date(c.end_time);
-          let status = 'upcoming';
+          
+          let status = c.status || 'scheduled';
           let badge = 'badge-blue';
-          if (now >= start && now <= end) { status = 'live'; badge = 'badge-green'; }
-          else if (now > end) { status = 'ended'; badge = 'badge-gray'; }
+          
+          // Auto-calculate live state if status is scheduled
+          if (status === 'scheduled') {
+            if (now >= start && now <= end) { status = 'live'; }
+            else if (now > end) { status = 'ended'; }
+          }
+          
+          if (status === 'live') badge = 'badge-green';
+          if (status === 'ended' || status === 'cancelled') badge = 'badge-gray';
 
-          const timeStr = `${start.toLocaleDateString()} ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+          const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+          const timeOpts = { hour: 'numeric', minute: 'numeric', hour12: true };
+          
+          const dateStr = start.toLocaleDateString(undefined, dateOpts);
+          const timeStr = `${start.toLocaleTimeString(undefined, timeOpts)} – ${end.toLocaleTimeString(undefined, timeOpts)}`;
 
           return `
-            <tr>
-              <td><strong>${c.title}</strong><br><span style="font-size:12px;color:var(--muted);">${c.course_title}</span></td>
-              <td><span class="badge ${badge}">${status.toUpperCase()}</span></td>
-              <td>${timeStr}</td>
-              <td>
-                ${status === 'live' ? `<a href="live-class.html?room=${encodeURIComponent(c.jitsi_room_name)}&title=${encodeURIComponent(c.title)}&teacher=${encodeURIComponent(document.querySelector('.admin-name').innerText)}" class="btn btn-primary btn-sm">Join</a>` : ''}
-                <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteLiveClass('${c.id}')">Delete</button>
-              </td>
-            </tr>
+            <div class="stat-card" style="display:flex; flex-direction:column; gap:0.75rem; text-align:left;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <strong style="font-size:1.1rem; color:var(--text);">${c.title}</strong>
+                <span class="badge ${badge}">${status.toUpperCase()}</span>
+              </div>
+              <div style="display:inline-block; font-size:0.8rem; background:rgba(0,210,255,0.1); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:600; width:fit-content;">${c.subject}</div>
+              
+              <div style="display:flex; flex-direction:column; gap:0.25rem; font-size:0.9rem; color:var(--muted); margin-top:0.5rem;">
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="material-symbols-outlined" style="font-size:1rem;">calendar_today</span>
+                  ${dateStr}
+                </div>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="material-symbols-outlined" style="font-size:1rem;">schedule</span>
+                  ${timeStr}
+                </div>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="material-symbols-outlined" style="font-size:1rem;">menu_book</span>
+                  ${c.course_title}
+                </div>
+              </div>
+              
+              <div style="display:flex; gap:0.5rem; margin-top:auto; padding-top:1rem;">
+                ${status === 'live' || status === 'scheduled' ? `<a href="live-class.html?room=${encodeURIComponent(c.jitsi_room_name)}" class="btn btn-primary" style="flex:1; justify-content:center;">Start Class</a>` : ''}
+                ${status === 'scheduled' ? `<button class="btn btn-ghost" style="flex:1; color:var(--red); justify-content:center;" onclick="cancelLiveClass('${c.id}')">Cancel</button>` : ''}
+              </div>
+            </div>
           `;
         }).join('');
       } catch (e) {
@@ -1693,13 +1709,14 @@
 
       const payload = {
         course_id: courseId,
+        teacher_id: window.currentUser.id,
         title: title,
         subject: subject,
         teacher_name: teacherName,
         description: desc,
         start_time: new Date(start).toISOString(),
         end_time: new Date(end).toISOString(),
-        jitsi_room_name: 'athenaeum-' + courseId + '-' + Date.now(),
+        jitsi_room_name: 'athenaeum-' + courseId.slice(0,8) + '-' + Date.now(),
         status: 'scheduled'
       };
 
@@ -1713,12 +1730,12 @@
       }
     }
 
-    async function deleteLiveClass(id) {
-      if (!confirm('Are you sure you want to delete this live class?')) return;
+    async function cancelLiveClass(id) {
+      if (!confirm('Are you sure you want to cancel this live class?')) return;
       try {
-        await svc.deleteLiveClass(id);
+        await svc.saveLiveClass({ id: id, status: 'cancelled' });
         loadLiveClasses();
-        showToast('Class deleted');
+        showToast('Class cancelled');
       } catch (e) {
         showToast(e.message, 'error');
       }

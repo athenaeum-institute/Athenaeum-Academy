@@ -148,6 +148,20 @@ class AthenaeumStudentService {
     return { top10, ownRank, studentId: sid };
   }
 
+  // ── LIVE CLASSES ──
+  async getLiveClasses() {
+    const { data, error } = await this.client.from('live_classes')
+      .select('*, courses(title)')
+      .order('start_time', { ascending: true });
+      
+    if (error) throw error;
+    
+    return data.map(c => ({
+      ...c,
+      course_title: c.courses ? c.courses.title : 'Course'
+    }));
+  }
+
 }
 
 // Initialize on window
