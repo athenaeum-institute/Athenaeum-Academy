@@ -318,7 +318,7 @@ window.AthenaeumAdmin = (function() {
       const sb = getClient();
       if (!sb) return { status: 'error' };
       try {
-        const { data, error } = await sb.from('profiles').select('id, full_name').eq('role', 'teacher');
+        const { data, error } = await sb.from('profiles').select('id, full_name').ilike('role', '%eacher%');
         if (error) throw error;
         return { status: 'success', data };
       } catch (err) {

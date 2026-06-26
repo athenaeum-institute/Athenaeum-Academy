@@ -823,6 +823,55 @@
       }
     }
 
+    async function loadLiveClasses() {
+      try {
+        const classes = await window.svc.getLiveClasses();
+        const container = document.getElementById('student-live-container');
+        if (!classes || classes.length === 0) {
+          container.innerHTML = '<div style="color:var(--muted)">No upcoming live classes.</div>';
+          return;
+        }
+
+        const now = new Date();
+        container.innerHTML = classes.map(c => {
+          const start = new Date(c.start_time);
+          const end = new Date(c.end_time);
+          let status = c.status || 'scheduled';
+          
+          if (status === 'scheduled') {
+            if (now >= start && now <= end) status = 'live';
+            else if (now > end) status = 'ended';
+          }
+          
+          if (status === 'ended' || status === 'cancelled') return ''; // Don't show ended classes to student
+          
+          const timeStr = `${start.toLocaleDateString()} ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+          const isLive = status === 'live';
+          
+          return `
+            <div class="live-card">
+              <div>
+                <strong>${c.title}</strong>
+                <div style="font-size:0.8rem; color:var(--muted)">${c.course_title} • ${timeStr}</div>
+              </div>
+              <a href="${isLive ? 'live-class.html?room=' + encodeURIComponent(c.jitsi_room_name) : '#'}" 
+                 class="btn ${isLive ? 'btn-primary' : 'btn-disabled'}" 
+                 style="text-decoration:none; padding: 0.5rem 1rem;" 
+                 ${isLive ? '' : 'onclick="event.preventDefault(); showToast(\\'Class has not started yet.\\', \\'info\\')"'}>
+                ${isLive ? 'Join Now' : 'Scheduled'}
+              </a>
+            </div>
+          `;
+        }).join('');
+        
+        if (container.innerHTML.trim() === '') {
+          container.innerHTML = '<div style="color:var(--muted)">No upcoming live classes.</div>';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     function getGreeting(name) {
       const hour = new Date().getHours();
       const firstName = name.split(' ')[0];
