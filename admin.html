@@ -2514,11 +2514,17 @@
         tbody.innerHTML = data.map((t, i) => `
       <tr>
         <td style="color:var(--muted)">${i + 1}</td>
-        <td><strong>${t.full_name || 'Unnamed'}</strong></td>
+        <td>
+          <strong>${t.full_name || 'Unnamed'}</strong>
+          ${t.role === 'pending_teacher' ? '<span style="background:var(--warning); color:#fff; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">Pending</span>' : ''}
+        </td>
         <td>${t.email || ''}</td>
         <td style="color:var(--muted);font-size:.8rem">${new Date(t.created_at).toLocaleDateString()}</td>
-        <td>
-          <button class="btn btn-danger btn-sm" onclick="removeTeacher('${t.id}')">Remove Role</button>
+        <td style="display: flex; gap: 8px;">
+          ${t.role === 'pending_teacher' 
+            ? `<button class="btn btn-primary btn-sm" onclick="approveTeacher('${t.id}')">Approve</button>
+               <button class="btn btn-danger btn-sm" onclick="removeTeacher('${t.id}')">Reject</button>` 
+            : `<button class="btn btn-danger btn-sm" onclick="removeTeacher('${t.id}')">Remove Role</button>`}
         </td>
       </tr>
     `).join('');
@@ -2545,7 +2551,7 @@
       if (!uid) { showToast('Please select a user', 'error'); return; }
       try {
         // Add logic to supabase-admin to assign teacher
-        const res = await window.AthenaeumAdmin.updateTeacherRole(uid, true);
+        const res = await window.AthenaeumAdmin.updateTeacherRole(uid, 'Teacher');
         if (res.status === 'error') throw new Error(res.message);
         showToast('Teacher role assigned ✅', 'success');
         document.getElementById('teacher-modal').classList.remove('open');
@@ -2558,9 +2564,21 @@
     async function removeTeacher(uid) {
       if (!confirm('Remove teacher role from this user? They will become a student.')) return;
       try {
-        const res = await window.AthenaeumAdmin.updateTeacherRole(uid, false);
+        const res = await window.AthenaeumAdmin.updateTeacherRole(uid, 'Student');
         if (res.status === 'error') throw new Error(res.message);
         showToast('Teacher role removed ✅', 'success');
+        await loadTeachers();
+      } catch (e) {
+        showToast('Error: ' + e.message, 'error');
+      }
+    }
+
+    async function approveTeacher(uid) {
+      if (!confirm('Approve this teacher account?')) return;
+      try {
+        const res = await window.AthenaeumAdmin.updateTeacherRole(uid, 'Teacher');
+        if (res.status === 'error') throw new Error(res.message);
+        showToast('Teacher approved ✅', 'success');
         await loadTeachers();
       } catch (e) {
         showToast('Error: ' + e.message, 'error');

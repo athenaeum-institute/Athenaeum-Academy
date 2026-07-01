@@ -258,12 +258,25 @@ window.AthenaeumAdmin = (function() {
       const sb = getClient();
       if (!sb) return [];
       try {
-        const { data, error } = await sb.from('profiles').select('*').eq('role', 'teacher');
+        const { data, error } = await sb.from('profiles').select('*').in('role', ['Teacher', 'teacher', 'pending_teacher']);
         if (error) throw error;
         return data || [];
       } catch (err) {
         console.error("Error fetching teachers:", err);
         return [];
+      }
+    },
+
+    async updateTeacherRole(userId, newRole) {
+      const sb = getClient();
+      if (!sb) return { status: 'error', message: 'Client not ready' };
+      try {
+        const { error } = await sb.from('profiles').update({ role: newRole }).eq('id', userId);
+        if (error) throw error;
+        return { status: 'success' };
+      } catch (err) {
+        console.error("Error updating teacher role:", err);
+        return { status: 'error', message: err.message };
       }
     },
 

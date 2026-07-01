@@ -248,6 +248,11 @@
             <input type="password" id="reg-confirm-password" class="form-control" placeholder="Confirm your password" required minlength="8">
             <span class="material-symbols-outlined input-icon">lock</span>
           </div>
+          <div class="form-group" id="teacher-invite-group" style="display: none;">
+            <label for="reg-invite-code">Teacher Invite Code</label>
+            <input type="text" id="reg-invite-code" class="form-control" placeholder="Enter admin invite code">
+            <span class="material-symbols-outlined input-icon">key</span>
+          </div>
           <div class="form-group" style="flex-direction:row; align-items:center; gap:8px; margin: 8px 0;">
             <input type="checkbox" id="reg-terms" required style="width:16px; height:16px; cursor:pointer;">
             <label for="reg-terms" style="margin:0; text-transform:none; font-size:12px; cursor:pointer;">
@@ -313,6 +318,19 @@
     function setRole(role) {
       currentRole = role;
       
+      // Toggle invite code field
+      const inviteGroup = document.getElementById('teacher-invite-group');
+      if (inviteGroup) {
+        const inviteInput = document.getElementById('reg-invite-code');
+        if (role === 'Teacher') {
+          inviteGroup.style.display = 'flex';
+          inviteInput.setAttribute('required', 'true');
+        } else {
+          inviteGroup.style.display = 'none';
+          inviteInput.removeAttribute('required');
+        }
+      }
+
       // Update buttons
       document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('role-' + role.toLowerCase()).classList.add('active');
@@ -425,6 +443,13 @@
           const userId = data.user.id;
           const { data: profile } = await window.supabaseClient.from('profiles').select('*').eq('id', userId).single();
           
+          if (profile && profile.role === 'pending_teacher') {
+            await window.supabaseClient.auth.signOut();
+            alert("Your account is still pending Admin approval. You cannot login yet.");
+            submitBtn.classList.remove('btn-loading');
+            return;
+          }
+
           if (profile) {
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
@@ -475,9 +500,20 @@
             submitBtn.classList.remove('btn-loading');
             return;
           }
+
+          let roleToSave = currentRole;
+          if (currentRole === 'Teacher') {
+            const inviteCode = document.getElementById('reg-invite-code').value.trim();
+            if (inviteCode !== 'ATHENAEUM_TEACHER_2026') {
+              alert("Invalid Teacher Invite Code. Please contact an Administrator.");
+              submitBtn.classList.remove('btn-loading');
+              return;
+            }
+            roleToSave = 'pending_teacher';
+          }
           
           const { data, error } = await window.supabaseClient.auth.signUp({
-            email, password, options: { data: { full_name: fullName, role: currentRole }, captchaToken }
+            email, password, options: { data: { full_name: fullName, role: roleToSave }, captchaToken }
           });
           
           if (error) {
@@ -494,7 +530,7 @@
             id: userId,
             full_name: fullName,
             email: email,
-            role: currentRole,
+            role: roleToSave,
             plan_type: 'trial',
             trial_start_date: new Date().toISOString(),
             trial_end_date: trialEnd.toISOString(),
@@ -512,26 +548,33 @@
           document.getElementById('success-avatar').innerText = initial;
           document.getElementById('success-name').innerText = `Welcome aboard, ${fullName}!`;
           
-          let dashboardUrl = 'dashboard-student.html';
-          if (currentRole === 'Admin') dashboardUrl = 'admin.html';
-          else if (currentRole === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
-          else if (currentRole === 'Parent') dashboardUrl = 'dashboard-parent.html';
-          
-          document.getElementById('success-dashboard-btn').href = dashboardUrl;
-          
-          // Auto Redirect Countdown
-          let count = 3;
-          const counterEl = document.getElementById('countdown');
-          const interval = setInterval(() => {
-            count--;
-            counterEl.innerText = count;
-            if(count <= 0) {
-              clearInterval(interval);
-              processPendingFreeTrial(userId).then(() => {
-                window.location.href = dashboardUrl;
-              });
-            }
-          }, 1000);
+          if (roleToSave === 'pending_teacher') {
+            document.querySelector('#success-screen h2').innerText = "Account Pending Approval";
+            document.getElementById('success-name').innerText = `Welcome, ${fullName}!`;
+            document.getElementById('success-dashboard-btn').style.display = 'none';
+            document.querySelector('#success-screen p').innerHTML = "Your teacher account has been created and is waiting for Admin approval.<br><br><a href='auth.html' style='color:var(--clr-primary)'>Return to Login</a>";
+          } else {
+            let dashboardUrl = 'dashboard-student.html';
+            if (currentRole === 'Admin') dashboardUrl = 'admin.html';
+            else if (currentRole === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
+            else if (currentRole === 'Parent') dashboardUrl = 'dashboard-parent.html';
+            
+            document.getElementById('success-dashboard-btn').href = dashboardUrl;
+            
+            // Auto Redirect Countdown
+            let count = 3;
+            const counterEl = document.getElementById('countdown');
+            const interval = setInterval(() => {
+              count--;
+              if (counterEl) counterEl.innerText = count;
+              if(count <= 0) {
+                clearInterval(interval);
+                processPendingFreeTrial(userId).then(() => {
+                  window.location.href = dashboardUrl;
+                });
+              }
+            }, 1000);
+          }
         }
       } catch (err) {
         console.error("Auth Error:", err);
