@@ -803,7 +803,11 @@
         const data = await svc.getDashboardData();
         renderProfile(data.profile);
         renderStats(data.profile.xp, data.stats);
-        renderCourses(data.courses);
+
+        // 3. Fetch Live Classes BEFORE renderCourses
+        const classesData = await loadLiveClasses();
+        
+        renderCourses(data.courses, classesData || []);
         if (data.lastLesson) renderHero(data.lastLesson);
         // renderAnnouncements(data.announcements); // Removed because announcements.js handles this now
 
@@ -817,8 +821,7 @@
           }, 2000);
         }
 
-        // 3. Fetch Live Classes
-        loadLiveClasses(svc);
+        // Live Classes already fetched above
 
         // 4. Fetch Notifications
         loadNotifications(svc);
@@ -886,53 +889,154 @@
       }
     };
 
-    async function loadLiveClasses(svc) {
-      try {
-        const classes = await svc.getLiveClasses();
-        const container = document.getElementById('student-live-container');
-        if (!classes || classes.length === 0) {
-          container.innerHTML = '<div style="color:var(--muted)">No upcoming live classes.</div>';
-          return;
+    async function loadLiveClasses() {
+      const { data: { session } } = await window.supabaseClient.auth.getSession();
+      const user = session?.user;
+      if (!user) return [];
+
+      // Get student's enrolled course IDs first
+      const { data: enrollments } = await window.supabaseClient
+        .from('enrollments')
+        .select('course_id')
+        .eq('student_id', user.id)
+        .in('payment_status', ['paid', 'free']);
+
+      if (!enrollments || enrollments.length === 0) {
+        showNoClasses('Enroll in a course to see live classes.');
+        return [];
+      }
+
+      const enrolledCourseIds = enrollments.map(e => e.course_id);
+
+      // Fetch live classes ONLY for enrolled courses
+      const { data: classes, error } = await window.supabaseClient
+        .from('live_classes')
+        .select('*, courses(title, subject)')
+        .in('course_id', enrolledCourseIds)
+        .neq('status', 'cancelled')
+        .order('start_time', { ascending: true });
+
+      if (error) {
+        console.error('Live classes fetch error:', error);
+        showNoClasses('Could not load live classes.');
+        return [];
+      }
+
+      if (!classes || classes.length === 0) {
+        showNoClasses('No live classes scheduled yet.');
+        return [];
+      }
+
+      renderLiveClasses(classes);
+      return classes;
+    }
+
+    function showNoClasses(message) {
+      const container = document.getElementById('student-live-container');
+      if (container) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:32px; color:#888;">
+            <span style="font-size:2rem;">📅</span>
+            <p style="margin-top:8px;">${message}</p>
+            <p style="font-size:0.85rem; color:#aaa;">
+              Check back later or contact your teacher.
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    function renderLiveClasses(classes) {
+      const now = new Date();
+      const container = document.getElementById('student-live-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      classes.forEach(cls => {
+        const start = new Date(cls.start_time);
+        const end = new Date(cls.end_time);
+        const isLive = now >= start && now <= end;
+        const isUpcoming = now < start;
+        const isEnded = now > end;
+
+        // Format date/time
+        const dateStr = start.toLocaleDateString('en-PK', {
+          weekday: 'long', day: 'numeric', 
+          month: 'long', year: 'numeric'
+        });
+        const timeStr = start.toLocaleTimeString('en-PK', {
+          hour: '2-digit', minute: '2-digit'
+        }) + ' – ' + end.toLocaleTimeString('en-PK', {
+          hour: '2-digit', minute: '2-digit'
+        });
+
+        // Countdown for upcoming
+        let countdownHTML = '';
+        if (isUpcoming) {
+          const diff = start - now;
+          const days = Math.floor(diff / 86400000);
+          const hours = Math.floor((diff % 86400000) / 3600000);
+          const mins = Math.floor((diff % 3600000) / 60000);
+          countdownHTML = `
+            <p style="color:#f59e0b; font-size:0.85rem; margin:4px 0 0;">
+              ⏰ Starts in ${days}d ${hours}h ${mins}m
+            </p>`;
         }
 
-        const now = new Date();
-        container.innerHTML = classes.map(c => {
-          const start = new Date(c.start_time);
-          const end = new Date(c.end_time);
-          let status = c.status || 'scheduled';
-          
-          if (status === 'scheduled') {
-            if (now >= start && now <= end) status = 'live';
-            else if (now > end) status = 'ended';
-          }
-          
-          if (status === 'ended' || status === 'cancelled') return ''; // Don't show ended classes to student
-          
-          const timeStr = `${start.toLocaleDateString()} ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-          const isLive = status === 'live';
-          
-          return `
-            <div class="live-card">
-              <div>
-                <strong>${c.title}</strong>
-                <div style="font-size:0.8rem; color:var(--muted)">${c.course_title} • ${timeStr}</div>
-              </div>
-              <a href="${isLive ? 'live-class.html?room=' + encodeURIComponent(c.jitsi_room_name) : '#'}" 
-                 class="btn ${isLive ? 'btn-primary' : 'btn-disabled'}" 
-                 style="text-decoration:none; padding: 0.5rem 1rem;" 
-                 ${isLive ? '' : 'onclick="event.preventDefault(); showToast(&#39;Class has not started yet.&#39;, &#39;info&#39;)"'}>
-                ${isLive ? 'Join Now' : 'Scheduled'}
-              </a>
-            </div>
-          `;
-        }).join('');
-        
-        if (container.innerHTML.trim() === '') {
-          container.innerHTML = '<div style="color:var(--muted)">No upcoming live classes.</div>';
+        // Action button
+        let actionBtn = '';
+        if (isLive) {
+          actionBtn = `
+            <a href="live-class.html?room=${cls.jitsi_room_name}&title=${encodeURIComponent(cls.title)}&teacher=${encodeURIComponent(cls.teacher_name)}"
+              style="display:inline-block; padding:8px 20px; 
+              background:#16a34a; color:white; border-radius:8px;
+              text-decoration:none; font-weight:600; margin-top:8px;">
+              🔴 Join Live Now
+            </a>`;
+        } else if (isUpcoming) {
+          actionBtn = `
+            <button disabled style="padding:8px 20px; 
+              background:#e5e7eb; color:#9ca3af; 
+              border:none; border-radius:8px; margin-top:8px; 
+              cursor:not-allowed;">
+              Upcoming
+            </button>`;
+        } else {
+          actionBtn = `
+            <span style="color:#9ca3af; font-size:0.85rem; 
+              margin-top:8px; display:inline-block;">
+              Class Ended
+            </span>`;
         }
-      } catch (err) {
-        console.error(err);
-      }
+
+        const card = document.createElement('div');
+        card.style.cssText = 
+          'border:1px solid #e5e7eb; border-radius:10px; ' +
+          'padding:16px; margin-bottom:12px; background:white;';
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; 
+            align-items:flex-start;">
+            <div>
+              ${isLive ? '<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:20px; font-size:0.75rem; font-weight:600;">🔴 LIVE</span>' : ''}
+              <h4 style="margin:6px 0 4px; color:#0d1b4b;">
+                ${cls.title}
+              </h4>
+              <p style="margin:0; color:#666; font-size:0.85rem;">
+                ${cls.courses?.title || ''} · ${cls.teacher_name}
+              </p>
+              <p style="margin:4px 0 0; color:#888; font-size:0.82rem;">
+                📅 ${dateStr}<br>⏰ ${timeStr}
+              </p>
+              ${countdownHTML}
+            </div>
+          </div>
+          ${actionBtn}
+        `;
+
+        container.appendChild(card);
+      });
     }
 
     function getGreeting(name) {
@@ -1020,19 +1124,38 @@
       }
     }
 
-    function renderCourses(courses) {
+    function renderCourses(courses, liveClassesData = []) {
       const container = document.getElementById('courses-row');
       if (!courses.length) {
         container.innerHTML = '<div style="color:var(--muted); padding:1rem;">You are not enrolled in any courses yet. <a href="courses.html" style="color:var(--accent)">Browse Courses</a></div>';
         return;
       }
+      
+      const now = new Date();
+      
       container.innerHTML = courses.map(c => {
         const isFreeTrial = c.payment_status === 'free';
         
+        // Find if there's an active/upcoming live class for this course
+        const activeClass = liveClassesData.find(lc => {
+          if (lc.course_id !== c.id) return false;
+          const end = new Date(lc.end_time);
+          return now <= end; // live or upcoming
+        });
+        
+        const isCurrentlyLive = activeClass ? (now >= new Date(activeClass.start_time) && now <= new Date(activeClass.end_time)) : false;
+        
         // Show Upgrade button if on trial, otherwise show Live Class
-        const primaryBtnHTML = isFreeTrial 
-          ? `<a href="checkout.html?course=${c.id}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background: #d29922; color:#000;"><span class="material-symbols-outlined" style="font-size:1rem; margin-right:4px;">upgrade</span> Upgrade</a>`
-          : `<a href="student-live-classes.html" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Live Class</a>`;
+        let primaryBtnHTML = '';
+        if (isFreeTrial) {
+          primaryBtnHTML = `<a href="checkout.html?course=${c.id}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background: #d29922; color:#000;"><span class="material-symbols-outlined" style="font-size:1rem; margin-right:4px;">upgrade</span> Upgrade</a>`;
+        } else {
+          if (isCurrentlyLive) {
+            primaryBtnHTML = `<a href="live-class.html?room=${encodeURIComponent(activeClass.jitsi_room_name)}&title=${encodeURIComponent(activeClass.title)}&teacher=${encodeURIComponent(activeClass.teacher_name)}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#16a34a; color:white;">Live Class</a>`;
+          } else {
+            primaryBtnHTML = `<button disabled class="btn btn-disabled" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#e5e7eb; color:#9ca3af; cursor:not-allowed;">No Class Today</button>`;
+          }
+        }
           
         return `
         <div class="course-card">
