@@ -1266,7 +1266,7 @@
         `).join('');
 
         // Populate selects
-        const options = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        const options = '<option value="" disabled selected>Select Course...</option>' + courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
         document.getElementById('ann-course').innerHTML = options;
         document.getElementById('e-course').innerHTML = options;
       } catch (e) {
@@ -1673,7 +1673,7 @@
     function openLiveClassModal() {
       // Populate course dropdown
       const courseSelect = document.getElementById('lc-course');
-      courseSelect.innerHTML = myCoursesData.map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
+      courseSelect.innerHTML = '<option value="" disabled selected>Select Course...</option>' + myCoursesData.map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
 
       document.getElementById('lc-id').value = '';
       document.getElementById('lc-title').value = '';

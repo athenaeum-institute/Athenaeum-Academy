@@ -2670,7 +2670,7 @@
         }
 
         document.getElementById('lc-teacher').innerHTML = (liveTeachersData || []).map(t => `<option data-id="${t.id}" value="${t.full_name}"></option>`).join('');
-        document.getElementById('lc-course').innerHTML = (liveCoursesData || []).map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
+        document.getElementById('lc-course').innerHTML = '<option value="" disabled selected>Select Course...</option>' + (liveCoursesData || []).map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
 
         document.getElementById('live-modal').classList.add('open');
       } catch (err) {
