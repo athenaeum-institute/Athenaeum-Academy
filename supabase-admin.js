@@ -44,7 +44,14 @@ window.AthenaeumAdmin = (function() {
           .select('id', { count: 'exact', head: true });
         if (e3) throw e3;
 
-        // 4. AI Stats for today
+        // 4. Total Teachers
+        const { count: totalTeachers, error: e4_teacher } = await sb
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('role', 'teacher');
+        if (e4_teacher) throw e4_teacher;
+
+        // Fetch AI Usage for today
         const today = new Date().toISOString().split('T')[0];
         const { data: usageData, error: e4 } = await sb
           .from('ai_usage')
@@ -70,6 +77,7 @@ window.AthenaeumAdmin = (function() {
           totalStudents: totalStudents || 0,
           paidStudents: paidStudents || 0,
           totalCourses: totalCourses || 0,
+          totalTeachers: totalTeachers || 0,
           aiQuestionsToday: totalQuestions,
           aiQuizzesToday: totalQuizzes,
           activeAiUsers: activeAiUsers.size,
@@ -107,9 +115,23 @@ window.AthenaeumAdmin = (function() {
           usageData.forEach(u => usageMap[u.user_id] = u);
         }
 
+        // Fetch Enrollments for courses
+        const { data: enrollmentsData } = await sb.from('enrollments').select('student_id, payment_status, courses(title)');
+        const enrollmentsMap = {};
+        if (enrollmentsData) {
+          enrollmentsData.forEach(e => {
+            if (!enrollmentsMap[e.student_id]) enrollmentsMap[e.student_id] = [];
+            enrollmentsMap[e.student_id].push({
+              title: e.courses?.title || 'Unknown Course',
+              payment_status: e.payment_status
+            });
+          });
+        }
+
         let students = data.map(p => ({
           ...p,
-          usage: usageMap[p.id] || { questions_used: 0, quizzes_used: 0 }
+          usage: usageMap[p.id] || { questions_used: 0, quizzes_used: 0 },
+          enrollments: enrollmentsMap[p.id] || []
         }));
         
         if (searchQuery) {
