@@ -20,6 +20,12 @@
     rel="stylesheet">
   <link rel="stylesheet" href="checkout.css">
 
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init('a-OveV3kaoWp2uMgf');
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth-state.js"></script>
@@ -288,31 +294,34 @@
 
     <div class="container" style="max-width: 900px; margin: 0 auto; flex:1; padding: 0 1rem;">
 
-      <div style="text-align:center; margin-bottom: 2rem;">
-        <span style="font-weight:800; color:#005088; letter-spacing:1px; text-transform:uppercase;">Live Batch
-          Timings</span>
-        <h2 style="font-size:2rem; margin-top:0.5rem;">Find a batch that fits your schedule</h2>
-      </div>
-
-      <div class="schedule-grid">
-        <div class="schedule-card">
-          <span class="card-badge">O/A Levels</span>
-          <div class="schedule-time">5:00 PM - 7:00 PM</div>
-          <div class="schedule-days"><span class="material-symbols-outlined"
-              style="font-size:1.2rem;">calendar_month</span> Monday, Wed, Friday</div>
-          <p style="color:#64748b; font-size:0.95rem;">Perfect for Cambridge students covering Physics, Chem, Math &
-            Bio.</p>
-        </div>
-
-        <div class="schedule-card">
-          <span class="card-badge">Matric / Inter</span>
-          <div class="schedule-time">6:00 PM - 8:30 PM</div>
-          <div class="schedule-days"><span class="material-symbols-outlined"
-              style="font-size:1.2rem;">calendar_month</span> Tuesday, Thurs, Saturday</div>
-          <p style="color:#64748b; font-size:0.95rem;">Extensive board preparation following the local syllabus
-            guidelines.</p>
-        </div>
-      </div>
+      <style>
+        .trial-form-input {
+          width: 100%;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          padding: 12px 16px;
+          font-size: 0.95rem;
+          margin-bottom: 12px;
+          font-family: 'Urbanist', sans-serif;
+          transition: border-color 0.3s ease;
+          box-sizing: border-box;
+        }
+        .trial-form-input:focus {
+          outline: none;
+          border-color: #00D2FF;
+        }
+        .trial-form-input.error {
+          border-color: red;
+        }
+        .error-message {
+          color: red;
+          font-size: 0.8rem;
+          margin-top: -8px;
+          margin-bottom: 12px;
+          display: none;
+          text-align: left;
+        }
+      </style>
 
       <div
         style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 3rem;">
@@ -337,11 +346,65 @@
           </li>
         </ul>
 
-        <div style="text-align: center;">
-          <button id="book-trial-btn" class="trial-btn" onclick="bookTrial()">
-            Book Your Free Slot Now <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-          <div id="loader">Processing... Please wait.</div>
+        <div id="trial-form-container" style="margin-top: 2rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+          <input type="text" id="trial-name" class="trial-form-input" placeholder="Enter your full name" required>
+          <div id="trial-name-error" class="error-message">Name is required</div>
+          
+          <input type="email" id="trial-email" class="trial-form-input" placeholder="Enter your email address" required>
+          <div id="trial-email-error" class="error-message">Valid email is required</div>
+          
+          <input type="text" id="trial-phone" class="trial-form-input" placeholder="e.g. 0300 1234567" required>
+          <div id="trial-phone-error" class="error-message">Phone number is required</div>
+          
+          <select id="trial-course" class="trial-form-input" required>
+            <option value="" disabled selected>Select Course</option>
+            <option value="O Level Mathematics">O Level Mathematics</option>
+            <option value="O Level Physics">O Level Physics</option>
+            <option value="O Level Chemistry">O Level Chemistry</option>
+            <option value="O Level Biology">O Level Biology</option>
+            <option value="O Level English">O Level English</option>
+            <option value="A Level Mathematics">A Level Mathematics</option>
+            <option value="A Level Physics">A Level Physics</option>
+            <option value="A Level Chemistry">A Level Chemistry</option>
+            <option value="A Level Biology">A Level Biology</option>
+            <option value="Matric Mathematics">Matric Mathematics</option>
+            <option value="Matric Physics">Matric Physics</option>
+            <option value="Matric Chemistry">Matric Chemistry</option>
+            <option value="Inter Mathematics">Inter Mathematics</option>
+            <option value="Inter Physics">Inter Physics</option>
+            <option value="Inter Chemistry">Inter Chemistry</option>
+            <option value="MDCAT Preparation">MDCAT Preparation</option>
+            <option value="ECAT Preparation">ECAT Preparation</option>
+          </select>
+          <div id="trial-course-error" class="error-message">Please select a course</div>
+          
+          <select id="trial-time" class="trial-form-input" required>
+            <option value="" disabled selected>Select Preferred Time</option>
+            <option value="Morning (9AM-12PM)">Morning (9AM-12PM)</option>
+            <option value="Afternoon (12PM-4PM)">Afternoon (12PM-4PM)</option>
+            <option value="Evening (4PM-7PM)">Evening (4PM-7PM)</option>
+            <option value="Night (7PM-10PM)">Night (7PM-10PM)</option>
+          </select>
+          <div id="trial-time-error" class="error-message">Please select a preferred time</div>
+
+          <div style="text-align: center; margin-top: 1rem;">
+            <button id="book-trial-btn" class="trial-btn" onclick="bookTrial()">
+              Book Your Free Slot Now <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+            <div id="loader" style="display:none; color:#005088; font-weight:bold; margin-top:1rem;">Processing... Please wait.</div>
+          </div>
+        </div>
+
+        <div id="success-message" style="display:none; text-align:center; padding:40px 20px;">
+          <div style="font-size:3rem;">🎉</div>
+          <h3 style="color:#0d1b4b; margin:16px 0 8px;">Free Trial Booked!</h3>
+          <p style="color:#666;">
+            Thank you <span id="success-name-display"></span>! Your free trial for <span id="success-course-display"></span> has been confirmed.<br>
+            We will contact you at <span id="success-phone-display"></span> within 24 hours with your class joining details.
+          </p>
+          <a href="courses.html" style="display:inline-block; margin-top:20px; padding:12px 32px; background:#1a1060; color:white; border-radius:8px; text-decoration:none;">
+            Browse All Courses →
+          </a>
         </div>
       </div>
 
@@ -357,37 +420,108 @@
       courseId = urlParams.get('course');
     });
 
+    function validateField(id, errorId) {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errorId);
+      if (!el.value || !el.value.trim()) {
+        el.classList.add('error');
+        err.style.display = 'block';
+        return false;
+      } else {
+        el.classList.remove('error');
+        err.style.display = 'none';
+        return true;
+      }
+    }
+
     async function bookTrial() {
+      const fullNameEl = document.getElementById('trial-name');
+      const emailEl = document.getElementById('trial-email');
+      const phoneEl = document.getElementById('trial-phone');
+      const courseEl = document.getElementById('trial-course');
+      const timeEl = document.getElementById('trial-time');
+
+      let isValid = true;
+      isValid = validateField('trial-name', 'trial-name-error') && isValid;
+      isValid = validateField('trial-email', 'trial-email-error') && isValid;
+      isValid = validateField('trial-phone', 'trial-phone-error') && isValid;
+      isValid = validateField('trial-course', 'trial-course-error') && isValid;
+      isValid = validateField('trial-time', 'trial-time-error') && isValid;
+
+      if (!isValid) return;
+
       const btn = document.getElementById('book-trial-btn');
       const loader = document.getElementById('loader');
 
       btn.style.display = 'none';
       loader.style.display = 'block';
 
+      const formData = {
+        fullName: fullNameEl.value.trim(),
+        email: emailEl.value.trim(),
+        phone: phoneEl.value.trim(),
+        courseName: courseEl.value,
+        preferredTime: timeEl.value
+      };
+
       try {
-        // Check if user is logged in
         const user = await getCurrentUser();
 
         if (!user) {
-          // Not logged in -> Redirect to auth and pass redirect param
-          // For trial, we just append &trial=true to let them know.
-          let redirectUrl = `auth.html?mode=register&redirect=dashboard-student.html`;
-          window.location.href = redirectUrl;
+          localStorage.setItem('pendingFreeTrial', JSON.stringify(formData));
+          window.location.href = 'auth.html?mode=register&redirect=free-trial';
           return;
         }
 
-        // If logged in, maybe simulate a trial enrollment or just send to dashboard
-        // Since the system handles "Free Trial" status by default for unpaid users (in auth-state.js),
-        // we can simply redirect them to the student dashboard!
+        const { data: coursesData } = await window.supabaseClient
+          .from('courses')
+          .select('id')
+          .eq('title', formData.courseName)
+          .limit(1);
 
-        setTimeout(() => {
-          window.location.href = 'dashboard-student.html';
-        }, 1000);
+        let courseId = coursesData && coursesData.length > 0 ? coursesData[0].id : null;
+
+        if (courseId) {
+          await window.supabaseClient.from('enrollments').insert({
+            user_id: user.id,
+            course_id: courseId,
+            status: 'free_trial'
+          });
+        }
+
+        await window.supabaseClient.from('free_trial_requests').insert({
+          user_id: user.id,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          course_name: formData.courseName,
+          preferred_time: formData.preferredTime
+        });
+
+        // Send email via EmailJS
+        try {
+          await emailjs.send('service_kzzgnik', 'template_vpoq0ne', {
+            subject: 'Free Trial Booking Confirmed — ' + formData.courseName,
+            message: 'Your free trial for ' + formData.courseName + ' has been booked for ' + formData.preferredTime + '. Our team will contact you within 24 hours on ' + formData.phone,
+            from_email: formData.email,
+            student_name: formData.fullName,
+            student_email: formData.email
+          });
+        } catch (emailErr) {
+          console.warn("EmailJS failed, but trial was booked.", emailErr);
+        }
+
+        document.getElementById('trial-form-container').style.display = 'none';
+        
+        document.getElementById('success-name-display').innerText = formData.fullName;
+        document.getElementById('success-course-display').innerText = formData.courseName;
+        document.getElementById('success-phone-display').innerText = formData.phone;
+        document.getElementById('success-message').style.display = 'block';
 
       } catch (err) {
         console.error(err);
-        alert("Something went wrong. Please try again.");
-        btn.style.display = 'inline-flex';
+        document.getElementById('trial-form-container').innerHTML = `<p style="color:red; text-align:center;">Something went wrong. Please WhatsApp us at +92 328 6715408</p>`;
+      } finally {
         loader.style.display = 'none';
       }
     }

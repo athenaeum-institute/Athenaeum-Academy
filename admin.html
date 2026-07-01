@@ -1145,6 +1145,10 @@
         <span class="material-symbols-outlined">school</span>
         <span>Students</span>
       </div>
+      <div class="nav-item" onclick="showPanel('freetrials')">
+        <span class="material-symbols-outlined">event_available</span>
+        <span>Free Trial Requests <span class="badge" id="trial-badge" style="background:#00D2FF; color:#0d1117; padding:2px 6px; border-radius:12px; font-size:0.75rem; margin-left:8px; font-weight:800; display:none;">0</span></span>
+      </div>
       <div class="nav-item" onclick="showPanel('teachers')">
         <span class="material-symbols-outlined">badge</span>
         <span>Teachers</span>
@@ -1540,6 +1544,40 @@
                 </tr>
               </thead>
               <tbody id="teachers-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── FREE TRIALS PANEL ── -->
+        <div id="panel-freetrials" class="panel">
+          <div class="section-header">
+            <div class="section-title">🎁 Free Trial Requests</div>
+            <div>
+              <button class="btn btn-ghost" onclick="loadFreeTrials()">
+                <span class="material-symbols-outlined">refresh</span> Refresh
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Course</th>
+                  <th>Preferred Time</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="freetrials-body">
+                <tr>
+                  <td colspan="8" class="empty-state">Loading...</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -2600,6 +2638,68 @@
       setTimeout(() => item.remove(), 4000);
     }
 
+    // ── FREE TRIALS ──
+    async function loadFreeTrials() {
+      const tbody = document.getElementById('freetrials-body');
+      tbody.innerHTML = `<tr><td colspan="8" class="empty-state">Loading...</td></tr>`;
+      
+      const trials = await window.AthenaeumAdmin.getFreeTrialRequests();
+      
+      const badge = document.getElementById('trial-badge');
+      const pendingCount = trials.filter(t => t.status === 'pending').length;
+      if (pendingCount > 0) {
+        badge.style.display = 'inline-block';
+        badge.textContent = pendingCount;
+      } else {
+        badge.style.display = 'none';
+      }
+
+      if (!trials || trials.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No free trial requests found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = trials.map(t => {
+        let statusBadge = '';
+        if (t.status === 'pending') statusBadge = '<span style="color:#f59e0b; font-weight:bold;">Pending</span>';
+        else if (t.status === 'confirmed') statusBadge = '<span style="color:#10b981; font-weight:bold;">Confirmed</span>';
+        else if (t.status === 'contacted') statusBadge = '<span style="color:#3b82f6; font-weight:bold;">Contacted</span>';
+        else if (t.status === 'rejected') statusBadge = '<span style="color:#ef4444; font-weight:bold;">Rejected</span>';
+        else statusBadge = t.status;
+
+        return `
+          <tr>
+            <td>${t.full_name}</td>
+            <td>${t.email}</td>
+            <td>${t.phone}</td>
+            <td>${t.course_name}</td>
+            <td>${t.preferred_time}</td>
+            <td>${new Date(t.created_at).toLocaleDateString()}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <select onchange="updateTrialStatus('${t.id}', this.value)" style="padding:4px; border-radius:4px; background:var(--card); color:var(--text); border:1px solid var(--border);">
+                <option value="" disabled selected>Action...</option>
+                <option value="confirmed">Confirm</option>
+                <option value="contacted">Contacted</option>
+                <option value="rejected">Reject</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateTrialStatus(id, newStatus) {
+      if (!newStatus) return;
+      const res = await window.AthenaeumAdmin.updateFreeTrialStatus(id, newStatus);
+      if (res.status === 'success') {
+        showToast('Trial status updated to ' + newStatus);
+        loadFreeTrials();
+      } else {
+        showToast('Failed to update: ' + res.message, 'error');
+      }
+    }
+
     // ── AUTO-DETECT SESSION ──
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { session } } = await window.supabaseClient.auth.getSession();
@@ -2614,6 +2714,7 @@
       loadTeachers();
       loadAnnouncements();
       loadLiveClasses();
+      loadFreeTrials();
       showToast('Auto-logged in as Admin 👋', 'success');
     });
   </script>

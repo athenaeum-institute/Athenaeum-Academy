@@ -325,6 +325,35 @@ window.AthenaeumAdmin = (function() {
         console.error("Error fetching teachers:", err);
         return { status: 'error', message: err.message };
       }
+    },
+
+    // -----------------------------------------------------
+    // FREE TRIAL REQUESTS
+    // -----------------------------------------------------
+    async getFreeTrialRequests() {
+      const sb = getClient();
+      if (!sb) return [];
+      try {
+        const { data, error } = await sb.from('free_trial_requests').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        return data || [];
+      } catch (err) {
+        console.error("Error fetching free trials:", err);
+        return [];
+      }
+    },
+
+    async updateFreeTrialStatus(id, newStatus) {
+      const sb = getClient();
+      if (!sb) return { status: 'error' };
+      try {
+        const { error } = await sb.from('free_trial_requests').update({ status: newStatus }).eq('id', id);
+        if (error) throw error;
+        return { status: 'success' };
+      } catch (err) {
+        console.error("Error updating free trial:", err);
+        return { status: 'error', message: err.message };
+      }
     }
 
   };

@@ -28,6 +28,54 @@
   <script src="auth-state.js"></script>
   <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
   <script>
+    async function processPendingFreeTrial(userId) {
+      const pendingStr = localStorage.getItem('pendingFreeTrial');
+      if (pendingStr) {
+        try {
+          const pending = JSON.parse(pendingStr);
+          
+          const { data: coursesData } = await window.supabaseClient
+            .from('courses')
+            .select('id')
+            .eq('title', pending.courseName)
+            .limit(1);
+
+          let courseId = coursesData && coursesData.length > 0 ? coursesData[0].id : null;
+
+          if (courseId) {
+            await window.supabaseClient.from('enrollments').insert({
+              user_id: userId,
+              course_id: courseId,
+              status: 'free_trial'
+            });
+          }
+
+          await window.supabaseClient.from('free_trial_requests').insert({
+            user_id: userId,
+            full_name: pending.fullName,
+            email: pending.email,
+            phone: pending.phone,
+            course_name: pending.courseName,
+            preferred_time: pending.preferredTime
+          });
+
+          try {
+            await emailjs.send('service_kzzgnik', 'template_vpoq0ne', {
+              subject: 'Free Trial Booking Confirmed — ' + pending.courseName,
+              message: 'Your free trial for ' + pending.courseName + ' has been booked for ' + pending.preferredTime + '. Our team will contact you within 24 hours on ' + pending.phone,
+              from_email: pending.email,
+              student_name: pending.fullName,
+              student_email: pending.email
+            });
+          } catch (e) { console.warn('EmailJS failed', e); }
+
+          localStorage.removeItem('pendingFreeTrial');
+        } catch (err) {
+          console.error("Error processing pending free trial", err);
+        }
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       if (window.supabaseClient) {
         const user = await getCurrentUser();
@@ -54,6 +102,7 @@
           if (role === 'Admin') dashboardUrl = 'admin.html';
           else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
           else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
+          await processPendingFreeTrial(user.id);
           window.location.href = dashboardUrl;
         }
       }
@@ -321,6 +370,9 @@
         const { data, error } = await window.supabaseClient.auth.signInWithPasskey();
         if (error) throw error;
         // The dashboard redirect logic will be handled inside auth-state or here
+        if (data && data.user) {
+          await processPendingFreeTrial(data.user.id);
+        }
         window.location.href = 'dashboard-student.html';
       } catch (err) {
         console.error("Passkey Auth Error:", err);
@@ -407,6 +459,7 @@
             else if (userRole === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
             else if (userRole === 'Parent') dashboardUrl = 'dashboard-parent.html';
             
+            await processPendingFreeTrial(userId);
             window.location.href = dashboardUrl;
           }
           
@@ -474,7 +527,9 @@
             counterEl.innerText = count;
             if(count <= 0) {
               clearInterval(interval);
-              window.location.href = dashboardUrl;
+              processPendingFreeTrial(userId).then(() => {
+                window.location.href = dashboardUrl;
+              });
             }
           }, 1000);
         }
