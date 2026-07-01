@@ -456,6 +456,7 @@
         // Parse URL tab query param if exists
         const urlParams = new URLSearchParams(window.location.search);
         let startTab = urlParams.get('tab') || 'all';
+        if (startTab === 'tech') startTab = 'skill';
         if (!['all', 'o_levels', 'a_levels', 'matric', 'inter', 'skill'].includes(startTab)) startTab = 'all';
         
         filterCatalog(startTab);

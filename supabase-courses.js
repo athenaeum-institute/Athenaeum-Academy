@@ -102,8 +102,8 @@ window.AthenaeumCourses = {
     if (data) {
       data.forEach(e => {
         map[e.course_id] = {
-          payment_status: isPremium ? 'paid' : e.payment_status,
-          status: isPremium ? 'paid' : e.payment_status // since status isn't fetched, fallback to payment_status
+          payment_status: isPremium ? 'paid' : 'free',
+          status: isPremium ? 'paid' : 'free'
         };
       });
     }
