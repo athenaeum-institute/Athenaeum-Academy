@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Athenaeum Academy | Best Online Tuition for O Levels, A Levels, Matric & Inter </title>
+  <meta name="description"
+    content="Pakistan's top online academy. Expert teachers, live classes, free trial. O Levels, A Levels, Matric, FSc, MDCAT & ECAT. Join 1000+ students today." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../athenaeum-assistant.css?v=2" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="../auth-state.js"></script>
+  <script src="../supabase-courses.js"></script>
+
+  <!-- Vercel Speed Insights -->
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+
+  <!-- Optimize DNS Resolution for External APIs & Assets -->
+  <link rel="preconnect" href="https://hgbaqaofrkljmrvcaisp.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="author" content="Athenaeum Academy">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://athenaeumacademy.com">
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"name":"Athenaeum Academy","telephone":"+923286715408","email":"support@athenaeumacademy.com","address":{"@type":"PostalAddress","addressLocality":"Lahore","addressRegion":"Punjab","addressCountry":"PK"},"geo":{"@type":"GeoCoordinates","latitude":31.5204,"longitude":74.3587},"openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"09:00","closes":"21:00"},"priceRange":"Rs 2,999 - Rs 4,999","paymentAccepted":"JazzCash, Easypaisa, Bank Transfer, Visa, Mastercard"}
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Athenaeum Academy",
+    "url": "https://athenaeumacademy.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://athenaeumacademy.com/courses.html?search={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Athenaeum Academy">
+  <meta property="og:title" content="Athenaeum Academy | Best Online Tuition for O Levels, A Levels, Matric & Inter ">
+  <meta property="og:description" content="Pakistan's top online academy. Expert teachers, live classes, free trial. O Levels, A Levels, Matric, FSc, MDCAT & ECAT. Join 1000+ students today.">
+  <meta property="og:image" content="https://athenaeumacademy.com/assets/logo.png">
+  <meta property="og:locale" content="en_PK">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="dns-prefetch" href="https://hgbaqaofrkljmrvcaisp.supabase.co">
+
+  <!-- Security Headers -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://meet.jit.si https://cdn.emailjs.com https://www.googletagmanager.com https://apis.google.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    img-src 'self' data: https: blob:;
+    connect-src 'self' https://*.supabase.co https://api.emailjs.com https://meet.jit.si;
+    frame-src https://meet.jit.si https://hcaptcha.com https://*.hcaptcha.com;
+  ">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What makes an online academy the best in Pakistan?", "acceptedAnswer": {"@type": "Answer", "text": "The best online academies offer live interactive classes, qualified teachers, rigorous past paper practice, and a transparent parent portal for monitoring progress."}}, {"@type": "Question", "name": "How does Athenaeum compare to physical tuition centers?", "acceptedAnswer": {"@type": "Answer", "text": "Athenaeum eliminates commute time, offers recording of missed lectures, provides top-tier teachers nationwide, and includes an AI assistant for 24/7 doubt clearing."}}, {"@type": "Question", "name": "Is there a free trial available?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, Athenaeum provides a free trial so students and parents can evaluate the teaching quality and platform features before committing."}}, {"@type": "Question", "name": "How do parents track progress?", "acceptedAnswer": {"@type": "Answer", "text": "Athenaeum features a dedicated parent dashboard showing real-time attendance, test scores, and overall academic trajectory."}}, {"@type": "Question", "name": "What are the fees for Athenaeum's courses?", "acceptedAnswer": {"@type": "Answer", "text": "Athenaeum aims to make quality education affordable, with standard pricing starting from Rs 2,999, along with financial aid options."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Best Online Academy in Pakistan 2025", "author": {"@type": "Organization", "name": "Athenaeum Academy"}, "publisher": {"@type": "Organization", "name": "Athenaeum Academy", "logo": {"@type": "ImageObject", "url": "https://athenaeumacademy.com/assets/logo.png"}}}</script>
+</head>
+<body>
+<!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <header id="navbar" class="navbar">
+    <nav class="container nav-inner">
+
+      <!-- Logo -->
+      <a href="../index.html" class="logo" id="nav-logo">
+        <img src="../logo_transparent.png" alt="Athenaeum Logo" style="height: 40px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+        <span class="logo-text">Athenaeum</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../courses.html" class="nav-link">Courses</a></li>
+        <li class="nav-dropdown">
+          <a href="../javascript:void(0)" class="nav-link has-dropdown">Academics <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-top:-3px;">keyboard_arrow_down</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="../oa-levels.html">O/A Levels</a></li>
+            <li><a href="../matric-inter.html">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="../courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
+        <li><a href="../about.html" class="nav-link">About</a></li>
+        <li><a href="../contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <!-- Nav actions -->
+      <div class="nav-actions">
+        <div class="nav-icons">
+          <button class="icon-btn" aria-label="Search" id="btn-search">
+            <span class="material-symbols-outlined">search</span>
+          </button>
+          <button class="icon-btn" aria-label="Wishlist" id="btn-wishlist">
+            <span class="material-symbols-outlined">favorite</span>
+          </button>
+          <a href="../cart.html" class="icon-btn" aria-label="Cart" style="position: relative;">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span class="cart-badge-count" style="display:none; position:absolute; top:-5px; right:-5px; background:#ef4444; color:white; font-size:10px; font-weight:bold; border-radius:50%; width:18px; height:18px; align-items:center; justify-content:center;">0</span>
+          </a>
+          <button class="icon-btn cart-btn" aria-label="Notifications" id="btn-notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="cart-badge">0</span>
+          </button>
+        </div>
+        <a href="../auth.html?mode=login" class="btn btn-ghost" id="btn-login">Login</a>
+        <a href="../auth.html?mode=register&ref=navbar" class="btn btn-primary" id="btn-start-learning">Get Started</a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <!-- Search Overlay -->
+      <div class="search-overlay" id="search-overlay" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--clr-surface); padding: 1rem 24px; border-bottom: 1px solid var(--clr-border); box-shadow: var(--shadow-md); z-index: 999;">
+        <div style="max-width: 800px; margin: 0 auto; display: flex; gap: 10px;">
+          <input type="text" id="global-search-input" placeholder="Search courses, skills, and resources..." style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--clr-border); border-radius: var(--radius-full); font-size: 1rem; outline: none;">
+          <button class="btn btn-primary" onclick="executeGlobalSearch()">Search</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+      <ul class="mobile-links">
+        <li><a href="../courses.html" class="nav-link">Courses</a></li>
+        <li class="nav-dropdown" style="padding-left:1rem;">
+          <strong style="color:var(--clr-primary);">Academics</strong>
+          <ul style="padding-left: 1rem; list-style:none; margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <li><a href="../oa-levels.html" class="nav-link" style="font-size:0.9em;">O/A Levels</a></li>
+            <li><a href="../matric-inter.html" class="nav-link" style="font-size:0.9em;">Matric/Inter</a></li>
+          </ul>
+        </li>
+        <li><a href="../courses.html?tab=tech" class="nav-link">Tech Skills</a></li>
+        <li><a href="../about.html" class="nav-link">About</a></li>
+        <li><a href="../contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="mobile-actions">
+        <a href="../auth.html?mode=login" class="btn btn-ghost full-width">Login</a>
+        <a href="../auth.html?mode=register&ref=navbar" class="btn btn-primary full-width">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+<div style="background: var(--clr-primary); color: white; padding: 120px 20px 80px; text-align: center;">
+    <h1 style="font-size: 3rem; margin-bottom: 20px; font-family: 'Merriweather', serif;">Best Online Academy in Pakistan 2025</h1>
+    <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9;">Complete Guide for Students & Parents</p>
+</div>
+<section class="container" style="padding: 60px 24px; max-width: 900px; margin: auto;">
+    <div style="font-size: 1.1rem; line-height: 1.8; color: var(--clr-text);">
+        <h2 style="font-size: 2rem; margin-bottom: 20px; color: var(--clr-primary);">What Makes an Online Academy Good in Pakistan?</h2>
+        <p style="margin-bottom: 20px;">The educational landscape in Pakistan is evolving rapidly. With the integration of technology into daily life, traditional tuition centers are increasingly being replaced by digital learning platforms. But what exactly makes an online academy the best choice for a student in Pakistan? A truly effective online academy bridges the gap between physical classroom engagement and digital convenience. It isn't just about playing pre-recorded videos; it's about fostering a dynamic, interactive environment where students feel heard, supported, and intellectually stimulated. The best platforms prioritize real-time interaction, structured curriculums, and comprehensive assessment methods that align with national and international board standards.</p>
+        <p style="margin-bottom: 20px;">Furthermore, accessibility and reliability are paramount. An excellent online academy must have a robust technological infrastructure that minimizes disruptions during live sessions, ensuring a seamless learning experience regardless of a student's geographic location within Pakistan. It should also offer supplemental resources such as topical notes, interactive quizzes, and 24/7 academic support to cater to different learning paces and styles. Ultimately, the hallmark of a superior online academy is its ability to consistently translate digital engagement into tangible academic success and improved examination grades.</p>
+
+        <h2 style="font-size: 2rem; margin-top: 40px; margin-bottom: 20px; color: var(--clr-primary);">Key Factors: Qualified Teachers, Live Classes, Past Papers & Monitoring</h2>
+        <p style="margin-bottom: 20px;">When evaluating an online academy, parents and students must look closely at several critical factors. First and foremost is the quality of the teaching faculty. Instructors must not only be subject matter experts but also proficient in digital pedagogy—knowing how to keep a remote audience engaged. Second, live interactive classes are essential. Passive learning through static videos rarely yields top grades; students need the ability to ask questions in real-time, participate in discussions, and receive immediate clarification on complex topics.</p>
+        <p style="margin-bottom: 20px;">Equally important is the emphasis on past paper practice. For curriculums like Cambridge O/A Levels, Federal Board, and provincial matriculation boards, success is heavily dependent on understanding exam formats and examiner expectations. A top-tier academy integrates topical and yearly past papers directly into its curriculum. Finally, parent monitoring cannot be overlooked. Online learning requires discipline, and a transparent system that provides parents with real-time updates on attendance, assignment completion, and test scores is vital for maintaining student accountability and ensuring consistent progress.</p>
+
+        <h2 style="font-size: 2rem; margin-top: 40px; margin-bottom: 20px; color: var(--clr-primary);">How Athenaeum Addresses Each Factor</h2>
+        <p style="margin-bottom: 20px;">Athenaeum has been meticulously designed to address every requirement of a world-class online academy. We recruit only the top 1% of educators in Pakistan, ensuring that every <a href="../courses.html" style="color:var(--clr-accent); font-weight:bold;">course</a> is led by a proven expert with a track record of producing A and A* grades. Our core methodology revolves around daily live interactive classes. These sessions utilize state-of-the-art digital whiteboards and engagement tools to replicate, and often exceed, the interactivity of a physical classroom. Students are encouraged to participate actively, making learning a collaborative rather than a solitary endeavor.</p>
+        <p style="margin-bottom: 20px;">To ensure exam readiness, Athenaeum's curriculum is heavily focused on rigorous past paper practice. We provide comprehensive, topical breakdowns of past papers, accompanied by detailed marking scheme analyses. Furthermore, we recognize the critical role parents play in a student's educational journey. Athenaeum features a dedicated, intuitive Parent Portal. This dashboard offers complete transparency, allowing parents to track their child's attendance, review mock exam performance, and monitor overall academic trajectory in real-time, providing peace of mind and fostering a supportive home learning environment.</p>
+
+        <h2 style="font-size: 2rem; margin-top: 40px; margin-bottom: 20px; color: var(--clr-primary);">Student Success Stories</h2>
+        <p style="margin-bottom: 20px;">The true measure of any educational institution is the success of its students. At Athenaeum, we take immense pride in the achievements of our alumni, who have consistently outperformed national averages. Take, for example, the story of Zainab from Lahore, who struggled with O Level Physics. After joining Athenaeum's live classes and utilizing our targeted past paper resources, she not only cleared her concepts but went on to secure a distinction. "The interactive sessions and instant feedback from teachers completely changed my approach to Physics," she notes.</p>
+        <p style="margin-bottom: 20px;">Similarly, Ahmed, a Matric student from Karachi, found traditional academies overcrowded and ineffective. By switching to Athenaeum, he benefited from our small batch sizes and personalized attention. The real-time parent monitoring kept him on track, and the rigorous mock exam schedule prepared him thoroughly for his board exams, resulting in a top-tier position in his district. These stories are a testament to how Athenaeum's holistic, technology-driven approach can unlock a student's full potential.</p>
+
+        <h2 style="font-size: 2rem; margin-top: 40px; margin-bottom: 20px; color: var(--clr-primary);">Comparison: What to Look For</h2>
+        <div style="overflow-x: auto; margin-bottom: 30px;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="background: var(--clr-primary); color: white;">
+                        <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">Feature</th>
+                        <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">What to Look For</th>
+                        <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">Athenaeum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd; font-weight: bold;">Live Classes</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">Real-time teaching & interaction</td>
+                        <td style="padding: 15px; border: 1px solid #ddd; background: #e8f5e9;">✅ Daily batches with interactive tools</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd; font-weight: bold;">Teacher Quality</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">Qualified + proven experience</td>
+                        <td style="padding: 15px; border: 1px solid #ddd; background: #e8f5e9;">✅ Expert faculty (Top 1% selected)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd; font-weight: bold;">Mock Exams</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">Regular testing & feedback</td>
+                        <td style="padding: 15px; border: 1px solid #ddd; background: #e8f5e9;">✅ Built-in automated testing system</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd; font-weight: bold;">Parent Portal</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">Progress & attendance tracking</td>
+                        <td style="padding: 15px; border: 1px solid #ddd; background: #e8f5e9;">✅ Real-time dedicated dashboard</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd; font-weight: bold;">Free Trial</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">Try before committing financially</td>
+                        <td style="padding: 15px; border: 1px solid #ddd; background: #e8f5e9;">✅ Available for all new students</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd; font-weight: bold;">Price</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">Affordable & transparent</td>
+                        <td style="padding: 15px; border: 1px solid #ddd; background: #e8f5e9;">✅ Starting from Rs 2,999/month</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 style="font-size: 2rem; margin-top: 40px; margin-bottom: 20px; color: var(--clr-primary);">Frequently Asked Questions</h2>
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 10px;">What makes an online academy the best in Pakistan?</h3>
+            <p>The best online academies offer live interactive classes, highly qualified teachers, rigorous past paper practice, and a transparent parent portal for monitoring progress, ensuring a comprehensive learning experience.</p>
+        </div>
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 10px;">How does Athenaeum compare to physical tuition centers?</h3>
+            <p>Athenaeum eliminates commute time, offers high-quality recordings of missed lectures, provides access to top-tier teachers nationwide, and includes an AI assistant for 24/7 doubt clearing, offering a superior alternative to crowded local centers.</p>
+        </div>
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 10px;">Is there a free trial available?</h3>
+            <p>Yes, Athenaeum provides a free trial so students and parents can evaluate the teaching quality, platform features, and overall fit before making any financial commitment.</p>
+        </div>
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 10px;">How do parents track progress?</h3>
+            <p>Athenaeum features a dedicated parent dashboard that shows real-time attendance, test scores, completed lessons, and the overall academic trajectory of the student.</p>
+        </div>
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 10px;">What are the fees for Athenaeum's courses?</h3>
+            <p>Athenaeum aims to make high-quality education affordable and accessible, with standard pricing starting from just Rs 2,999, along with available financial aid options for deserving students.</p>
+        </div>
+
+        <div style="text-align: center; margin: 60px 0;">
+            <a href="../courses.html" class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 40px; border-radius: 30px; text-decoration: none;">Enroll Now & Start Your Journey &rarr;</a>
+        </div>
+    </div>
+</section>
+        
+<footer class="footer">
+
+    <!-- Payment trust strip -->
+    <div class="footer-payment-strip">
+      <div class="container payment-strip-inner">
+        <p class="payment-strip-label">
+          <span class="material-symbols-outlined">lock</span>
+          Secure Payments Accepted:
+        </p>
+        <div class="payment-methods">
+          <!-- JazzCash -->
+          <div class="payment-chip" title="JazzCash">
+            <svg width="22" height="22" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <rect width="40" height="40" rx="8" fill="#BF0000" />
+              <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="8"
+                font-weight="bold" font-family="Arial">Jazz</text>
+              <text x="50%" y="78%" dominant-baseline="middle" text-anchor="middle" fill="#FFD700" font-size="6"
+                font-weight="bold" font-family="Arial">Cash</text>
+            </svg>
+            <span>JazzCash</span>
+          </div>
+          <!-- Easypaisa -->
+          <div class="payment-chip" title="Easypaisa">
+            <svg width="22" height="22" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <rect width="40" height="40" rx="8" fill="#3CB043" />
+              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="7"
+                font-weight="bold" font-family="Arial">Easy</text>
+              <text x="50%" y="73%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="5.5"
+                font-weight="bold" font-family="Arial">paisa</text>
+            </svg>
+            <span>Easypaisa</span>
+          </div>
+          <!-- Bank Transfer -->
+          <div class="payment-chip" title="Bank Transfer">
+            <span class="material-symbols-outlined"
+              style="font-size:22px;color:var(--clr-primary);">account_balance</span>
+            <span>Bank Transfer</span>
+          </div>
+          <!-- Visa -->
+          <div class="payment-chip" title="Visa / Mastercard">
+            <svg width="36" height="22" viewBox="0 0 54 34" fill="none" aria-hidden="true">
+              <rect width="54" height="34" rx="5" fill="#1A1F71" />
+              <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="14"
+                font-weight="bold" font-family="Arial" letter-spacing="1">VISA</text>
+            </svg>
+            <span>Visa / MC</span>
+          </div>
+          <!-- HBL -->
+          <div class="payment-chip" title="HBL Internet Banking">
+            <svg width="22" height="22" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <rect width="40" height="40" rx="8" fill="#006341" />
+              <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#FFD700" font-size="11"
+                font-weight="bold" font-family="Arial">HBL</text>
+            </svg>
+            <span>HBL</span>
+          </div>
+        </div>
+        <div class="ssl-badge">
+          <span class="material-symbols-outlined">verified_user</span>
+          <span>SSL Secured</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-grid">
+
+      <div class="footer-brand">
+        <a href="../index.html" class="logo footer-logo">
+          <img src="../logo_transparent.png" alt="Athenaeum Logo" style="height: 50px; width: auto; object-fit: contain;" loading="lazy" decoding="async" />
+          <span class="logo-text">Athenaeum</span>
+        </a>
+        <p>Empowering the next generation with quality education and expert guidance across all academic levels.
+          Pakistan's most trusted online academy.</p>
+        <div class="social-links">
+          <a href="https://www.facebook.com/athenaeumacademy" class="social-btn" aria-label="Facebook" id="social-facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/athenaeumacademy" class="social-btn" aria-label="Instagram" id="social-instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path
+                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+            </svg>
+          </a>
+          <a href="https://www.youtube.com/@athenaeumacademy" class="social-btn" aria-label="YouTube" id="social-youtube">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path
+                d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </svg>
+          </a>
+          <a href="https://wa.me/923286715408" target="_blank" rel="noopener noreferrer" class="social-btn social-btn--wa"
+            aria-label="WhatsApp" id="social-whatsapp">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <ul>
+          <li><a href="../oa-levels.html">O/A Levels</a></li>
+          <li><a href="../matric-inter.html">Matric Science</a></li>
+          <li><a href="../matric-inter.html">Intermediate Arts</a></li>
+          <li><a href="../courses.html">Skill Development</a></li>
+          <li><a href="../courses.html">MDCAT Prep</a></li>
+          <li><a href="../courses.html">ECAT Prep</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Subjects</h4>
+        <ul>
+          <li><a href="../subjects/o-level-mathematics.html">O Level Math</a></li>
+          <li><a href="../subjects/o-level-physics.html">O Level Physics</a></li>
+          <li><a href="../subjects/o-level-chemistry.html">O Level Chemistry</a></li>
+          <li><a href="../subjects/o-level-biology.html">O Level Biology</a></li>
+          <li><a href="../subjects/a-level-mathematics.html">A Level Math</a></li>
+          <li><a href="../subjects/a-level-physics.html">A Level Physics</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Academy</h4>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="../auth.html?mode=register">Free Trial</a></li>
+          <li><a href="../live-class.html">Live Classes</a></li>
+          <li><a href="../mock-exam.html">Mock Exams</a></li>
+          <li><a href="#" onclick="document.getElementById('assistant-fab') ? document.getElementById('assistant-fab').click() : alert('Athenaeum Assistant is not available')">Athenaeum Assistant Tutor</a></li>
+          <li><a href="../become-a-teacher.html">Become a Teacher</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="../privacy.html">Privacy Policy</a></li>
+          <li><a href="../terms.html">Terms of Service</a></li>
+          <li><a href="../refund.html">Refund Policy</a></li>
+          <li><a href="../cookie.html">Cookie Policy</a></li>
+          <li><a href="../security.html">Security</a></li>
+          <li><a href="../press.html">Press & Media</a></li>
+        </ul>
+        <div class="footer-contact-mini">
+          <p><a href="mailto:support@athenaeumacademy.com" style="display:flex; align-items:center; gap:0.5rem;"><span class="material-symbols-outlined">mail</span> support@athenaeumacademy.com</a></p>
+          <p><a href="tel:+923286715408" style="display:flex; align-items:center; gap:0.5rem;"><span class="material-symbols-outlined">call</span> +92 328 6715408</a></p>
+          <p><span class="material-symbols-outlined">location_on</span> Lahore, Pakistan</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>© 2025 Athenaeum. University-grade excellence. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="../privacy.html">Privacy</a>
+          <a href="../terms.html">Terms</a>
+          <a href="../sitemap.xml">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../main.js"></script>
+
+<!-- Athenaeum Assistant Widget (shows teaser for guests, full chat for logged-in users) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-client.js"></script>
+<script src="../athenaeum-assistant.js?v=2" defer></script>
+
+<!-- Floating Glass Back Button -->
+<button onclick="window.history.back()" class="floating-back-btn" aria-label="Go Back">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+</button>
+
+  <!-- Add Auth State Checker -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (window.supabaseClient) {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (session) {
+          const userRole = session.user.user_metadata?.role?.toLowerCase() || 'student';
+          let dashLink = 'dashboard-student.html';
+          if (userRole === 'admin') dashLink = 'admin.html';
+          else if (userRole === 'teacher') dashLink = 'dashboard-teacher.html';
+          else if (userRole === 'parent') dashLink = 'dashboard-parent.html';
+
+          // Update desktop buttons
+          const btnLogin = document.getElementById('btn-login');
+          if (btnLogin) {
+            btnLogin.innerText = 'Go to Dashboard';
+            btnLogin.href = dashLink;
+          }
+
+          // Update mobile buttons
+          const mobileBtns = document.querySelectorAll('.mobile-actions .btn-ghost');
+          if (mobileBtns.length > 0) {
+            mobileBtns[0].innerText = 'Go to Dashboard';
+            mobileBtns[0].href = dashLink;
+          }
+        }
+      }
+    });
+  </script>
+
+
+  <!-- filtering logic -->
+  <script>
+    function filterCatalog(category) {
+      // Get all cards
+      const cards = document.querySelectorAll(".course-card");
+      const tabAca = document.getElementById("tab-academics");
+      const tabTech = document.getElementById("tab-tech");
+
+      // Update active tab styles
+      if (category === "academic") {
+        tabAca.classList.add("active");
+        tabTech.classList.remove("active");
+        tabAca.style.background = "var(--clr-primary)";
+        tabAca.style.color = "#fff";
+        tabTech.style.background = "transparent";
+        tabTech.style.color = "var(--clr-primary)";
+      } else {
+        tabTech.classList.add("active");
+        tabAca.classList.remove("active");
+        tabTech.style.background = "var(--clr-primary)";
+        tabTech.style.color = "#fff";
+        tabAca.style.background = "transparent";
+        tabAca.style.color = "var(--clr-primary)";
+      }
+
+      // Filter cards
+      cards.forEach(card => {
+        if (category === "all" || card.getAttribute("data-category") === category) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    // Initialize to academic tab on load
+    document.addEventListener("DOMContentLoaded", () => {
+      filterCatalog("academics");
+    });
+  </script>
+
+</body>
+
