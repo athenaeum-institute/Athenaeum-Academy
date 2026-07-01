@@ -3372,3 +3372,47 @@ body {
     overflow-x: hidden !important;
   }
 }
+
+
+/* --- ADDITIONAL MOBILE RESPONSIVE FIXES --- */
+@media (max-width: 768px) {
+  /* Force hide nav-icons to prevent horizontal overflow */
+  .nav-icons {
+    display: none !important;
+  }
+  
+  /* Allow nav-actions to shrink or wrap if needed */
+  .nav-actions, .navbar-right, .header-actions, .navbar .right-section {
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    flex-shrink: 1 !important;
+  }
+  
+  /* Make the user button more compact on mobile */
+  .nav-user-btn {
+    padding: 6px 8px !important;
+    font-size: 14px !important;
+  }
+  
+  .nav-user-avatar {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+  }
+
+  /* Ensure the navbar itself doesn't overflow */
+  .navbar {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
+  .navbar .container {
+    padding-inline: 15px !important;
+  }
+}
+
+html, body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+}
