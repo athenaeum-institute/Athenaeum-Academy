@@ -35,7 +35,7 @@ class AthenaeumStudentService {
     
     // 2. Enrolled Courses
     const pCourses = this.client.from('enrollments')
-      .select('course_id, courses(id, title, category, subject, thumbnail_url)')
+      .select('course_id, payment_status, courses(id, title, category, subject, thumbnail_url)')
       .eq('student_id', sid)
       .order('enrolled_at', { ascending: false });
 
@@ -86,7 +86,13 @@ class AthenaeumStudentService {
     const allAnnouncements = resAnn.data || [];
 
     // Process Courses
-    const courses = enrollments.map(e => e.courses).filter(c => c !== null);
+    const courses = enrollments.map(e => {
+      if (!e.courses) return null;
+      return {
+        ...e.courses,
+        payment_status: e.payment_status
+      };
+    }).filter(c => c !== null);
 
     // Process Lessons Completed
     const lessonsCompletedCount = progressData.filter(p => p.completed).length;

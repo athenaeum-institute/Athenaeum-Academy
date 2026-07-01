@@ -1026,19 +1026,31 @@
         container.innerHTML = '<div style="color:var(--muted); padding:1rem;">You are not enrolled in any courses yet. <a href="courses.html" style="color:var(--accent)">Browse Courses</a></div>';
         return;
       }
-      container.innerHTML = courses.map(c => `
+      container.innerHTML = courses.map(c => {
+        const isFreeTrial = c.payment_status === 'free';
+        
+        // Show Upgrade button if on trial, otherwise show Live Class
+        const primaryBtnHTML = isFreeTrial 
+          ? `<a href="checkout.html?course=${c.id}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background: #d29922; color:#000;"><span class="material-symbols-outlined" style="font-size:1rem; margin-right:4px;">upgrade</span> Upgrade</a>`
+          : `<a href="student-live-classes.html" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Live Class</a>`;
+          
+        return `
         <div class="course-card">
           <img src="${c.thumbnail_url || 'https://via.placeholder.com/250x120'}" class="course-img" loading="lazy" decoding="async">
           <div class="course-body">
-            <div style="font-size:0.75rem; color:var(--accent); font-weight:800; text-transform:uppercase; margin-bottom:0.25rem">${c.subject || c.category}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
+              <div style="font-size:0.75rem; color:var(--accent); font-weight:800; text-transform:uppercase;">${c.subject || c.category}</div>
+              ${isFreeTrial ? `<div style="font-size:0.65rem; background:rgba(210,153,34,0.2); color:#d29922; padding:0.1rem 0.4rem; border-radius:4px; font-weight:700;">TRIAL</div>` : ''}
+            </div>
             <h4 style="margin-bottom:1rem; font-size:1.1rem">${c.title}</h4>
             <div style="display:flex; gap:0.5rem;">
-              <a href="student-live-classes.html" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Live Class</a>
+              ${primaryBtnHTML}
               <a href="#" onclick="event.preventDefault(); window.startCourse('${c.id}')" class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Start Course</a>
             </div>
           </div>
         </div>
-      `).join('');
+        `;
+      }).join('');
     }
     function renderRecentExams(exams) {
       const container = document.getElementById('recent-exams-list');

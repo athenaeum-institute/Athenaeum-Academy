@@ -63,9 +63,9 @@ BEGIN
   
   -- 2. Ensure their individual course enrollments match the new plan
   IF new_plan != 'paid' THEN
-    UPDATE public.enrollments SET payment_status = 'free', status = 'free' WHERE student_id = target_user_id;
+    UPDATE public.enrollments SET payment_status = 'free' WHERE student_id = target_user_id;
   ELSE
-    UPDATE public.enrollments SET payment_status = 'paid', status = 'paid' WHERE student_id = target_user_id;
+    UPDATE public.enrollments SET payment_status = 'paid' WHERE student_id = target_user_id;
   END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
