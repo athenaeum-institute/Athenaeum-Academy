@@ -58,7 +58,15 @@ BEGIN
     RAISE EXCEPTION 'Access denied. Admin only.';
   END IF;
   
+  -- 1. Update the user's plan in profiles
   UPDATE public.profiles SET plan_type = new_plan WHERE id = target_user_id;
+  
+  -- 2. Ensure their individual course enrollments match the new plan
+  IF new_plan != 'paid' THEN
+    UPDATE public.enrollments SET payment_status = 'free', status = 'free' WHERE student_id = target_user_id;
+  ELSE
+    UPDATE public.enrollments SET payment_status = 'paid', status = 'paid' WHERE student_id = target_user_id;
+  END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

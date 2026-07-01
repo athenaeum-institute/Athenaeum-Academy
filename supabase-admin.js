@@ -136,6 +136,7 @@ window.AthenaeumAdmin = (function() {
           new_plan: newPlan 
         });
         if (error) throw error;
+
         return { status: 'success' };
       } catch (err) {
         console.error("Error updating plan:", err);
