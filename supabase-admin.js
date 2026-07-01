@@ -180,6 +180,12 @@ window.AthenaeumAdmin = (function() {
           new_status: newStatus 
         });
         if (error) throw error;
+
+        // If deleting, also remove all enrollments so courses are inaccessible
+        if (newStatus === 'deleted') {
+          await sb.from('enrollments').delete().eq('student_id', userId);
+        }
+
         return { status: 'success' };
       } catch (err) {
         console.error("Error toggling status:", err);

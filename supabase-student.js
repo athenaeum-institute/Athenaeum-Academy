@@ -65,6 +65,21 @@ class AthenaeumStudentService {
     if (resProfile.error) throw resProfile.error;
 
     const profile = resProfile.data;
+    
+    // ── ACCOUNT STATUS CHECK ─────────────────────────────────
+    // If admin deleted or blocked this account, log the user out immediately
+    if (profile && (profile.status === 'deleted' || profile.status === 'blocked')) {
+      await this.client.auth.signOut();
+      sessionStorage.clear();
+      const msg = profile.status === 'deleted'
+        ? 'Your account has been removed. Please contact support.'
+        : 'Your account has been blocked. Please contact support.';
+      alert(msg);
+      window.location.href = 'index.html';
+      throw new Error('Account ' + profile.status);
+    }
+    // ─────────────────────────────────────────────────────────
+    
     const enrollments = resCourses.data || [];
     const progressData = resProgress.data || [];
     const examResults = resExams.data || [];

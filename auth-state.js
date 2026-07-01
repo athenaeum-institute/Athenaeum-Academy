@@ -172,6 +172,22 @@ async function updateNavbar() {
 
   if (user) {
     const profile = await getUserProfile(user.id);
+    
+    // ── BLOCKED / DELETED CHECK ──────────────────────────────
+    // If admin has deleted or blocked this account, force logout immediately
+    if (profile && (profile.status === 'deleted' || profile.status === 'blocked')) {
+      await window.supabaseClient.auth.signOut();
+      sessionStorage.clear();
+      localStorage.removeItem('supabase.auth.token');
+      alert(profile.status === 'deleted' 
+        ? 'Your account has been removed. Please contact support.'
+        : 'Your account has been blocked. Please contact support.'
+      );
+      window.location.href = 'index.html';
+      return;
+    }
+    // ────────────────────────────────────────────────────────
+    
     const firstName = profile?.full_name?.split(' ')[0] || 'Student';
     const initial = firstName.charAt(0).toUpperCase();
     const role = profile?.role || 'Student';
