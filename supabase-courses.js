@@ -77,6 +77,18 @@ window.AthenaeumCourses = {
   // Get all user enrollments for quick lookup
   async getUserEnrollmentMap(userId) {
     if (!userId) return {};
+    
+    // Check if user is a premium member
+    let isPremium = false;
+    try {
+      const { data: profile } = await window.supabaseClient.from('profiles').select('plan_type').eq('id', userId).single();
+      if (profile && profile.plan_type === 'paid') {
+        isPremium = true;
+      }
+    } catch (err) {
+      console.error("Error checking premium status:", err);
+    }
+
     const { data, error } = await window.supabaseClient
       .from('enrollments')
       .select('course_id, payment_status')
@@ -89,13 +101,9 @@ window.AthenaeumCourses = {
     const map = {};
     if (data) {
       data.forEach(e => {
-        // If there's a status column, we use that if it implies paid. 
-        // We'll prioritize 'paid' if payment_status is 'paid' or status is 'active'/'paid'
-        // For simplicity, store both in an object if needed, or just a string status.
-        // Let's store an object: { payment_status, status }
         map[e.course_id] = {
-          payment_status: e.payment_status,
-          status: e.status
+          payment_status: isPremium ? 'paid' : e.payment_status,
+          status: isPremium ? 'paid' : e.payment_status // since status isn't fetched, fallback to payment_status
         };
       });
     }
