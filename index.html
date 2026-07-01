@@ -609,14 +609,14 @@
                 if (isPaid) {
                   buttonsHtml = `
                     <div class="course-card-buttons" style="padding: 0 1.2rem 1.2rem 1.2rem;">
-                      <a href="video-player.html?course=${course.id}" class="btn" style="width:100%; justify-content:center; background:var(--green, #10b981); color:white; font-size:0.9rem; padding:0.6rem;">Continue Learning &rarr;</a>
+                      <a href="#" onclick="event.preventDefault(); window.startCourse('${course.id}')" class="btn" style="width:100%; justify-content:center; background:var(--green, #10b981); color:white; font-size:0.9rem; padding:0.6rem;">Start &rarr;</a>
                     </div>
                   `;
                 } else if (isTrial) {
                   buttonsHtml = `
                     <div class="course-card-buttons" style="padding: 0 1.2rem 1.2rem 1.2rem;">
                       <div class="row-1">
-                        <a href="video-player.html?course=${course.id}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
+                        <a href="#" onclick="event.preventDefault(); window.startCourse('${course.id}')" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
                         <a href="checkout.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Upgrade</a>
                       </div>
                     </div>

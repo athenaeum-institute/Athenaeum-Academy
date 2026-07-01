@@ -372,3 +372,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+/**
+ * Handle Start Course Click
+ */
+window.startCourse = async function(courseId) {
+  if (!courseId) return;
+  try {
+    const { data: liveClasses } = await window.supabaseClient
+      .from('live_classes')
+      .select('*')
+      .eq('course_id', courseId)
+      .eq('status', 'live');
+      
+    if (liveClasses && liveClasses.length > 0) {
+      window.location.href = 'live-class.html?room=' + encodeURIComponent(liveClasses[0].jitsi_room_name);
+    } else {
+      window.location.href = 'mock-exam.html';
+    }
+  } catch (e) {
+    console.error(e);
+    window.location.href = 'mock-exam.html';
+  }
+};

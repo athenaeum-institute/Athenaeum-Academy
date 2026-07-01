@@ -102,10 +102,10 @@ js_logic = """
         const isTrial = enrollRecord && enrollRecord.payment_status === 'free';
 
         if (isPaid) {
-          buttonsHtml = `<a href="video-player.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Continue Learning &rarr;</a>`;
+          buttonsHtml = `<a href="#" onclick="event.preventDefault(); window.startCourse('${course.id}')" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Start &rarr;</a>`;
         } else if (isTrial) {
           buttonsHtml = `
-            <a href="video-player.html?course=${course.id}" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
+            <a href="#" onclick="event.preventDefault(); window.startCourse('${course.id}')" class="btn" style="flex:1; justify-content:center; background:#eff6ff; color:var(--clr-primary); font-size:0.9rem; padding:0.6rem;">Continue Trial &rarr;</a>
             <a href="checkout.html?course=${course.id}" class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.9rem; padding:0.6rem;">Upgrade to Full Access</a>
           `;
         } else {

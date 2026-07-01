@@ -629,8 +629,8 @@
           <h2 id="hero-lesson-title" style="font-family:'Merriweather',serif; margin-bottom:0.5rem; font-size:2rem;">
             Lesson Title</h2>
           <p id="hero-course-title" style="color:rgba(255,255,255,0.7); margin-bottom:1.5rem">Course Title</p>
-          <a href="video-player.html" class="btn" style="background:#fff; color:var(--primary)">
-            <span class="material-symbols-outlined">play_arrow</span> Watch Recording
+          <a href="student-live-classes.html" class="btn" style="background:#fff; color:var(--primary)">
+            <span class="material-symbols-outlined">play_arrow</span> Join Live Class
           </a>
         </div>
       </div>
@@ -1034,7 +1034,7 @@
             <h4 style="margin-bottom:1rem; font-size:1.1rem">${c.title}</h4>
             <div style="display:flex; gap:0.5rem;">
               <a href="student-live-classes.html" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Live Class</a>
-              <a href="video-player.html?course=${c.id}" class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Recordings</a>
+              <a href="#" onclick="event.preventDefault(); window.startCourse('${c.id}')" class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Start Course</a>
             </div>
           </div>
         </div>
