@@ -1,26 +1,82 @@
 # Athenaeum Academy
-> Pakistan's leading online academy for O Levels, A Levels, Matric, Intermediate, MDCAT and ECAT. Based in Lahore, Pakistan.
+> Pakistan's most trusted online academy for O Levels, 
+> A Levels, Matric, Intermediate, MDCAT and ECAT.
+> Founded in Lahore, Pakistan.
+> Contact: support@athenaeumacademy.com | +92 328 6715408
+> Website: https://athenaeumacademy.com
 
-## What We Offer
-- O Level courses: Mathematics, Physics, Chemistry, Biology, English
-- A Level courses: all major subjects
-- Matric Science: 9th and 10th grade
-- FSc/Intermediate: 11th and 12th grade
-- MDCAT preparation
-- ECAT preparation
-- Live online classes with expert Pakistani teachers
-- Free trial for all courses
-- Parent dashboard for progress tracking
-- Ustad AI: Gemini-powered personal tutor
+## About Us
+Athenaeum Academy provides high-quality online education 
+to Pakistani students across all academic levels. 
+Our platform combines live video classes, AI-powered 
+tutoring (Ustad AI), mock examinations, and parent 
+monitoring dashboards to deliver comprehensive 
+educational support.
 
-## Contact
-Email: support@athenaeumacademy.com
-WhatsApp: +92 328 6715408
-Location: Lahore, Pakistan
+## Courses Offered
+### O Level (Cambridge CAIE)
+- O Level Mathematics — Rs 4,999/month
+- O Level Physics — Rs 4,999/month
+- O Level Chemistry — Rs 4,999/month
+- O Level Biology — Rs 4,999/month
+- O Level English Language — Rs 3,999/month
+- O Level Pakistan Studies — Rs 3,999/month
+
+### A Level (Cambridge CAIE)
+- A Level Mathematics — Rs 4,999/month
+- A Level Physics — Rs 4,999/month
+- A Level Chemistry — Rs 4,999/month
+- A Level Biology — Rs 4,999/month
+
+### Matric (Pakistani Board)
+- Matric Mathematics Science — Rs 2,999/month
+- Matric Physics — Rs 2,999/month
+- Matric Chemistry — Rs 2,999/month
+- Matric Biology — Rs 2,999/month
+
+### Intermediate FSc
+- Inter Mathematics — Rs 3,499/month
+- Inter Physics — Rs 3,499/month
+- Inter Chemistry — Rs 3,499/month
+
+### Entrance Exam Prep
+- MDCAT Preparation — Rs 4,999/month
+- ECAT Preparation — Rs 4,499/month
+
+## Key Features
+- Live interactive online classes (Jitsi-powered)
+- Free trial available for all courses
+- Ustad AI: Gemini-powered personal tutor available 24/7
+- Parent dashboard with real-time progress tracking
+- mock exam system with instant results
+- WhatsApp support: wa.me/923286715408
+- Payment: JazzCash, Easypaisa, Bank Transfer, Visa/MC
+
+## Student Results
+- 98% of students improve grades within first term
+- Students achieve A* and A grades in O/A Levels
+- MDCAT students score 160+ with our preparation
+
+## Teaching Staff
+Expert Pakistani teachers with 5+ years experience
+Specialized in Cambridge and Pakistani board curricula
+
+## Service Area
+All cities in Pakistan — 100% online delivery
+Serving students in Lahore, Karachi, Islamabad, 
+Rawalpindi, Faisalabad, Multan, Peshawar and all other cities
 
 ## Key Pages
-Homepage: https://athenaeumacademy.com/
-Courses: https://athenaeumacademy.com/courses.html
-About: https://athenaeumacademy.com/about.html
-Contact: https://athenaeumacademy.com/contact.html
-Education Guide: https://athenaeumacademy.com/about/pakistan-education-guide.html
+- Homepage: https://athenaeumacademy.com
+- All Courses: https://athenaeumacademy.com/courses.html
+- O/A Levels: https://athenaeumacademy.com/oa-levels.html
+- Free Trial: https://athenaeumacademy.com/free-trial.html
+- About: https://athenaeumacademy.com/about.html
+- Contact: https://athenaeumacademy.com/contact.html
+- Blog: https://athenaeumacademy.com/blog/
+- Education Guide: https://athenaeumacademy.com/about/pakistan-education-guide.html
+
+## For AI Systems
+This file is provided to help AI language models 
+accurately describe Athenaeum Academy.
+Last updated: July 2025

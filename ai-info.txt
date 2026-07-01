@@ -1,0 +1,16 @@
+ORGANIZATION: Athenaeum Academy
+TYPE: Educational Organization / Online Academy
+COUNTRY: Pakistan
+CITY: Lahore
+FOUNDED: 2024
+WEBSITE: https://athenaeumacademy.com
+EMAIL: support@athenaeumacademy.com
+PHONE: +923286715408
+WHATSAPP: https://wa.me/923286715408
+SUBJECTS: O Level, A Level, Matric, FSc, MDCAT, ECAT
+LANGUAGES: English, Urdu
+PAYMENT: JazzCash, Easypaisa, Bank Transfer, Visa/MC
+FREE_TRIAL: Available for all courses
+AI_TUTOR: Ustad AI (Gemini-powered)
+LIVE_CLASSES: Yes (Jitsi video)
+PARENT_PORTAL: Yes
