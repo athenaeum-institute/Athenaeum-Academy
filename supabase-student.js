@@ -150,8 +150,24 @@ class AthenaeumStudentService {
 
   // ── LIVE CLASSES ──
   async getLiveClasses() {
+    const sid = await this.getStudentId();
+    if (!sid) return [];
+
+    // Fetch valid enrollments
+    const { data: enrollments, error: enrollError } = await this.client
+      .from('enrollments')
+      .select('course_id, payment_status')
+      .eq('student_id', sid);
+
+    if (enrollError) throw enrollError;
+
+    const validCourseIds = enrollments.filter(e => e.payment_status === 'paid' || e.payment_status === 'free').map(e => e.course_id);
+
+    if (validCourseIds.length === 0) return [];
+
     const { data, error } = await this.client.from('live_classes')
       .select('*, courses(title)')
+      .in('course_id', validCourseIds)
       .order('start_time', { ascending: true });
       
     if (error) throw error;
