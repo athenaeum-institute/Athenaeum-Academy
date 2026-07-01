@@ -3422,3 +3422,56 @@ html, body {
     overflow: visible !important;
   }
 }
+
+/* --- HORIZONTAL SCROLL CARDS FOR MOBILE --- */
+@media (max-width: 768px) {
+  .oa-grid, .matric-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    gap: 16px !important;
+    padding-bottom: 20px !important;
+    /* Hide scrollbar visually but allow scrolling */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    margin-inline: -24px !important; /* Bleed to screen edges based on container padding */
+    padding-inline: 24px !important; /* Start padding */
+  }
+  
+  .oa-grid::-webkit-scrollbar, .matric-grid::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .oa-card, .matric-card {
+    flex: 0 0 260px !important; /* Smaller card size */
+    scroll-snap-align: start;
+    padding: 20px !important; 
+    height: auto !important;
+  }
+  
+  /* Adjust inner elements */
+  .oa-card h3, .matric-card h4 {
+    font-size: 1.15rem !important;
+    margin-bottom: 6px !important;
+  }
+  .oa-card p, .matric-card p {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+  }
+  
+  /* Icons adjustment */
+  .oa-icon-box {
+    width: 44px !important;
+    height: 44px !important;
+    margin-bottom: 15px !important;
+  }
+  .oa-icon-box .material-symbols-outlined {
+    font-size: 22px !important;
+  }
+  .matric-icon {
+    font-size: 28px !important;
+    margin-bottom: 12px !important;
+  }
+}
