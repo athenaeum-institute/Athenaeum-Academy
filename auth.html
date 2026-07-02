@@ -86,11 +86,17 @@
           const storedRole = localStorage.getItem('oauthSelectedRole');
           if (storedRole) {
             localStorage.removeItem('oauthSelectedRole');
-            role = storedRole;
+            role = storedRole === 'Teacher' ? 'pending_teacher' : storedRole;
+            
+            // Do not downgrade a verified Teacher
+            if (profile && profile.role === 'Teacher') {
+              role = 'Teacher';
+            }
+            
             // Update profile with the stored role
             await window.supabaseClient.from('profiles').upsert({
               id: user.id,
-              full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+              full_name: profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
               email: user.email,
               role: role
             }, { onConflict: 'id' });

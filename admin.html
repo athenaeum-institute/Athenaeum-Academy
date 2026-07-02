@@ -1892,6 +1892,36 @@
           </div>
         </div>
 
+        <!-- ── TEACHER CODES PANEL ── -->
+        <div id="panel-teacher-codes" class="panel">
+          <div class="section-header">
+            <div class="section-title">🔑 Teacher Access Codes</div>
+            <button class="btn btn-primary" onclick="generateTeacherCode()">
+              <span class="material-symbols-outlined">add</span> Generate Code
+            </button>
+          </div>
+          <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap; align-items: center;">
+            <select class="form-select" style="width:200px" id="code-course-select">
+              <option value="">Select Course...</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Course</th>
+                  <th>Status</th>
+                  <th>Generated Date</th>
+                </tr>
+              </thead>
+              <tbody id="teacher-codes-body">
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading codes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div><!-- /page-content -->
     </div><!-- /main -->
   </div><!-- /admin-app -->
@@ -2014,36 +2044,6 @@
       </div>
     </div>
   </div>
-
-        <!-- ── TEACHER CODES PANEL ── -->
-        <div id="panel-teacher-codes" class="panel">
-          <div class="section-header">
-            <div class="section-title">🔑 Teacher Access Codes</div>
-            <button class="btn btn-primary" onclick="generateTeacherCode()">
-              <span class="material-symbols-outlined">add</span> Generate Code
-            </button>
-          </div>
-          <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap; align-items: center;">
-            <select class="form-select" style="width:200px" id="code-course-select">
-              <option value="">Select Course...</option>
-            </select>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Course</th>
-                  <th>Status</th>
-                  <th>Generated Date</th>
-                </tr>
-              </thead>
-              <tbody id="teacher-codes-body">
-                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading codes...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
 
   <!-- UPGRADE STUDENT MODAL -->
   <div class="modal-overlay" id="upgrade-modal">
@@ -3104,6 +3104,7 @@
       document.getElementById('sidebar-email').textContent = session.user.email;
       document.getElementById('admin-app').style.display = 'block';
       loadDashboardStats();
+      loadAdminCourses();
       loadStudents();
       loadTeachers();
       loadAnnouncements();
