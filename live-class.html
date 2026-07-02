@@ -130,7 +130,7 @@
       // Wait for supabase session
       const { data: { user } } = await window.supabaseClient.auth.getUser();
       if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = 'auth.html';
         return;
       }
 
@@ -147,27 +147,15 @@
           email: user.email
         },
         configOverwrite: {
-          startWithAudioMuted: true,
-          startWithVideoMuted: true,
-          prejoinPageEnabled: false,
-          disableDeepLinking: true,
-          defaultLanguage: 'en',
-          enableWelcomePage: false
+          startWithAudioMuted: false,
+          startWithVideoMuted: false,
+          prejoinPageEnabled: true // Enable prejoin page to allow browser permission prompts
         },
         interfaceConfigOverwrite: {
           SHOW_JITSI_WATERMARK: false,
           SHOW_BRAND_WATERMARK: false,
           SHOW_POWERED_BY: false,
-          DISPLAY_WELCOME_PAGE_CONTENT: false,
-          SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-          HIDE_INVITE_MORE_HEADER: true,
-          DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-          TOOLBAR_BUTTONS: [
-            'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
-            'fodeviceselection', 'hangout', 'profile', 'chat', 'recording',
-            'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-            'videoquality', 'filmstrip', 'shortcuts', 'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
-          ]
+          DISABLE_JOIN_LEAVE_NOTIFICATIONS: true
         }
       };
 

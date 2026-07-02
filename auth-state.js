@@ -174,15 +174,21 @@ async function updateNavbar() {
     const profile = await getUserProfile(user.id);
     
     // ── BLOCKED / DELETED CHECK ──────────────────────────────
-    // If admin has deleted or blocked this account, force logout immediately
-    if (profile && (profile.status === 'deleted' || profile.status === 'blocked')) {
+    // If admin has deleted or blocked this account (or if profile is missing entirely), force logout immediately
+    if (!profile || profile.status === 'deleted' || profile.status === 'blocked') {
       await window.supabaseClient.auth.signOut();
       sessionStorage.clear();
-      localStorage.removeItem('supabase.auth.token');
-      alert(profile.status === 'deleted' 
-        ? 'Your account has been removed. Please contact support.'
-        : 'Your account has been blocked. Please contact support.'
-      );
+      localStorage.clear(); // Clear all stale tokens
+      
+      if (profile && profile.status === 'blocked') {
+        alert('Your account has been blocked. Please contact support.');
+      } else if (profile && profile.status === 'deleted') {
+        alert('Your account has been removed. Please contact support.');
+      } else {
+        // Silent logout for deleted accounts via SQL wipe
+        console.warn("User profile not found. Force logging out stale session.");
+      }
+      
       window.location.href = 'index.html';
       return;
     }
