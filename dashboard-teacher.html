@@ -720,9 +720,6 @@
       <div id="panel-courses" class="panel">
         <div class="section-header">
           <div class="section-title">My Courses</div>
-          <button class="btn btn-primary" onclick="openCourseModal()">
-            <span class="material-symbols-outlined">add</span> Create Course
-          </button>
         </div>
         <div class="table-wrap">
           <table>
@@ -1259,7 +1256,6 @@
             <td>${c.enrollments[0]?.count || 0}</td>
             <td><span class="badge ${c.is_published ? 'badge-green' : 'badge-gray'}">${c.is_published ? 'Published' : 'Draft'}</span></td>
             <td>
-              <button class="btn btn-ghost btn-sm" onclick="editCourse('${c.id}')">Edit</button>
               <button class="btn btn-primary btn-sm" onclick="manageContent('${c.id}', '${c.title.replace(/'/g, "\\'")}')">Content</button>
             </td>
           </tr>
