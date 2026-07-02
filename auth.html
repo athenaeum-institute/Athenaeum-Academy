@@ -83,7 +83,7 @@
       const storedRole = localStorage.getItem('oauthSelectedRole');
       if (storedRole) {
         localStorage.removeItem('oauthSelectedRole');
-        role = storedRole === 'Teacher' ? 'pending_teacher' : storedRole;
+        role = storedRole === 'Teacher' ? 'student' : storedRole;
         
         // Do not downgrade a verified Teacher
         if (profile && profile.role === 'Teacher') {
@@ -111,7 +111,7 @@
       if (safeRole === 'admin') dashboardUrl = 'admin.html';
       else if (safeRole === 'teacher') dashboardUrl = 'dashboard-teacher.html';
       else if (safeRole === 'parent') dashboardUrl = 'dashboard-parent.html';
-      else if (safeRole === 'pending_teacher') dashboardUrl = 'teacher-verify.html';
+      else if (storedRole === 'Teacher') dashboardUrl = 'teacher-verify.html';
       
       try {
         await processPendingFreeTrial(user.id);
@@ -464,7 +464,7 @@
           const userId = data.user.id;
           const { data: profile } = await window.supabaseClient.from('profiles').select('*').eq('id', userId).single();
           
-          if (profile && profile.role === 'pending_teacher') {
+          if (profile && currentRole === 'Teacher' && profile.role !== 'Teacher') {
             window.location.href = 'teacher-verify.html';
             return;
           }
@@ -502,7 +502,7 @@
             if (userRole === 'admin') dashboardUrl = 'admin.html';
             else if (userRole === 'teacher') dashboardUrl = 'dashboard-teacher.html';
             else if (userRole === 'parent') dashboardUrl = 'dashboard-parent.html';
-            else if (userRole === 'pending_teacher') dashboardUrl = 'teacher-verify.html';
+            else if (currentRole === 'Teacher' && userRole !== 'teacher') dashboardUrl = 'teacher-verify.html';
             
             try { await processPendingFreeTrial(userId); } catch(e){}
             window.location.href = dashboardUrl;
@@ -523,13 +523,7 @@
 
           let roleToSave = currentRole;
           if (currentRole === 'Teacher') {
-            const inviteCode = document.getElementById('reg-invite-code').value.trim();
-            if (inviteCode !== 'ATHENAEUM_TEACHER_2026') {
-              alert("Invalid Teacher Invite Code. Please contact an Administrator.");
-              submitBtn.classList.remove('btn-loading');
-              return;
-            }
-            roleToSave = 'pending_teacher';
+            roleToSave = 'student'; // Changed from pending_teacher
           }
           
           const { data, error } = await window.supabaseClient.auth.signUp({
@@ -568,13 +562,13 @@
           document.getElementById('success-avatar').innerText = initial;
           document.getElementById('success-name').innerText = `Welcome aboard, ${fullName}!`;
           
-          if (roleToSave === 'pending_teacher') {
+          if (currentRole === 'Teacher') {
             document.querySelector('#success-screen h2').innerText = "Verify Teacher Account";
             document.getElementById('success-name').innerText = `Welcome, ${fullName}!`;
             document.getElementById('success-dashboard-btn').innerText = "Enter Verification Code";
             document.getElementById('success-dashboard-btn').style.display = 'inline-block';
             document.getElementById('success-dashboard-btn').href = 'teacher-verify.html';
-            document.querySelector('#success-screen p').innerHTML = "Your teacher account has been created. Please enter the security code provided by your admin to gain access to your course portal.";
+            document.querySelector('#success-screen p').innerHTML = "Your account has been created. Please enter the security code provided by your admin to gain access as a Teacher.";
           } else {
             let dashboardUrl = 'dashboard-student.html';
             if (currentRole === 'Admin') dashboardUrl = 'admin.html';

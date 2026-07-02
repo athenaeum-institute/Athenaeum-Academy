@@ -93,16 +93,10 @@
         return;
       }
 
-      // 2. Ensure they are pending_teacher (if they are already Teacher, redirect to dashboard)
+      // 2. If they are already Teacher, redirect to dashboard
       const profile = await getUserProfile(user.id);
       if (profile && profile.role === 'Teacher') {
         window.location.href = 'dashboard-teacher.html';
-        return;
-      }
-      
-      if (profile && profile.role !== 'pending_teacher') {
-        alert("You do not have a pending teacher account.");
-        window.location.href = 'dashboard-student.html';
         return;
       }
 
