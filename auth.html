@@ -649,8 +649,12 @@
           console.error('Error checking welcome email status:', err);
         }
         
-        // Always redirect when SIGNED_IN fires on auth.html
-        await handleAuthRedirect(session.user);
+        // Trigger redirect when SIGNED_IN fires (This is what fixes Google OAuth)
+        try {
+          await handleAuthRedirect(session.user);
+        } catch (e) {
+          console.error('Redirect failed', e);
+        }
       }
     });
   </script>
