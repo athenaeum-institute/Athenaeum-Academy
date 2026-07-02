@@ -1703,6 +1703,7 @@
         return showToast('Please fill all required fields', 'error');
       }
 
+      const classId = document.getElementById('lc-id').value;
       const payload = {
         course_id: courseId,
         teacher_id: window.currentUser.id,
@@ -1715,6 +1716,10 @@
         jitsi_room_name: 'athenaeum-' + courseId.slice(0,8) + '-' + Date.now(),
         status: 'scheduled'
       };
+      
+      if (classId) {
+        payload.id = classId;
+      }
 
       try {
         await svc.saveLiveClass(payload);
