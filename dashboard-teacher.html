@@ -1713,24 +1713,28 @@
       }
 
       const classId = document.getElementById('lc-id').value;
-      const payload = {
-        course_id: courseId,
-        teacher_id: window.currentUser.id,
-        title: title,
-        subject: subject,
-        teacher_name: teacherName,
-        description: desc,
-        start_time: new Date(start).toISOString(),
-        end_time: new Date(end).toISOString(),
-        jitsi_room_name: 'athenaeum-' + courseId.slice(0,8) + '-' + Date.now(),
-        status: 'scheduled'
-      };
       
-      if (classId) {
-        payload.id = classId;
-      }
-
       try {
+        const tid = await svc.getTeacherId();
+        if (!tid) throw new Error("Could not find teacher ID");
+
+        const payload = {
+          course_id: courseId,
+          teacher_id: tid,
+          title: title,
+          subject: subject,
+          teacher_name: teacherName,
+          description: desc,
+          start_time: new Date(start).toISOString(),
+          end_time: new Date(end).toISOString(),
+          jitsi_room_name: 'athenaeum-' + courseId.slice(0,8) + '-' + Date.now(),
+          status: 'scheduled'
+        };
+        
+        if (classId) {
+          payload.id = classId;
+        }
+
         await svc.saveLiveClass(payload);
         closeModal('live-modal');
         loadLiveClasses();
