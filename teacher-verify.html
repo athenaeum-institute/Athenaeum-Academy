@@ -111,7 +111,7 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const code = document.getElementById('security-code').value.trim();
+        const code = document.getElementById('security-code').value.replace(/\s+/g, '').toUpperCase();
         if(!code) return;
 
         const submitBtn = form.querySelector('button[type="submit"]');
