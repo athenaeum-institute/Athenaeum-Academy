@@ -69,23 +69,16 @@ BEGIN
     RAISE EXCEPTION 'You must be logged in to verify a code.';
   END IF;
 
-  -- Find the code
+  -- Find the code (no longer checking is_used=false, code is lifetime)
   SELECT * INTO code_record 
   FROM public.teacher_access_codes 
-  WHERE code = entered_code AND is_used = false;
+  WHERE code = entered_code;
 
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'Invalid or already used security code.';
+    RAISE EXCEPTION 'Invalid security code.';
   END IF;
 
-  -- 1. Mark code as used
-  UPDATE public.teacher_access_codes 
-  SET is_used = true, used_by = user_id, used_at = now() 
-  WHERE id = code_record.id;
-
-  -- 2. Update user's profile role to 'Teacher' (bypassing triggers if needed, since this is SECURITY DEFINER)
-  -- Note: If we have a trigger blocking this, the trigger must allow changes by admin. 
-  -- Since SECURITY DEFINER functions run with the privileges of the creator (Admin), the profile trigger will allow it.
+  -- 1. Update user's profile role to 'Teacher'
   UPDATE public.profiles SET role = 'Teacher' WHERE id = user_id;
 
   -- 3. Assign the teacher to the course
