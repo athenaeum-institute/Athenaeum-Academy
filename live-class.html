@@ -68,12 +68,18 @@
     <a href="index.html" class="brand">🎓 Athenaeum</a>
 
     <div class="nav-center">
-      <span class="badge badge-live">
-        <span class="material-symbols-outlined" style="font-size:.85rem;">fiber_manual_record</span> LIVE
+      <span class="live-indicator">
+        <span class="material-symbols-outlined" style="font-size:1.1rem;margin-right:4px;">radio_button_checked</span>
+        LIVE
       </span>
       <span id="header-title" style="font-weight:700; color:#fff;">Loading Class...</span>
       <span id="header-teacher" style="opacity:.6; font-size:.8rem;"></span>
     </div>
+
+    <div class="nav-right">
+      <button class="btn btn-ghost" onclick="testMedia()" style="color:var(--accent); border: 1px solid var(--accent); padding: 4px 8px; font-size: 12px; margin-right: 10px;">
+        <span class="material-symbols-outlined" style="font-size: 14px; margin-right: 4px;">science</span> Test Mic/Cam
+      </button>
 
     <div class="nav-right">
       <a href="javascript:history.back()" class="btn btn-ghost btn-sm">
@@ -136,6 +142,10 @@
 
       const displayName = user.user_metadata?.full_name || user.email || 'Student';
 
+      if (window.location.protocol === 'file:') {
+        alert("⚠️ WARNING: Jitsi Camera/Microphone will NOT work when opening files directly (file://). You MUST use a local server like VS Code Live Server (http://127.0.0.1:5500) or deploy to a real website (https://...) for video/audio to work.");
+      }
+
       const domain = 'meet.jit.si';
       const options = {
         roomName: room,
@@ -165,6 +175,16 @@
         window.location.href = 'dashboard-student.html';
       });
     });
+
+    async function testMedia() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        stream.getTracks().forEach(t => t.stop());
+        alert("Success! Your browser natively allows Camera and Microphone! ✅\nIf Jitsi still shows them disabled, it might be a Jitsi meeting policy or another app using the camera.");
+      } catch (err) {
+        alert("Failed to access Camera/Microphone directly! ❌\nError: " + err.name + " - " + err.message + "\n\nThis means the browser or OS is blocking access, OR another app is using the camera.");
+      }
+    }
   </script>
 
   <!-- Athenaeum Assistant Widget (with Supabase for auth check) -->
