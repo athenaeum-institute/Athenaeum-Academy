@@ -988,7 +988,7 @@
         let actionBtn = '';
         if (isLive) {
           actionBtn = `
-            <a href="live-class.html?room=${cls.jitsi_room_name}&title=${encodeURIComponent(cls.title)}&teacher=${encodeURIComponent(cls.teacher_name)}"
+            <a href="https://meet.jit.si/${cls.jitsi_room_name}" target="_blank"
               style="display:inline-block; padding:8px 20px; 
               background:#16a34a; color:white; border-radius:8px;
               text-decoration:none; font-weight:600; margin-top:8px;">
@@ -1151,7 +1151,7 @@
           primaryBtnHTML = `<a href="checkout.html?course=${c.id}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background: #d29922; color:#000;"><span class="material-symbols-outlined" style="font-size:1rem; margin-right:4px;">upgrade</span> Upgrade</a>`;
         } else {
           if (isCurrentlyLive) {
-            primaryBtnHTML = `<a href="live-class.html?room=${encodeURIComponent(activeClass.jitsi_room_name)}&title=${encodeURIComponent(activeClass.title)}&teacher=${encodeURIComponent(activeClass.teacher_name)}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#16a34a; color:white;">Live Class</a>`;
+            primaryBtnHTML = `<a href="https://meet.jit.si/${encodeURIComponent(activeClass.jitsi_room_name)}" target="_blank" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#16a34a; color:white;">Live Class</a>`;
           } else {
             primaryBtnHTML = `<button disabled class="btn btn-disabled" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#e5e7eb; color:#9ca3af; cursor:not-allowed;">No Class Today</button>`;
           }

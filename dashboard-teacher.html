@@ -1655,7 +1655,7 @@
               </div>
               
               <div style="display:flex; gap:0.5rem; margin-top:auto; padding-top:1rem;">
-                ${status === 'live' || status === 'scheduled' ? `<a href="live-class.html?room=${encodeURIComponent(c.jitsi_room_name)}" class="btn btn-primary" style="flex:1; justify-content:center;">Start Class</a>` : ''}
+                ${status === 'live' || status === 'scheduled' ? `<a href="https://meet.jit.si/${encodeURIComponent(c.jitsi_room_name)}" target="_blank" class="btn btn-primary" style="flex:1; justify-content:center;">Start Class</a>` : ''}
                 ${status === 'scheduled' ? `<button class="btn btn-ghost" style="flex:1; color:var(--red); justify-content:center;" onclick="cancelLiveClass('${c.id}')">Cancel</button>` : ''}
               </div>
             </div>
