@@ -638,10 +638,8 @@
           console.error('Error checking welcome email status:', err);
         }
         
-        // Trigger redirect for OAuth logins (they return with a hash)
-        if (window.location.hash) {
-          await handleAuthRedirect(session.user);
-        }
+        // Always redirect when SIGNED_IN fires on auth.html
+        await handleAuthRedirect(session.user);
       }
     });
   </script>
