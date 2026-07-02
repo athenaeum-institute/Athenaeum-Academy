@@ -163,40 +163,46 @@ class AthenaeumTeacherService {
     const tid = await this.getTeacherId();
     if (!tid) return [];
 
-    // Find all courses by this teacher
-    const { data: courses } = await this.client.from('courses').select('id, title').eq('instructor_id', tid);
-    if (!courses || courses.length === 0) return [];
-    
-    const courseIds = courses.map(c => c.id);
-    const courseMap = {};
-    courses.forEach(c => courseMap[c.id] = c.title);
+    try {
+      // Find all courses by this teacher
+      const { data: courses } = await this.client.from('courses').select('id, title').eq('instructor_id', tid);
+      if (!courses || courses.length === 0) return [];
+      
+      const courseIds = courses.map(c => c.id);
+      const courseMap = {};
+      courses.forEach(c => courseMap[c.id] = c.title);
 
-    // Get all enrollments for these courses, including student profiles
-    const { data: enrollments, error } = await this.client.from('enrollments')
-      .select(`
-        *,
-        student:student_id ( id, full_name, plan_type, email )
-      `)
-      .in('course_id', courseIds)
-      .order('enrolled_at', { ascending: false });
+      // Get all enrollments for these courses
+      const { data: enrollments, error } = await this.client.from('enrollments')
+        .select('*')
+        .in('course_id', courseIds)
+        .order('enrolled_at', { ascending: false });
 
-    if (error) throw error;
+      if (error) throw error;
+      if (!enrollments || enrollments.length === 0) return [];
 
-    // Wait, Supabase doesn't let us select 'email' from auth.users directly via relation without RLS permissions. 
-    // Usually profiles has email? No, profiles doesn't have email in the schema, but auth.users does. 
-    // We will just return the full_name and plan_type from profiles.
+      // Get the profiles manually since auth.users is restricted and profiles lacks email
+      const studentIds = [...new Set(enrollments.map(e => e.student_id))];
+      const { data: profiles, error: pErr } = await this.client.from('profiles').select('id, full_name, plan_type').in('id', studentIds);
+      
+      if (pErr) console.warn("Could not fetch profiles:", pErr);
 
-    // Let's get the profiles manually if relation fails
-    const studentIds = [...new Set(enrollments.map(e => e.student_id))];
-    const { data: profiles } = await this.client.from('profiles').select('id, full_name, plan_type').in('id', studentIds);
-    const profileMap = {};
-    if(profiles) profiles.forEach(p => profileMap[p.id] = p);
+      const profileMap = {};
+      if (profiles) profiles.forEach(p => profileMap[p.id] = p);
 
-    return enrollments.map(e => ({
-      ...e,
-      course_title: courseMap[e.course_id],
-      student: profileMap[e.student_id] || { full_name: 'Unknown', plan_type: 'trial' }
-    }));
+      return enrollments.map(e => ({
+        ...e,
+        course_title: courseMap[e.course_id],
+        student: {
+          full_name: profileMap[e.student_id]?.full_name || 'Unknown',
+          plan_type: profileMap[e.student_id]?.plan_type || 'trial',
+          email: 'Hidden (Privacy)' // Teachers cannot directly query auth.users email
+        }
+      }));
+    } catch (err) {
+      console.error("Error fetching students:", err);
+      throw err;
+    }
   }
 
   // ── ANNOUNCEMENTS ──
