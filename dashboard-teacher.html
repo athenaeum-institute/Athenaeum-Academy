@@ -1666,7 +1666,16 @@
       }
     }
 
-    function openLiveClassModal() {
+    async function openLiveClassModal() {
+      // Ensure we have courses data before populating
+      if (!myCoursesData || myCoursesData.length === 0) {
+        try {
+          myCoursesData = await svc.getMyCourses();
+        } catch(e) {
+          console.error("Failed to load courses for modal", e);
+        }
+      }
+
       // Populate course dropdown
       const courseSelect = document.getElementById('lc-course');
       courseSelect.innerHTML = '<option value="" disabled selected>Select Course...</option>' + myCoursesData.map(c => `<option value="${c.id}" data-subject="${c.subject}">${c.title}</option>`).join('');
