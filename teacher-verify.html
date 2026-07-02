@@ -93,11 +93,12 @@
         return;
       }
 
-      // 2. If they are already Teacher, redirect to dashboard
+      // 2. Check if they are already Teacher
       const profile = await getUserProfile(user.id);
       if (profile && profile.role === 'Teacher') {
-        window.location.href = 'dashboard-teacher.html';
-        return;
+        document.getElementById('form-title').innerText = 'Claim Another Course';
+        document.getElementById('form-subtitle').innerText = 'Enter your new security code to add another course to your dashboard.';
+        // Don't redirect, allow them to enter another code
       }
 
       // 3. Handle Verify Form Submit
