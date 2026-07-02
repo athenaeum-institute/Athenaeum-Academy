@@ -90,23 +90,33 @@
           role = 'Teacher';
         }
         
-        // Update profile with the stored role
-        await window.supabaseClient.from('profiles').upsert({
-          id: user.id,
-          full_name: profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-          email: user.email,
-          role: role
-        }, { onConflict: 'id' });
+        try {
+          // Update profile with the stored role
+          await window.supabaseClient.from('profiles').upsert({
+            id: user.id,
+            full_name: profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+            email: user.email,
+            role: role
+          }, { onConflict: 'id' });
+        } catch (dbErr) {
+          console.error("Profile upsert failed (likely a role constraint issue):", dbErr);
+        }
       } else if (profile && profile.role) {
         role = profile.role;
       }
 
       let dashboardUrl = 'dashboard-student.html';
-      if (role === 'Admin') dashboardUrl = 'admin.html';
-      else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
-      else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
-      else if (role === 'pending_teacher') dashboardUrl = 'teacher-verify.html';
-      await processPendingFreeTrial(user.id);
+      const safeRole = (role || '').toLowerCase();
+      
+      if (safeRole === 'admin') dashboardUrl = 'admin.html';
+      else if (safeRole === 'teacher') dashboardUrl = 'dashboard-teacher.html';
+      else if (safeRole === 'parent') dashboardUrl = 'dashboard-parent.html';
+      else if (safeRole === 'pending_teacher') dashboardUrl = 'teacher-verify.html';
+      
+      try {
+        await processPendingFreeTrial(user.id);
+      } catch(e) { console.error(e); }
+      
       window.location.href = dashboardUrl;
     }
 
@@ -487,13 +497,14 @@
               streak_days: newStreak
             }).eq('id', userId);
             
-            const userRole = profile.role || currentRole || 'Student';
+            const userRole = (profile.role || currentRole || 'Student').toLowerCase();
             let dashboardUrl = 'dashboard-student.html';
-            if (userRole === 'Admin') dashboardUrl = 'admin.html';
-            else if (userRole === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
-            else if (userRole === 'Parent') dashboardUrl = 'dashboard-parent.html';
+            if (userRole === 'admin') dashboardUrl = 'admin.html';
+            else if (userRole === 'teacher') dashboardUrl = 'dashboard-teacher.html';
+            else if (userRole === 'parent') dashboardUrl = 'dashboard-parent.html';
+            else if (userRole === 'pending_teacher') dashboardUrl = 'teacher-verify.html';
             
-            await processPendingFreeTrial(userId);
+            try { await processPendingFreeTrial(userId); } catch(e){}
             window.location.href = dashboardUrl;
           }
           
