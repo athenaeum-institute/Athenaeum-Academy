@@ -396,6 +396,38 @@ window.AthenaeumAdmin = (function() {
         console.error("Error updating free trial:", err);
         return { status: 'error', message: err.message };
       }
+    },
+
+    // -----------------------------------------------------
+    // TEACHER CODES
+    // -----------------------------------------------------
+    async fetchTeacherCodes() {
+      const sb = getClient();
+      if (!sb) return [];
+      try {
+        const { data, error } = await sb
+          .from('teacher_access_codes')
+          .select(`*, courses(title)`)
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data || [];
+      } catch (err) {
+        console.error("Error fetching teacher codes:", err);
+        return [];
+      }
+    },
+
+    async generateTeacherCode(courseId) {
+      const sb = getClient();
+      if (!sb) return { status: 'error' };
+      try {
+        const { data, error } = await sb.rpc('generate_teacher_code', { target_course_id: courseId });
+        if (error) throw error;
+        return { status: 'success', code: data };
+      } catch (err) {
+        console.error("Error generating teacher code:", err);
+        return { status: 'error', message: err.message };
+      }
     }
 
   };

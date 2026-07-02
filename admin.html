@@ -1153,6 +1153,10 @@
         <span class="material-symbols-outlined">badge</span>
         <span>Teachers</span>
       </div>
+      <div class="nav-item" onclick="showPanel('teacher-codes')">
+        <span class="material-symbols-outlined">vpn_key</span>
+        <span>Teacher Codes</span>
+      </div>
 
       <div class="nav-section">Website</div>
       <div class="nav-item" onclick="window.open('index.html','_blank')">
@@ -2011,6 +2015,36 @@
     </div>
   </div>
 
+        <!-- ── TEACHER CODES PANEL ── -->
+        <div id="panel-teacher-codes" class="panel">
+          <div class="section-header">
+            <div class="section-title">🔑 Teacher Access Codes</div>
+            <button class="btn btn-primary" onclick="generateTeacherCode()">
+              <span class="material-symbols-outlined">add</span> Generate Code
+            </button>
+          </div>
+          <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap; align-items: center;">
+            <select class="form-select" style="width:200px" id="code-course-select">
+              <option value="">Select Course...</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Course</th>
+                  <th>Status</th>
+                  <th>Generated Date</th>
+                </tr>
+              </thead>
+              <tbody id="teacher-codes-body">
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading codes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
   <!-- UPGRADE STUDENT MODAL -->
   <div class="modal-overlay" id="upgrade-modal">
     <div class="modal" style="width:400px">
@@ -2189,6 +2223,7 @@
         'ai-settings': 'Athenaeum Assistant Settings',
         students: 'Student Management',
         teachers: 'Teacher Management',
+        'teacher-codes': 'Teacher Access Codes',
         announcements: 'Announcements',
       };
       document.getElementById('topbar-title').textContent = titles[name] || name;
@@ -2251,6 +2286,12 @@
 
       adminCoursesList = await window.AthenaeumAdmin.fetchAllCourses();
       renderCourses();
+      
+      const select = document.getElementById('code-course-select');
+      if (select) {
+        select.innerHTML = '<option value="">Select Course...</option>' + 
+          adminCoursesList.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+      }
     }
 
     function renderCourses() {
@@ -3007,6 +3048,52 @@
       }
     }
 
+    // ── TEACHER CODES ──
+    async function loadTeacherCodes() {
+      const tbody = document.getElementById('teacher-codes-body');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading...</td></tr>';
+      
+      const codes = await window.AthenaeumAdmin.fetchTeacherCodes();
+      
+      if (!codes || codes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">No codes generated yet.</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = codes.map(c => {
+        let statusBadge = c.is_used 
+          ? '<span class="badge badge-gray">Used</span>' 
+          : '<span class="badge badge-green">Available</span>';
+          
+        return `
+          <tr>
+            <td><strong>${c.code}</strong></td>
+            <td>${c.courses ? c.courses.title : 'Unknown Course'}</td>
+            <td>${statusBadge}</td>
+            <td style="color:var(--muted);font-size:0.8rem">${new Date(c.created_at).toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function generateTeacherCode() {
+      const select = document.getElementById('code-course-select');
+      const courseId = select.value;
+      if (!courseId) {
+        showToast('Please select a course first', 'error');
+        return;
+      }
+      
+      const res = await window.AthenaeumAdmin.generateTeacherCode(courseId);
+      if (res.status === 'success') {
+        showToast('Generated code: ' + res.code, 'success');
+        loadTeacherCodes();
+      } else {
+        showToast('Failed to generate code: ' + res.message, 'error');
+      }
+    }
+
     // ── AUTO-DETECT SESSION ──
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { session } } = await window.supabaseClient.auth.getSession();
@@ -3022,6 +3109,7 @@
       loadAnnouncements();
       loadLiveClasses();
       loadFreeTrials();
+      loadTeacherCodes();
       showToast('Auto-logged in as Admin 👋', 'success');
     });
   </script>

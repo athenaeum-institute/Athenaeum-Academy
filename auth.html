@@ -102,6 +102,7 @@
           if (role === 'Admin') dashboardUrl = 'admin.html';
           else if (role === 'Teacher') dashboardUrl = 'dashboard-teacher.html';
           else if (role === 'Parent') dashboardUrl = 'dashboard-parent.html';
+          else if (role === 'pending_teacher') dashboardUrl = 'teacher-verify.html';
           await processPendingFreeTrial(user.id);
           window.location.href = dashboardUrl;
         }
@@ -444,9 +445,7 @@
           const { data: profile } = await window.supabaseClient.from('profiles').select('*').eq('id', userId).single();
           
           if (profile && profile.role === 'pending_teacher') {
-            await window.supabaseClient.auth.signOut();
-            alert("Your account is still pending Admin approval. You cannot login yet.");
-            submitBtn.classList.remove('btn-loading');
+            window.location.href = 'teacher-verify.html';
             return;
           }
 
@@ -549,10 +548,12 @@
           document.getElementById('success-name').innerText = `Welcome aboard, ${fullName}!`;
           
           if (roleToSave === 'pending_teacher') {
-            document.querySelector('#success-screen h2').innerText = "Account Pending Approval";
+            document.querySelector('#success-screen h2').innerText = "Verify Teacher Account";
             document.getElementById('success-name').innerText = `Welcome, ${fullName}!`;
-            document.getElementById('success-dashboard-btn').style.display = 'none';
-            document.querySelector('#success-screen p').innerHTML = "Your teacher account has been created and is waiting for Admin approval.<br><br><a href='auth.html' style='color:var(--clr-primary)'>Return to Login</a>";
+            document.getElementById('success-dashboard-btn').innerText = "Enter Verification Code";
+            document.getElementById('success-dashboard-btn').style.display = 'inline-block';
+            document.getElementById('success-dashboard-btn').href = 'teacher-verify.html';
+            document.querySelector('#success-screen p').innerHTML = "Your teacher account has been created. Please enter the security code provided by your admin to gain access to your course portal.";
           } else {
             let dashboardUrl = 'dashboard-student.html';
             if (currentRole === 'Admin') dashboardUrl = 'admin.html';
