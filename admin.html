@@ -2684,8 +2684,12 @@
               <td>${timeStr}</td>
               <td><span class="badge ${badge}">${status.toUpperCase()}</span></td>
               <td>
-                <button class="btn btn-ghost btn-sm" onclick="openLiveClassModal('${c.id}')">Edit</button>
-                ${status === 'scheduled' ? `<button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="cancelLiveClass('${c.id}')">Cancel</button>` : ''}
+                <div style="display:flex;gap:0.25rem;">
+                  ${status === 'live' || status === 'scheduled' ? `<a href="live-class.html?room=${encodeURIComponent(c.jitsi_room_name)}" class="btn btn-primary btn-sm" target="_blank" style="padding:4px 8px;">Join</a>` : ''}
+                  <button class="btn btn-ghost btn-sm" onclick="openLiveClassModal('${c.id}')">Edit</button>
+                  ${status === 'scheduled' ? `<button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="cancelLiveClass('${c.id}')">Cancel</button>` : ''}
+                  <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="deleteLiveClass('${c.id}')">Delete</button>
+                </div>
               </td>
             </tr>
           `;
@@ -2795,6 +2799,17 @@
       const res = await window.AthenaeumAdmin.saveLiveClass({ id: id, status: 'cancelled' });
       if (res.status === 'success') {
         showToast('Class Cancelled');
+        loadLiveClasses();
+      } else {
+        showToast(res.message, 'error');
+      }
+    }
+
+    async function deleteLiveClass(id) {
+      if (!confirm('Are you sure you want to PERMANENTLY DELETE this class schedule?')) return;
+      const res = await window.AthenaeumAdmin.deleteLiveClass(id);
+      if (res.status === 'success') {
+        showToast('Class Deleted', 'success');
         loadLiveClasses();
       } else {
         showToast(res.message, 'error');

@@ -356,6 +356,19 @@ window.AthenaeumAdmin = (function() {
       }
     },
 
+    async deleteLiveClass(id) {
+      const sb = getClient();
+      if (!sb) return { status: 'error' };
+      try {
+        const { error } = await sb.from('live_classes').delete().eq('id', id);
+        if (error) throw error;
+        return { status: 'success' };
+      } catch (err) {
+        console.error("Error deleting live class:", err);
+        return { status: 'error', message: err.message };
+      }
+    },
+
     async getAllTeachers() {
       const sb = getClient();
       if (!sb) return { status: 'error' };
