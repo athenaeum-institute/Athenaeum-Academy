@@ -2047,9 +2047,9 @@
 
   <!-- UPGRADE STUDENT MODAL -->
   <div class="modal-overlay" id="upgrade-modal">
-    <div class="modal" style="width:400px">
+    <div class="modal" style="width:500px">
       <div class="modal-header">
-        <div class="modal-title">Update Student Plan</div>
+        <div class="modal-title">Manage Student Courses</div>
         <button class="modal-close"
           onclick="document.getElementById('upgrade-modal').classList.remove('open')">✕</button>
       </div>
@@ -2058,19 +2058,27 @@
           <label class="form-label">Student</label>
           <input class="form-input" id="upgrade-name" disabled>
         </div>
+        
         <div class="form-group">
-          <label class="form-label">Plan Type</label>
-          <select class="form-select" id="upgrade-plan">
-            <option value="trial">Free Trial</option>
-            <option value="paid">Paid (Unlimited)</option>
-            <option value="free">Free (No AI)</option>
-          </select>
+          <label class="form-label">Course Enrollments</label>
+          <div id="course-management-list" style="background:var(--bg-lighter); padding:1rem; border-radius:8px; display:flex; flex-direction:column; gap:0.5rem; max-height:200px; overflow-y:auto;">
+            <!-- Rendered via JS -->
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-ghost"
-          onclick="document.getElementById('upgrade-modal').classList.remove('open')">Cancel</button>
-        <button class="btn btn-primary" onclick="applyUpgrade()">Update Plan</button>
+
+        <hr style="border-top:1px solid var(--border-color); margin:1.5rem 0;">
+
+        <div class="form-group">
+          <label class="form-label">Global Profile Plan</label>
+          <div style="display:flex;gap:0.5rem;">
+            <select class="form-select" id="upgrade-plan" style="flex:1;">
+              <option value="trial">Free Trial</option>
+              <option value="paid">Paid (Unlimited)</option>
+              <option value="free">Free (No AI)</option>
+            </select>
+            <button class="btn btn-primary" onclick="applyUpgrade()">Update Global Plan</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2477,7 +2485,7 @@
       <td style="color:var(--muted);font-size:.8rem">${new Date(s.created_at).toLocaleDateString()}</td>
       <td>
         <div style="display:flex;gap:0.5rem">
-          <button class="btn btn-ghost btn-sm" onclick="openUpgradeModal('${s.id}','${(s.full_name || 'Student').replace(/'/g, "\\'")}','${s.plan_type}')" title="Change Plan" ${isDeleted ? 'disabled' : ''}>✏️</button>
+          <button class="btn btn-ghost btn-sm" onclick="openUpgradeModal('${s.id}','${(s.full_name || 'Student').replace(/'/g, "\\'")}','${s.plan_type}', '${encodeURIComponent(JSON.stringify(s.enrollments || []))}')" title="Manage Student" ${isDeleted ? 'disabled' : ''}>✏️</button>
           <button class="btn btn-ghost btn-sm" onclick="toggleStudentStatus('${s.id}', ${!isBlocked})" title="${isBlocked ? 'Unblock' : 'Block'}" ${isDeleted ? 'disabled' : ''}>${isBlocked ? '🔓' : '🚫'}</button>
           <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')" title="Delete" ${isDeleted ? 'disabled' : ''}>🗑️</button>
         </div>
@@ -2495,11 +2503,67 @@
       await loadStudents();
     }
 
-    function openUpgradeModal(id, name, plan) {
+    function openUpgradeModal(id, name, plan, enrollmentsStr) {
       upgradeTargetId = id;
       document.getElementById('upgrade-name').value = name;
       document.getElementById('upgrade-plan').value = plan || 'trial';
+      
+      const enrollments = enrollmentsStr ? JSON.parse(decodeURIComponent(enrollmentsStr)) : [];
+      const courseListEl = document.getElementById('course-management-list');
+      
+      if (enrollments.length === 0) {
+        courseListEl.innerHTML = '<div style="color:var(--muted); font-size:0.9rem;">No courses enrolled.</div>';
+      } else {
+        courseListEl.innerHTML = enrollments.map(e => `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-dark); padding:0.5rem; border-radius:6px;">
+            <div style="font-size:0.85rem; font-weight:500;">${e.title}</div>
+            <div style="display:flex; gap:0.5rem;">
+              <select class="form-select" id="course-status-${e.course_id}" style="padding:0.25rem; font-size:0.8rem; height:auto; width:80px;">
+                <option value="free" ${e.payment_status === 'free' ? 'selected' : ''}>Free</option>
+                <option value="paid" ${e.payment_status === 'paid' ? 'selected' : ''}>Paid</option>
+              </select>
+              <button class="btn btn-primary" style="padding:0.25rem 0.5rem; font-size:0.8rem;" onclick="applyCourseUpgrade('${e.course_id}')">Save</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      
       document.getElementById('upgrade-modal').classList.add('open');
+    }
+
+    async function applyCourseUpgrade(courseId) {
+      const statusSelect = document.getElementById(`course-status-${courseId}`);
+      if (!statusSelect) return;
+      const newStatus = statusSelect.value;
+      
+      const btn = statusSelect.nextElementSibling;
+      const originalText = btn.innerText;
+      btn.innerText = 'Saving...';
+      btn.disabled = true;
+
+      try {
+        const res = await window.AthenaeumAdmin.updateEnrollmentStatus(upgradeTargetId, courseId, newStatus);
+        if (res.status === 'error') throw new Error(res.message);
+        
+        showToast(`Course updated to ${newStatus.toUpperCase()} ✅`, 'success');
+        await loadStudents();
+        await loadDashboardStats();
+        
+        // Don't close modal so they can edit others
+        // We just update the button back
+        setTimeout(() => {
+          btn.innerText = 'Saved!';
+          setTimeout(() => {
+             btn.innerText = 'Save';
+             btn.disabled = false;
+          }, 1500);
+        }, 300);
+
+      } catch (e) {
+        showToast('Error: ' + e.message, 'error');
+        btn.innerText = 'Error';
+        btn.disabled = false;
+      }
     }
 
     async function applyUpgrade() {

@@ -116,12 +116,13 @@ window.AthenaeumAdmin = (function() {
         }
 
         // Fetch Enrollments for courses
-        const { data: enrollmentsData } = await sb.from('enrollments').select('student_id, payment_status, courses(title)');
+        const { data: enrollmentsData } = await sb.from('enrollments').select('student_id, course_id, payment_status, courses(title)');
         const enrollmentsMap = {};
         if (enrollmentsData) {
           enrollmentsData.forEach(e => {
             if (!enrollmentsMap[e.student_id]) enrollmentsMap[e.student_id] = [];
             enrollmentsMap[e.student_id].push({
+              course_id: e.course_id,
               title: e.courses?.title || 'Unknown Course',
               payment_status: e.payment_status
             });
@@ -162,6 +163,24 @@ window.AthenaeumAdmin = (function() {
         return { status: 'success' };
       } catch (err) {
         console.error("Error updating plan:", err);
+        return { status: 'error', message: err.message };
+      }
+    },
+
+    async updateEnrollmentStatus(studentId, courseId, newStatus) {
+      const sb = getClient();
+      if (!sb) return { status: 'error', message: 'Client not ready' };
+      
+      try {
+        const { error } = await sb.from('enrollments')
+          .update({ payment_status: newStatus })
+          .eq('student_id', studentId)
+          .eq('course_id', courseId);
+          
+        if (error) throw error;
+        return { status: 'success' };
+      } catch (err) {
+        console.error("Error updating enrollment:", err);
         return { status: 'error', message: err.message };
       }
     },
