@@ -1990,10 +1990,10 @@
           <div class="form-group">
             <label class="form-label">Category *</label>
             <select class="form-select" id="c-category">
-              <option value="A-Level">A-Level</option>
-              <option value="O-Level">O-Level</option>
-              <option value="Matric">Matric</option>
-              <option value="Inter">Inter/FSc</option>
+              <option value="a_levels">A-Level</option>
+              <option value="o_levels">O-Level</option>
+              <option value="matric">Matric</option>
+              <option value="inter">Inter/FSc</option>
             </select>
           </div>
           <div class="form-group">
@@ -2365,7 +2365,7 @@
           title.textContent = 'Edit Course';
           document.getElementById('c-title').value = c.title || '';
           document.getElementById('c-instructor').value = c.instructorName || '';
-          document.getElementById('c-category').value = c.category || 'A-Level';
+          document.getElementById('c-category').value = c.category || 'a_levels';
           document.getElementById('c-price').value = c.price || '0';
           document.getElementById('c-thumbnail').value = c.thumbnail_url || '';
           document.getElementById('c-description').value = c.description || '';

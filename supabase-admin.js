@@ -172,10 +172,11 @@ window.AthenaeumAdmin = (function() {
       if (!sb) return { status: 'error', message: 'Client not ready' };
       
       try {
-        const { error } = await sb.from('enrollments')
-          .update({ payment_status: newStatus })
-          .eq('student_id', studentId)
-          .eq('course_id', courseId);
+        const { error } = await sb.rpc('admin_update_enrollment_status', { 
+          target_student_id: studentId, 
+          target_course_id: courseId, 
+          new_status: newStatus 
+        });
           
         if (error) throw error;
         return { status: 'success' };
