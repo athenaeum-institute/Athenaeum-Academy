@@ -237,6 +237,9 @@ async function updateNavbar() {
           <a href="#" onclick="if(window.toggleUstadAI) toggleUstadAI(); return false;">
             <span class="material-symbols-outlined">smart_toy</span> Athenaeum Assistant
           </a>
+          <a href="community.html">
+            <span class="material-symbols-outlined">forum</span> Community Feed
+          </a>
           <a href="#">
             <span class="material-symbols-outlined">settings</span> Settings
           </a>

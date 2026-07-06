@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Feed | Athenaeum Academy</title>
+  <meta name="description" content="Athenaeum Academy Community — share notes, doubts, results, and announcements with teachers, students, and admins.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-state.js"></script>
+  <script src="security.js"></script>
+
+  <style>
+    /* ══════════════════════════════════════════════
+       COMMUNITY FEED — DESIGN SYSTEM
+    ══════════════════════════════════════════════ */
+    :root {
+      --primary:    #005088;
+      --accent:     #00D2FF;
+      --gold:       #FFD700;
+      --bg:         #0D1117;
+      --bg2:        #161B22;
+      --card:       #1C2330;
+      --card2:      #21293A;
+      --border:     rgba(255,255,255,0.08);
+      --border2:    rgba(255,255,255,0.13);
+      --text:       #E6EDF3;
+      --text2:      #8B949E;
+      --green:      #3FB950;
+      --orange:     #F0883E;
+      --purple:     #A371F7;
+      --pink:       #FF7EB6;
+      --teacher:    #58A6FF;
+      --student:    #3FB950;
+      --admin:      #F0883E;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Urbanist', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(13, 17, 23, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-logo {
+      font-size: 1.15rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.85rem;
+      color: var(--text2);
+      text-decoration: none;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      transition: all 0.2s;
+    }
+    .nav-back:hover { color: var(--text); border-color: var(--border2); background: var(--card); }
+    .nav-back .material-symbols-outlined { font-size: 1rem; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+
+    .user-avatar-sm {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* ── PAGE LAYOUT ── */
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .feed-header {
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+    }
+
+    .feed-header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    .feed-header p {
+      color: var(--text2);
+      font-size: 0.95rem;
+    }
+
+    /* ── FILTER TABS ── */
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-bottom: 1.25rem;
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+
+    .filter-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: 'Urbanist', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .filter-tab:hover { border-color: var(--border2); color: var(--text); }
+    .filter-tab.active {
+      background: linear-gradient(135deg, rgba(0,210,255,0.15), rgba(163,113,247,0.15));
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── COMPOSER CARD ── */
+    .composer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .composer-card:focus-within { border-color: var(--accent); }
+
+    .composer-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .composer-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .composer-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Urbanist', sans-serif;
+      font-size: 0.95rem;
+      resize: none;
+      min-height: 70px;
+      line-height: 1.6;
+    }
+    .composer-textarea::placeholder { color: var(--text2); }
+
+    /* Image preview in composer */
+    .img-preview-wrap {
+      position: relative;
+      margin-bottom: 0.75rem;
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+    }
+    .img-preview-wrap.show { display: block; }
+    .img-preview-wrap img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .img-remove-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .composer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .composer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .composer-icon-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.35rem 0.6rem;
+      color: var(--text2);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      font-family: 'Urbanist', sans-serif;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .composer-icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .composer-icon-btn .material-symbols-outlined { font-size: 1.1rem; }
+
+    .category-select {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
+      font-family: 'Urbanist', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.35rem 0.6rem;
+      cursor: pointer;
+      outline: none;
+    }
+    .category-select:focus { border-color: var(--accent); }
+
+    .post-btn {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      border-radius: 50px;
+      padding: 0.45rem 1.25rem;
+      color: #fff;
+      font-family: 'Urbanist', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .post-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,210,255,0.3); }
+    .post-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .post-btn .material-symbols-outlined { font-size: 1rem; }
+
+    /* ── LOGIN GATE ── */
+    .login-gate {
+      background: var(--card);
+      border: 1px dashed var(--border2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .login-gate p { color: var(--text2); margin-bottom: 0.75rem; font-size: 0.9rem; }
+    .login-gate a {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 800;
+      font-size: 0.88rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    /* ── FEED ── */
+    #feed-container { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* ── POST CARD ── */
+    .post-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+      transition: border-color 0.2s;
+    }
+    .post-card:hover { border-color: var(--border2); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Pinned highlight */
+    .post-card.pinned {
+      border-color: rgba(240, 136, 62, 0.4);
+      background: linear-gradient(135deg, var(--card), rgba(240,136,62,0.04));
+    }
+
+    .post-inner { padding: 1.1rem 1.25rem; }
+
+    /* Post author row */
+    .post-author-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .post-meta { flex: 1; }
+    .post-author-name {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .post-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 0.15rem;
+    }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .role-badge.teacher { background: rgba(88,166,255,0.15); color: var(--teacher); }
+    .role-badge.student { background: rgba(63,185,80,0.15);  color: var(--student); }
+    .role-badge.admin   { background: rgba(240,136,62,0.15); color: var(--admin);   }
+
+    .cat-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(163,113,247,0.12);
+      color: var(--purple);
+    }
+
+    .post-time {
+      font-size: 0.72rem;
+      color: var(--text2);
+    }
+
+    .pin-indicator {
+      font-size: 0.75rem;
+      color: var(--orange);
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      margin-left: auto;
+    }
+    .pin-indicator .material-symbols-outlined { font-size: 0.9rem; }
+
+    /* Post content */
+    .post-content {
+      font-size: 0.93rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Post image */
+    .post-img-wrap {
+      margin: 0 -1.25rem 0.85rem;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .post-img-wrap img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .post-img-wrap:hover img { transform: scale(1.02); }
+
+    /* Engagement bar */
+    .engage-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .engage-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 0.35rem 0.65rem;
+      color: var(--text2);
+      font-family: 'Urbanist', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.18s;
+    }
+    .engage-btn:hover { background: var(--card2); color: var(--text); }
+    .engage-btn.liked { color: #FF7EB6; }
+    .engage-btn .material-symbols-outlined { font-size: 1rem; }
+
+    .engage-spacer { flex: 1; }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 0.35rem;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.85rem;
+      transition: all 0.18s;
+    }
+    .delete-btn:hover { color: #ff5555; background: rgba(255,85,85,0.1); }
+    .delete-btn .material-symbols-outlined { font-size: 1rem; }
+
+    /* ── COMMENTS SECTION ── */
+    .comments-section {
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      padding: 0.85rem 1.25rem;
+      display: none;
+    }
+    .comments-section.open { display: block; }
+
+    .comment-item {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      animation: slideUp 0.2s ease;
+    }
+    .comment-item:last-child { border-bottom: none; }
+
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .comment-body { flex: 1; }
+    .comment-author {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+    }
+    .comment-text {
+      font-size: 0.85rem;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+    .comment-time {
+      font-size: 0.68rem;
+      color: var(--text2);
+      margin-top: 0.15rem;
+    }
+
+    .comment-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+    }
+    .comment-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      color: var(--text);
+      font-family: 'Urbanist', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.45rem 1rem;
+      outline: none;
+    }
+    .comment-input:focus { border-color: var(--accent); }
+    .comment-input::placeholder { color: var(--text2); }
+    .comment-send-btn {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .comment-send-btn:hover { transform: scale(1.1); }
+    .comment-send-btn .material-symbols-outlined { font-size: 1rem; }
+
+    /* ── LOADING STATE ── */
+    .post-skeleton {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      animation: shimmer 1.5s infinite;
+    }
+    .skel-line {
+      height: 14px;
+      background: var(--card2);
+      border-radius: 8px;
+      margin-bottom: 0.6rem;
+    }
+    @keyframes shimmer {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text2);
+    }
+    .empty-state .material-symbols-outlined {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .empty-state h3 { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 0.35rem; }
+
+    /* ── IMAGE LIGHTBOX ── */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-overlay img {
+      max-width: 92vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 64px rgba(0,0,0,0.8);
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── TOAST ── */
+    .toast-msg {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1C2330;
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      z-index: 10000;
+      white-space: nowrap;
+      transition: transform 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── LOAD MORE ── */
+    .load-more-btn {
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text2);
+      font-family: 'Urbanist', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .load-more-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,210,255,0.05); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .feed-header h1 { font-size: 1.6rem; }
+      .page-wrap { padding: 1rem 0.75rem 4rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ── TOP NAV ─────────────────────────────────── -->
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="javascript:history.back()" class="nav-back">
+      <span class="material-symbols-outlined">arrow_back</span> Back
+    </a>
+    <a href="index.html" class="nav-logo">Athenaeum</a>
+  </div>
+  <div class="nav-right">
+    <div id="user-pill-wrap"></div>
+  </div>
+</nav>
+
+<!-- ── MAIN CONTENT ─────────────────────────────── -->
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="feed-header">
+    <h1>🌐 Community Feed</h1>
+    <p>Share notes, ask doubts, celebrate results — all in one place!</p>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs" id="filter-tabs">
+    <button class="filter-tab active" data-filter="all" onclick="setFilter('all',this)">
+      🔥 All Posts
+    </button>
+    <button class="filter-tab" data-filter="teacher" onclick="setFilter('teacher',this)">
+      🎓 Teachers
+    </button>
+    <button class="filter-tab" data-filter="student" onclick="setFilter('student',this)">
+      📚 Students
+    </button>
+    <button class="filter-tab" data-filter="admin" onclick="setFilter('admin',this)">
+      🛡️ Admin
+    </button>
+    <button class="filter-tab" data-filter="doubt" onclick="setFilter('doubt',this)">
+      ❓ Doubts
+    </button>
+    <button class="filter-tab" data-filter="class_notes" onclick="setFilter('class_notes',this)">
+      📝 Notes
+    </button>
+    <button class="filter-tab" data-filter="announcement" onclick="setFilter('announcement',this)">
+      📢 Announcements
+    </button>
+    <button class="filter-tab" data-filter="result" onclick="setFilter('result',this)">
+      🏆 Results
+    </button>
+    <button class="filter-tab" data-filter="past_paper" onclick="setFilter('past_paper',this)">
+      📄 Past Papers
+    </button>
+  </div>
+
+  <!-- Composer (shown after login check) -->
+  <div id="composer-wrap"></div>
+
+  <!-- Feed -->
+  <div id="feed-container">
+    <!-- Skeletons while loading -->
+    <div class="post-skeleton">
+      <div class="skel-line" style="width:40%; height:12px;"></div>
+      <div class="skel-line" style="width:100%; height:14px; margin-top:0.75rem;"></div>
+      <div class="skel-line" style="width:80%;"></div>
+    </div>
+    <div class="post-skeleton">
+      <div class="skel-line" style="width:35%; height:12px;"></div>
+      <div class="skel-line" style="width:100%; height:14px; margin-top:0.75rem;"></div>
+      <div class="skel-line" style="width:65%;"></div>
+    </div>
+  </div>
+
+  <button id="load-more-btn" class="load-more-btn" onclick="loadMore()" style="display:none;">
+    Load more posts ↓
+  </button>
+
+</div>
+
+<!-- ── IMAGE LIGHTBOX ─────────────────────────── -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Post image">
+</div>
+
+<!-- ── TOAST ─────────────────────────────────── -->
+<div class="toast-msg" id="toast-msg"></div>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── STATE ── */
+let currentUser   = null;
+let userProfile   = null;
+let currentFilter = 'all';
+let allPosts      = [];
+let userLikes     = new Set();
+let pageSize      = 10;
+let pageOffset    = 0;
+let isLoading     = false;
+
+/* ── CATEGORY META ── */
+const CAT_LABELS = {
+  general:        { label: 'General',        emoji: '💬' },
+  class_notes:    { label: 'Class Notes',    emoji: '📝' },
+  announcement:   { label: 'Announcement',   emoji: '📢' },
+  past_paper:     { label: 'Past Paper',     emoji: '📄' },
+  motivational:   { label: 'Motivation',     emoji: '💪' },
+  doubt:          { label: 'Doubt',          emoji: '❓' },
+  result:         { label: 'Result',         emoji: '🏆' },
+  exam_schedule:  { label: 'Exam Schedule',  emoji: '📅' },
+  academy_update: { label: 'Academy Update', emoji: '🏫' },
+};
+
+/* Category options per role */
+const ROLE_CATS = {
+  teacher: ['class_notes','announcement','past_paper','motivational','general'],
+  student: ['doubt','result','class_notes','general'],
+  admin:   ['announcement','exam_schedule','academy_update','motivational','general'],
+};
+
+/* Avatar colors per role */
+const ROLE_COLORS = {
+  teacher: '#58A6FF',
+  student: '#3FB950',
+  admin:   '#F0883E',
+};
+
+/* ── HELPERS ── */
+function toast(msg, dur = 2500) {
+  const t = document.getElementById('toast-msg');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function timeAgo(ts) {
+  const diff = (Date.now() - new Date(ts)) / 1000;
+  if (diff < 60)    return 'just now';
+  if (diff < 3600)  return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
+
+function avatarInitials(name) {
+  return (name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser   = await getCurrentUser();
+  userProfile   = currentUser ? await getUserProfile(currentUser.id) : null;
+
+  renderUserPill();
+  renderComposer();
+  await loadPosts();
+  subscribeRealtime();
+});
+
+/* ── USER PILL ── */
+function renderUserPill() {
+  const wrap = document.getElementById('user-pill-wrap');
+  if (!currentUser || !userProfile) {
+    wrap.innerHTML = `<a href="auth.html" style="background:linear-gradient(135deg,#005088,#00D2FF);color:#fff;border-radius:50px;padding:0.35rem 0.9rem;font-weight:800;font-size:0.83rem;text-decoration:none;">Login</a>`;
+    return;
+  }
+  const role   = (userProfile.role || 'student').toLowerCase();
+  const name   = userProfile.full_name?.split(' ')[0] || 'User';
+  const initial= avatarInitials(userProfile.full_name || name);
+  const color  = ROLE_COLORS[role] || '#58A6FF';
+
+  wrap.innerHTML = `
+    <div class="user-pill">
+      <div class="user-avatar-sm" style="background:${color};">${initial}</div>
+      <span style="font-size:0.83rem;">${name}</span>
+    </div>`;
+}
+
+/* ── COMPOSER ── */
+function renderComposer() {
+  const wrap = document.getElementById('composer-wrap');
+  if (!currentUser || !userProfile) {
+    wrap.innerHTML = `
+      <div class="login-gate">
+        <p>🔒 Login karo to post kar sako!</p>
+        <a href="auth.html">Login / Sign Up</a>
+      </div>`;
+    return;
+  }
+
+  const role    = (userProfile.role || 'student').toLowerCase();
+  const name    = userProfile.full_name || 'User';
+  const initial = avatarInitials(name);
+  const color   = ROLE_COLORS[role] || '#58A6FF';
+  const cats    = ROLE_CATS[role] || ROLE_CATS['student'];
+
+  const catOptions = cats.map(c =>
+    `<option value="${c}">${CAT_LABELS[c]?.emoji} ${CAT_LABELS[c]?.label}</option>`
+  ).join('');
+
+  wrap.innerHTML = `
+    <div class="composer-card">
+      <div class="composer-top">
+        <div class="composer-avatar" style="background:${color};">${initial}</div>
+        <textarea
+          class="composer-textarea"
+          id="composer-text"
+          placeholder="Kuch share karo — doubt, notes, result, ya announcement... ✍️"
+          maxlength="1000"
+          oninput="updatePostBtn()"
+        ></textarea>
+      </div>
+
+      <div class="img-preview-wrap" id="img-preview-wrap">
+        <img src="" id="img-preview-el" alt="Preview">
+        <button class="img-remove-btn" onclick="removeImage()">✕</button>
+      </div>
+
+      <div class="composer-bottom">
+        <div class="composer-actions">
+          <label class="composer-icon-btn" for="img-upload">
+            <span class="material-symbols-outlined">image</span> Photo
+          </label>
+          <input type="file" id="img-upload" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+          <select class="category-select" id="cat-select">${catOptions}</select>
+        </div>
+        <button class="post-btn" id="post-submit-btn" onclick="submitPost()" disabled>
+          <span class="material-symbols-outlined">send</span> Post
+        </button>
+      </div>
+    </div>`;
+}
+
+let selectedImageFile = null;
+let selectedImageUrl  = null;
+
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('⚠️ Image 5MB se chhoti honi chahiye'); return; }
+  selectedImageFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('img-preview-el').src   = e.target.result;
+    document.getElementById('img-preview-wrap').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+  updatePostBtn();
+}
+
+function removeImage() {
+  selectedImageFile = null;
+  selectedImageUrl  = null;
+  document.getElementById('img-upload').value = '';
+  document.getElementById('img-preview-wrap').classList.remove('show');
+  updatePostBtn();
+}
+
+function updatePostBtn() {
+  const text = document.getElementById('composer-text')?.value?.trim();
+  const btn  = document.getElementById('post-submit-btn');
+  if (btn) btn.disabled = !text && !selectedImageFile;
+}
+
+async function submitPost() {
+  const text = document.getElementById('composer-text')?.value?.trim();
+  const cat  = document.getElementById('cat-select')?.value || 'general';
+  const btn  = document.getElementById('post-submit-btn');
+
+  if (!text && !selectedImageFile) return;
+  if (!currentUser) { toast('❌ Please login first'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="material-symbols-outlined" style="animation:spin 1s linear infinite;">sync</span> Posting...';
+
+  try {
+    let imgUrl = null;
+
+    // Upload image if selected
+    if (selectedImageFile) {
+      const ext      = selectedImageFile.name.split('.').pop();
+      const filename = `${currentUser.id}/${Date.now()}.${ext}`;
+      const { data: uploadData, error: uploadErr } = await window.supabaseClient
+        .storage.from('community-images')
+        .upload(filename, selectedImageFile, { upsert: false, contentType: selectedImageFile.type });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data: { publicUrl } } = window.supabaseClient
+        .storage.from('community-images')
+        .getPublicUrl(filename);
+      imgUrl = publicUrl;
+    }
+
+    const role = (userProfile?.role || 'student').toLowerCase();
+    const { error } = await window.supabaseClient
+      .from('community_posts')
+      .insert({
+        user_id:     currentUser.id,
+        author_name: userProfile?.full_name || 'User',
+        author_role: role,
+        content:     text || '',
+        image_url:   imgUrl,
+        category:    cat,
+      });
+
+    if (error) throw error;
+
+    // Reset composer
+    document.getElementById('composer-text').value = '';
+    removeImage();
+    toast('✅ Post ho gaya!');
+    await loadPosts();
+
+  } catch (err) {
+    console.error(err);
+    toast('❌ Post fail ho gaya. Try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined">send</span> Post';
+  }
+}
+
+/* ── FILTER ── */
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  pageOffset = 0;
+  loadPosts();
+}
+
+/* ── LOAD POSTS ── */
+async function loadPosts(append = false) {
+  if (isLoading) return;
+  isLoading = true;
+  const container = document.getElementById('feed-container');
+
+  if (!append) {
+    container.innerHTML = `
+      <div class="post-skeleton"><div class="skel-line" style="width:40%;height:12px;"></div><div class="skel-line" style="width:100%;height:14px;margin-top:.75rem;"></div><div class="skel-line" style="width:70%;"></div></div>
+      <div class="post-skeleton"><div class="skel-line" style="width:35%;height:12px;"></div><div class="skel-line" style="width:100%;height:14px;margin-top:.75rem;"></div><div class="skel-line" style="width:55%;"></div></div>`;
+    pageOffset = 0;
+  }
+
+  try {
+    let query = window.supabaseClient
+      .from('community_posts')
+      .select('*')
+      .eq('is_approved', true)
+      .order('is_pinned', { ascending: false })
+      .order('created_at', { ascending: false })
+      .range(pageOffset, pageOffset + pageSize - 1);
+
+    // Filter by role or category
+    if (currentFilter === 'teacher') query = query.eq('author_role', 'teacher');
+    else if (currentFilter === 'student') query = query.eq('author_role', 'student');
+    else if (currentFilter === 'admin')   query = query.eq('author_role', 'admin');
+    else if (currentFilter !== 'all')     query = query.eq('category', currentFilter);
+
+    const { data: posts, error } = await query;
+    if (error) throw error;
+
+    // Fetch user likes
+    if (currentUser) {
+      const postIds = posts.map(p => p.id);
+      if (postIds.length > 0) {
+        const { data: likes } = await window.supabaseClient
+          .from('post_likes')
+          .select('post_id')
+          .eq('user_id', currentUser.id)
+          .in('post_id', postIds);
+        userLikes = new Set((likes || []).map(l => l.post_id));
+      }
+    }
+
+    if (!append) {
+      allPosts = posts || [];
+      container.innerHTML = '';
+    } else {
+      allPosts = [...allPosts, ...(posts || [])];
+    }
+
+    if (allPosts.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <span class="material-symbols-outlined">dynamic_feed</span>
+          <h3>Abhi koi post nahi!</h3>
+          <p>Pehli post tum karo! 🚀</p>
+        </div>`;
+    } else {
+      (posts || []).forEach(post => {
+        container.appendChild(buildPostCard(post));
+      });
+    }
+
+    pageOffset += pageSize;
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    loadMoreBtn.style.display = (posts && posts.length === pageSize) ? 'block' : 'none';
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">error</span><h3>Posts load nahi hue</h3><p>Refresh karo ya internet check karo.</p></div>`;
+  } finally {
+    isLoading = false;
+  }
+}
+
+async function loadMore() { await loadPosts(true); }
+
+/* ── BUILD POST CARD ── */
+function buildPostCard(post) {
+  const div = document.createElement('div');
+  div.className = 'post-card' + (post.is_pinned ? ' pinned' : '');
+  div.id = `post-${post.id}`;
+
+  const role    = post.author_role || 'student';
+  const initial = avatarInitials(post.author_name || 'U');
+  const color   = ROLE_COLORS[role] || '#58A6FF';
+  const catMeta = CAT_LABELS[post.category] || { label: post.category, emoji: '💬' };
+  const isLiked = userLikes.has(post.id);
+  const isOwner = currentUser && currentUser.id === post.user_id;
+
+  const canDelete = isOwner || (userProfile && userProfile.role === 'admin');
+
+  div.innerHTML = `
+    <div class="post-inner">
+      <div class="post-author-row">
+        <div class="post-avatar" style="background:${color};">${initial}</div>
+        <div class="post-meta">
+          <div class="post-author-name">${escHtml(post.author_name)}</div>
+          <div class="post-meta-row">
+            <span class="role-badge ${role}">${roleEmoji(role)} ${capitalize(role)}</span>
+            <span class="cat-badge">${catMeta.emoji} ${catMeta.label}</span>
+            <span class="post-time">${timeAgo(post.created_at)}</span>
+          </div>
+        </div>
+        ${post.is_pinned ? `<span class="pin-indicator"><span class="material-symbols-outlined">push_pin</span> Pinned</span>` : ''}
+      </div>
+
+      ${post.content ? `<div class="post-content">${escHtml(post.content)}</div>` : ''}
+
+      ${post.image_url ? `
+        <div class="post-img-wrap" onclick="openLightbox('${escAttr(post.image_url)}')">
+          <img src="${escAttr(post.image_url)}" alt="Post image" loading="lazy">
+        </div>` : ''}
+
+      <div class="engage-bar">
+        <button class="engage-btn ${isLiked ? 'liked' : ''}"
+          id="like-btn-${post.id}"
+          onclick="toggleLike('${post.id}', this)">
+          <span class="material-symbols-outlined">${isLiked ? 'favorite' : 'favorite_border'}</span>
+          <span id="like-count-${post.id}">${post.likes_count || 0}</span>
+        </button>
+
+        <button class="engage-btn" onclick="toggleComments('${post.id}')">
+          <span class="material-symbols-outlined">chat_bubble_outline</span>
+          <span id="cmnt-count-${post.id}">${post.comments_count || 0}</span>
+        </button>
+
+        <div class="engage-spacer"></div>
+
+        ${canDelete ? `
+          <button class="delete-btn" onclick="deletePost('${post.id}')" title="Delete">
+            <span class="material-symbols-outlined">delete</span>
+          </button>` : ''}
+      </div>
+    </div>
+
+    <div class="comments-section" id="comments-${post.id}">
+      <div id="comments-list-${post.id}" style="margin-bottom:0.5rem;"></div>
+      ${currentUser ? `
+        <div class="comment-input-row">
+          <input type="text" class="comment-input" id="cmnt-input-${post.id}"
+            placeholder="Comment likho..." maxlength="300"
+            onkeydown="if(event.key==='Enter') sendComment('${post.id}')">
+          <button class="comment-send-btn" onclick="sendComment('${post.id}')">
+            <span class="material-symbols-outlined">send</span>
+          </button>
+        </div>` : `<p style="font-size:0.8rem;color:var(--text2);margin-top:0.5rem;"><a href="auth.html" style="color:var(--accent);">Login</a> to comment</p>`}
+    </div>`;
+
+  return div;
+}
+
+/* ── HELPERS ── */
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return String(s||'').replace(/"/g,'&quot;');
+}
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function roleEmoji(r) { return r==='teacher'?'🎓':r==='admin'?'🛡️':'📚'; }
+
+/* ── LIKE ── */
+async function toggleLike(postId, btn) {
+  if (!currentUser) { toast('❌ Login karo to like kar sako!'); return; }
+
+  const isLiked    = userLikes.has(postId);
+  const countEl    = document.getElementById(`like-count-${postId}`);
+  const iconEl     = btn.querySelector('.material-symbols-outlined');
+  let   currentCnt = parseInt(countEl.textContent) || 0;
+
+  // Optimistic UI
+  if (isLiked) {
+    userLikes.delete(postId);
+    btn.classList.remove('liked');
+    iconEl.textContent = 'favorite_border';
+    countEl.textContent = Math.max(0, currentCnt - 1);
+  } else {
+    userLikes.add(postId);
+    btn.classList.add('liked');
+    iconEl.textContent = 'favorite';
+    countEl.textContent = currentCnt + 1;
+  }
+
+  try {
+    if (isLiked) {
+      await window.supabaseClient
+        .from('post_likes')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', currentUser.id);
+    } else {
+      await window.supabaseClient
+        .from('post_likes')
+        .insert({ post_id: postId, user_id: currentUser.id });
+    }
+  } catch(e) {
+    console.error(e);
+    // Revert
+    if (isLiked) {
+      userLikes.add(postId);
+      btn.classList.add('liked');
+      iconEl.textContent = 'favorite';
+      countEl.textContent = currentCnt;
+    } else {
+      userLikes.delete(postId);
+      btn.classList.remove('liked');
+      iconEl.textContent = 'favorite_border';
+      countEl.textContent = Math.max(0, currentCnt - 1);
+    }
+  }
+}
+
+/* ── COMMENTS ── */
+async function toggleComments(postId) {
+  const section = document.getElementById(`comments-${postId}`);
+  const isOpen  = section.classList.contains('open');
+  if (isOpen) {
+    section.classList.remove('open');
+    return;
+  }
+  section.classList.add('open');
+  await loadComments(postId);
+}
+
+async function loadComments(postId) {
+  const listEl = document.getElementById(`comments-list-${postId}`);
+  listEl.innerHTML = '<p style="color:var(--text2);font-size:0.8rem;">Loading...</p>';
+  try {
+    const { data, error } = await window.supabaseClient
+      .from('post_comments')
+      .select('*')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      listEl.innerHTML = '<p style="color:var(--text2);font-size:0.8rem;padding:0.35rem 0;">Koi comment nahi. Pehle comment karo! 💬</p>';
+      return;
+    }
+
+    listEl.innerHTML = data.map(c => {
+      const role  = c.author_role || 'student';
+      const color = ROLE_COLORS[role] || '#58A6FF';
+      const init  = avatarInitials(c.author_name || 'U');
+      return `
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:${color};">${init}</div>
+          <div class="comment-body">
+            <div class="comment-author">${escHtml(c.author_name)} <span style="font-weight:500;font-size:0.72rem;color:var(--text2);">(${capitalize(role)})</span></div>
+            <div class="comment-text">${escHtml(c.content)}</div>
+            <div class="comment-time">${timeAgo(c.created_at)}</div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.error(e);
+    listEl.innerHTML = '<p style="color:#ff5555;font-size:0.8rem;">Comments load nahi hue.</p>';
+  }
+}
+
+async function sendComment(postId) {
+  const input = document.getElementById(`cmnt-input-${postId}`);
+  const text  = input?.value?.trim();
+  if (!text || !currentUser) return;
+
+  const role = (userProfile?.role || 'student').toLowerCase();
+  input.value = '';
+
+  try {
+    const { error } = await window.supabaseClient
+      .from('post_comments')
+      .insert({
+        post_id:     postId,
+        user_id:     currentUser.id,
+        author_name: userProfile?.full_name || 'User',
+        author_role: role,
+        content:     text,
+      });
+
+    if (error) throw error;
+
+    await loadComments(postId);
+
+    // Update local count
+    const countEl = document.getElementById(`cmnt-count-${postId}`);
+    if (countEl) countEl.textContent = parseInt(countEl.textContent || 0) + 1;
+
+  } catch(e) {
+    console.error(e);
+    toast('❌ Comment send nahi hua');
+  }
+}
+
+/* ── DELETE POST ── */
+async function deletePost(postId) {
+  if (!confirm('Post delete karein?')) return;
+  try {
+    const { error } = await window.supabaseClient
+      .from('community_posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) throw error;
+
+    const el = document.getElementById(`post-${postId}`);
+    if (el) {
+      el.style.transition = 'all 0.3s ease';
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(-20px)';
+      setTimeout(() => el.remove(), 300);
+    }
+    toast('🗑️ Post delete ho gaya');
+  } catch(e) {
+    console.error(e);
+    toast('❌ Delete nahi hua');
+  }
+}
+
+/* ── LIGHTBOX ── */
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+/* ── REALTIME ── */
+function subscribeRealtime() {
+  window.supabaseClient
+    .channel('community-feed')
+    .on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'community_posts' },
+      payload => {
+        const container = document.getElementById('feed-container');
+        const emptyEl   = container.querySelector('.empty-state');
+        if (emptyEl) container.innerHTML = '';
+
+        // Only add if matches current filter
+        const p = payload.new;
+        let matches = true;
+        if      (currentFilter === 'teacher') matches = p.author_role === 'teacher';
+        else if (currentFilter === 'student') matches = p.author_role === 'student';
+        else if (currentFilter === 'admin')   matches = p.author_role === 'admin';
+        else if (currentFilter !== 'all')     matches = p.category === currentFilter;
+
+        if (matches && p.user_id !== currentUser?.id) {
+          const card = buildPostCard(p);
+          container.prepend(card);
+          toast('🔔 Naya post aaya!');
+        }
+      })
+    .subscribe();
+}
+
+/* ── SPIN ANIMATION ── */
+const style = document.createElement('style');
+style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
