@@ -377,8 +377,8 @@
           <span class="material-symbols-outlined"
             style="color:var(--clr-secondary); font-size:4rem;">check_circle</span>
         </div>
-        <h2>Payment Successful!</h2>
-        <p>
+        <h2 id="confirm-title">Payment Successful!</h2>
+        <p id="confirm-msg">
           Welcome aboard! Your course <strong><span id="receipt-course-name">O-Level Mathematics</span></strong> is now
           active. We've sent a receipt to your email.
         </p>
@@ -673,11 +673,15 @@ ${studentName || 'Applicant'}`
           const courseId = urlParams.get('course');
 
           if (user) {
+            const finalPaymentStatus = (currentMethod === 'local') ? 'pending' : 'paid';
+            const tidVal = (currentMethod === 'local') ? tid : null;
+
             if (isCartMode) {
               const enrollmentData = cartItemsList.map(item => ({
                 student_id: user.id,
                 course_id: item.course_id,
-                payment_status: 'paid',
+                payment_status: finalPaymentStatus,
+                transaction_id: tidVal,
                 enrolled_at: new Date().toISOString()
               }));
               const { error: enrollError } = await window.supabaseClient.from('enrollments').upsert(enrollmentData, { onConflict: 'student_id,course_id' });
@@ -692,7 +696,8 @@ ${studentName || 'Applicant'}`
                 .upsert({
                   student_id: user.id,
                   course_id: courseId,
-                  payment_status: 'paid',
+                  payment_status: finalPaymentStatus,
+                  transaction_id: tidVal,
                   enrolled_at: new Date().toISOString()
                 }, {
                   onConflict: 'student_id,course_id'
@@ -709,6 +714,11 @@ ${studentName || 'Applicant'}`
 
         document.getElementById('checkout-main').style.display = 'none';
         document.querySelector('.checkout-progress').style.display = 'none';
+
+        if (currentMethod === 'local') {
+          document.getElementById('confirm-title').textContent = 'Payment Under Review';
+          document.getElementById('confirm-msg').innerHTML = 'Your payment details have been submitted. Please allow up to 24 hours for us to verify your transaction and grant course access.';
+        }
 
         const screen = document.getElementById('confirmation-screen');
         screen.classList.add('visible');
