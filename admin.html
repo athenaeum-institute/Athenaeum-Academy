@@ -2338,7 +2338,7 @@
         const studentIds = enrollments.map(e => e.student_id);
         const { data: profiles, error: err2 } = await window.supabaseClient
           .from('profiles')
-          .select('id, full_name, email')
+          .select('id, full_name')
           .in('id', studentIds);
           
         if (err2) throw err2;
