@@ -194,17 +194,19 @@ window.AthenaeumAdmin = (function() {
         let newStatus = 'active';
         if (statusParam === true || statusParam === 'blocked') newStatus = 'blocked';
         if (statusParam === 'deleted' || statusParam === 'delete') newStatus = 'deleted';
-        
+
+        if (newStatus === 'deleted') {
+          // Hard delete the user via RPC to allow them to register again
+          const { error } = await sb.rpc('admin_hard_delete_user', { target_user_id: userId });
+          if (error) throw error;
+          return { status: 'success' };
+        }
+
         const { error } = await sb.rpc('admin_update_status', { 
           target_user_id: userId, 
           new_status: newStatus 
         });
         if (error) throw error;
-
-        // If deleting, also remove all enrollments so courses are inaccessible
-        if (newStatus === 'deleted') {
-          await sb.from('enrollments').delete().eq('student_id', userId);
-        }
 
         return { status: 'success' };
       } catch (err) {
