@@ -1135,6 +1135,10 @@
         <span class="material-symbols-outlined">campaign</span>
         <span>Announcements</span>
       </div>
+      <div class="nav-item" onclick="showPanel('materials')">
+        <span class="material-symbols-outlined">folder_shared</span>
+        <span>Course Materials</span>
+      </div>
       <div class="nav-item" onclick="showPanel('ai-settings')">
         <span class="material-symbols-outlined">smart_toy</span>
         <span>Athenaeum Assistant</span>
@@ -1584,6 +1588,53 @@
                 </tr>
               </thead>
               <tbody id="announcements-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── MATERIALS PANEL ── -->
+        <div id="panel-materials" class="panel">
+          <!-- Stats bar -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+            <div class="stat-card blue" style="padding:1rem;">
+              <div class="stat-val" id="adm-mat-total" style="font-size:1.5rem;">—</div>
+              <div class="stat-label">Total Materials</div>
+            </div>
+            <div class="stat-card" style="padding:1rem;">
+              <div class="stat-val" id="adm-mat-pdf" style="font-size:1.5rem; color:var(--red);">—</div>
+              <div class="stat-label">PDFs</div>
+            </div>
+            <div class="stat-card" style="padding:1rem;">
+              <div class="stat-val" id="adm-mat-ann" style="font-size:1.5rem; color:var(--orange);">—</div>
+              <div class="stat-label">Announcements</div>
+            </div>
+            <div class="stat-card" style="padding:1rem;">
+              <div class="stat-val" id="adm-mat-link" style="font-size:1.5rem; color:var(--accent);">—</div>
+              <div class="stat-label">Links</div>
+            </div>
+            <div class="stat-card" style="padding:1rem;">
+              <div class="stat-val" id="adm-mat-img" style="font-size:1.5rem; color:var(--purple);">—</div>
+              <div class="stat-label">Images</div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Teacher</th>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Pinned</th>
+                  <th>Shared On</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adm-materials-body">
+                <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">Loading materials...</td></tr>
               </tbody>
             </table>
           </div>
@@ -2237,8 +2288,12 @@
         teachers: 'Teacher Management',
         'teacher-codes': 'Teacher Access Codes',
         announcements: 'Announcements',
+        materials: 'Course Materials',
+        live: 'Live Classes',
+        freetrials: 'Free Trial Requests',
       };
       document.getElementById('topbar-title').textContent = titles[name] || name;
+      if (name === 'materials') loadAdminMaterials();
     }
 
     // ── DASHBOARD STATS ──
@@ -3177,6 +3232,95 @@
       }
     }
 
+    // ── COURSE MATERIALS (Admin) ──────────────────────────────────────────
+    const adminMatTypeIcons = { pdf: '📄', announcement: '📢', link: '🔗', image: '🖼️' };
+
+    async function loadAdminMaterials() {
+      const tbody = document.getElementById('adm-materials-body');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">Loading...</td></tr>';
+
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('course_materials')
+          .select('*, courses(title)')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Update stats
+        const total = data.length;
+        const counts = { pdf: 0, announcement: 0, link: 0, image: 0 };
+        data.forEach(m => { if (counts[m.material_type] !== undefined) counts[m.material_type]++; });
+        document.getElementById('adm-mat-total').textContent = total;
+        document.getElementById('adm-mat-pdf').textContent = counts.pdf;
+        document.getElementById('adm-mat-ann').textContent = counts.announcement;
+        document.getElementById('adm-mat-link').textContent = counts.link;
+        document.getElementById('adm-mat-img').textContent = counts.image;
+
+        if (!data.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No materials shared yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.map(m => {
+          const typeIcon = adminMatTypeIcons[m.material_type] || '📁';
+          const date = new Date(m.created_at).toLocaleDateString();
+          const courseName = m.courses?.title || '—';
+          let actionLink = '';
+          if (m.file_url) actionLink = `<a href="${m.file_url}" target="_blank" class="btn btn-ghost btn-sm" style="color:var(--accent);">View</a>`;
+          if (m.link_url) actionLink = `<a href="${m.link_url}" target="_blank" class="btn btn-ghost btn-sm" style="color:var(--accent);">Open</a>`;
+          return `
+          <tr>
+            <td><span style="font-size:.8rem;color:var(--muted);">${courseName}</span></td>
+            <td>${m.teacher_name}</td>
+            <td><strong>${m.title}</strong>${m.description ? `<br><span style="font-size:.75rem;color:var(--muted);">${m.description.slice(0,60)}${m.description.length>60?'...':''}</span>` : ''}</td>
+            <td><span class="badge badge-blue" style="font-size:.72rem;">${typeIcon} ${m.material_type}</span></td>
+            <td>
+              <button onclick="adminTogglePin('${m.id}', ${m.is_pinned})" class="btn btn-ghost btn-sm" style="color:${m.is_pinned ? 'var(--gold)' : 'var(--muted)'};" title="${m.is_pinned ? 'Unpin' : 'Pin'}">
+                📌
+              </button>
+            </td>
+            <td style="font-size:.8rem;color:var(--muted);">${date}</td>
+            <td style="display:flex;gap:.4rem;align-items:center;">
+              ${actionLink}
+              <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="adminDeleteMaterial('${m.id}')">
+                <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+              </button>
+            </td>
+          </tr>`;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--red);padding:2rem;">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function adminDeleteMaterial(id) {
+      if (!confirm('Permanently delete this material?')) return;
+      try {
+        const { error } = await window.supabaseClient.from('course_materials').delete().eq('id', id);
+        if (error) throw error;
+        showToast('Material deleted');
+        loadAdminMaterials();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    async function adminTogglePin(id, currentPinned) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('course_materials')
+          .update({ is_pinned: !currentPinned })
+          .eq('id', id);
+        if (error) throw error;
+        showToast(currentPinned ? 'Material unpinned' : 'Material pinned 📌');
+        loadAdminMaterials();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
     // ── AUTO-DETECT SESSION ──
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { session } } = await window.supabaseClient.auth.getSession();
@@ -3197,6 +3341,7 @@
       showToast('Auto-logged in as Admin 👋', 'success');
     });
   </script>
+
 </body>
 
 </html>

@@ -535,6 +535,7 @@
       <a href="dashboard-student.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span>
         Overview</a>
       <a href="courses.html" class="nav-item"><span class="material-symbols-outlined">menu_book</span> My Courses</a>
+      <a href="#student-materials" class="nav-item" onclick="document.getElementById('student-materials').scrollIntoView({behavior:'smooth'}); return false;"><span class="material-symbols-outlined">folder_shared</span> Course Materials</a>
       <a href="student-live-classes.html" class="nav-item"><span class="material-symbols-outlined">videocam</span> Live
         Classes</a>
       <a href="mock-exam.html" class="nav-item"><span class="material-symbols-outlined">quiz</span> Mock Exams</a>
@@ -736,6 +737,26 @@
 
       </div>
 
+      <!-- COURSE MATERIALS SECTION -->
+      <div class="panel fade-in" id="student-materials" style="margin-bottom:2rem;">
+        <div class="panel-header">
+          <div class="panel-title" style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="material-symbols-outlined" style="color:var(--primary);">folder_shared</span>
+            Course Materials
+          </div>
+          <span id="mat-total-badge" style="font-size:0.8rem; color:var(--muted);"></span>
+        </div>
+
+        <!-- Course filter chips -->
+        <div id="mat-course-chips" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;"></div>
+
+        <!-- Materials grid -->
+        <div id="student-materials-grid">
+          <div class="skeleton" style="height:80px; margin-bottom:10px; border-radius:10px;"></div>
+          <div class="skeleton" style="height:80px; margin-bottom:10px; border-radius:10px;"></div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -826,6 +847,9 @@
 
         // 4. Fetch Notifications
         loadNotifications(svc);
+
+        // 5. Load Course Materials
+        loadCourseMaterials();
 
         // 5. Fetch Leaderboard
         const lb = await svc.getLeaderboard();
@@ -1275,6 +1299,138 @@
     async function logout() {
       await window.supabaseClient.auth.signOut();
       window.location.href = 'index.html';
+    }
+
+    // ── COURSE MATERIALS (Student) ───────────────────────────────────────
+    let allStudentMaterials = [];
+    let activeCourseFilter = 'all';
+
+    async function loadCourseMaterials() {
+      const grid = document.getElementById('student-materials-grid');
+      const chipsContainer = document.getElementById('mat-course-chips');
+      if (!grid) return;
+
+      try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const user = session?.user;
+        if (!user) return;
+
+        // Fetch all materials for enrolled courses (RLS handles access control)
+        const { data, error } = await window.supabaseClient
+          .from('course_materials')
+          .select('*, courses(title, subject)')
+          .order('is_pinned', { ascending: false })
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allStudentMaterials = data || [];
+
+        // Update total badge
+        const totalBadge = document.getElementById('mat-total-badge');
+        if (totalBadge) totalBadge.textContent = allStudentMaterials.length > 0 ? `${allStudentMaterials.length} items` : '';
+
+        // Build course filter chips
+        const uniqueCourses = {};
+        allStudentMaterials.forEach(m => {
+          if (m.courses && !uniqueCourses[m.course_id]) {
+            uniqueCourses[m.course_id] = m.courses.title;
+          }
+        });
+
+        if (chipsContainer) {
+          chipsContainer.innerHTML = `<button onclick="filterStudentMaterials('all')" id="chip-all" style="padding:.35rem .85rem;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--accent);background:rgba(0,210,255,.1);color:var(--primary);transition:.2s;">All Courses</button>` +
+            Object.entries(uniqueCourses).map(([cid, ctitle]) =>
+              `<button onclick="filterStudentMaterials('${cid}')" id="chip-${cid}" style="padding:.35rem .85rem;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:.2s;">${ctitle}</button>`
+            ).join('');
+        }
+
+        renderStudentMaterials();
+      } catch (err) {
+        if (grid) grid.innerHTML = `<div style="color:var(--muted); text-align:center; padding:1rem;">Could not load materials.</div>`;
+        console.error('Materials load error:', err);
+      }
+    }
+
+    function filterStudentMaterials(courseId) {
+      activeCourseFilter = courseId;
+      // Update chip styles
+      document.querySelectorAll('[id^="chip-"]').forEach(btn => {
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--muted)';
+      });
+      const activeChip = document.getElementById('chip-' + courseId);
+      if (activeChip) {
+        activeChip.style.borderColor = 'var(--accent)';
+        activeChip.style.background = 'rgba(0,210,255,.1)';
+        activeChip.style.color = 'var(--primary)';
+      }
+      renderStudentMaterials();
+    }
+
+    function renderStudentMaterials() {
+      const grid = document.getElementById('student-materials-grid');
+      if (!grid) return;
+
+      const filtered = activeCourseFilter === 'all'
+        ? allStudentMaterials
+        : allStudentMaterials.filter(m => m.course_id === activeCourseFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div style="text-align:center; padding:2rem; color:var(--muted);">
+            <span class="material-symbols-outlined" style="font-size:2.5rem; display:block; margin-bottom:0.75rem; opacity:0.3;">folder_open</span>
+            <p style="font-weight:700;">No materials shared yet for this course.</p>
+            <p style="font-size:0.85rem; margin-top:0.5rem;">Check back after your next class!</p>
+          </div>`;
+        return;
+      }
+
+      const typeIcons = { pdf: '📄', announcement: '📢', link: '🔗', image: '🖼️' };
+
+      grid.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:1rem;">
+        ${filtered.map(m => {
+          const courseName = m.courses?.title || 'Course';
+          const timeAgo = studentTimeAgo(m.created_at);
+
+          // Action button
+          let actionHTML = '';
+          if (m.material_type === 'pdf') {
+            actionHTML = m.file_url ? `<a href="${m.file_url}" download target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;background:var(--primary);color:#fff;padding:.45rem 1rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85rem;"><span class="material-symbols-outlined" style="font-size:1rem;">download</span> Download PDF</a>` : '';
+          } else if (m.material_type === 'image') {
+            actionHTML = m.file_url ? `<a href="${m.file_url}" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;background:var(--purple);color:#fff;padding:.45rem 1rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85rem;"><span class="material-symbols-outlined" style="font-size:1rem;">open_in_new</span> View Image</a>` : '';
+          } else if (m.material_type === 'link') {
+            actionHTML = m.link_url ? `<a href="${m.link_url}" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(0,210,255,.1);color:var(--primary);border:1px solid rgba(0,210,255,.3);padding:.45rem 1rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85rem;"><span class="material-symbols-outlined" style="font-size:1rem;">open_in_new</span> Open Resource →</a>` : '';
+          }
+          // Announcement type - no button, just shows text
+
+          return `
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;position:relative;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.02);" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,80,136,.1)'; this.style.borderColor='rgba(0,210,255,.3)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,.02)'; this.style.borderColor='var(--border)'">
+            ${m.is_pinned ? '<div style="position:absolute;top:.75rem;right:.75rem;background:rgba(255,215,0,.15);color:#d97706;border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:.1rem .6rem;font-size:.7rem;font-weight:800;">📌 PINNED</div>' : ''}
+            <div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.75rem;">
+              <div style="width:40px;height:40px;border-radius:10px;background:${m.material_type==='pdf'?'rgba(239,68,68,.1)':m.material_type==='image'?'rgba(139,92,246,.1)':m.material_type==='link'?'rgba(0,210,255,.1)':'rgba(249,115,22,.1)'};display:grid;place-items:center;font-size:1.3rem;flex-shrink:0;">${typeIcons[m.material_type] || '📁'}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:800;font-size:.95rem;line-height:1.3;margin-bottom:.2rem;">${m.title}</div>
+                <div style="font-size:.75rem;color:var(--muted);">Shared by ${m.teacher_name} · ${timeAgo}</div>
+                <div style="font-size:.72rem;color:var(--accent);font-weight:700;margin-top:.15rem;">${courseName}</div>
+              </div>
+            </div>
+            ${m.description ? `<p style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem;line-height:1.4;border-left:3px solid var(--border);padding-left:.75rem;">${m.description}</p>` : ''}
+            ${actionHTML ? `<div style="margin-top:.5rem;">${actionHTML}</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+
+    function studentTimeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      const hrs = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      if (mins < 2) return 'just now';
+      if (mins < 60) return `${mins} min ago`;
+      if (hrs < 24) return `${hrs}h ago`;
+      return `${days}d ago`;
     }
 
     window.onload = init;

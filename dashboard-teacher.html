@@ -641,6 +641,10 @@
       <span class="material-symbols-outlined">campaign</span>
       <span>Announcements</span>
     </div>
+    <div class="nav-item" onclick="showPanel('materials')">
+      <span class="material-symbols-outlined">folder_shared</span>
+      <span>Course Materials</span>
+    </div>
     <div class="nav-item" onclick="showPanel('exams')">
       <span class="material-symbols-outlined">quiz</span>
       <span>Mock Exams</span>
@@ -826,6 +830,29 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- MATERIALS PANEL -->
+      <div id="panel-materials" class="panel">
+        <div class="section-header">
+          <div class="section-title">Course Materials</div>
+          <button class="btn btn-primary" onclick="openMaterialModal()">
+            <span class="material-symbols-outlined">add</span> Share New Material
+          </button>
+        </div>
+
+        <!-- Course filter -->
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label">Filter by Course:</label>
+          <select class="form-select" id="mat-filter-course" style="max-width:320px;" onchange="renderFilteredMaterials()">
+            <option value="">All Courses</option>
+          </select>
+        </div>
+
+        <!-- Materials list -->
+        <div id="materials-list-container">
+          <div style="text-align:center;padding:2rem;color:var(--muted);">Loading materials...</div>
         </div>
       </div>
 
@@ -1181,6 +1208,86 @@
     </div>
   </div>
 
+  <!-- ── MATERIAL MODAL ─────────────────────────────────────── -->
+  <div class="modal-overlay" id="materials-modal">
+    <div class="modal" style="max-width:620px;">
+      <div class="modal-header">
+        <div class="modal-title">Share Material with Students</div>
+        <button class="modal-close" onclick="closeModal('materials-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Course Select -->
+        <div class="form-group">
+          <label class="form-label">Select Course *</label>
+          <select class="form-select" id="mat-course-id"></select>
+        </div>
+
+        <!-- Material Type -->
+        <div class="form-group">
+          <label class="form-label">Material Type *</label>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem;" id="mat-type-selector">
+            <label id="mat-type-pdf" class="mat-type-btn" onclick="selectMatType('pdf')" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.75rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;font-size:.8rem;font-weight:700;color:var(--muted);">
+              <span style="font-size:1.5rem;">📄</span>PDF / File
+            </label>
+            <label id="mat-type-announcement" class="mat-type-btn" onclick="selectMatType('announcement')" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.75rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;font-size:.8rem;font-weight:700;color:var(--muted);">
+              <span style="font-size:1.5rem;">📢</span>Announcement
+            </label>
+            <label id="mat-type-link" class="mat-type-btn" onclick="selectMatType('link')" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.75rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;font-size:.8rem;font-weight:700;color:var(--muted);">
+              <span style="font-size:1.5rem;">🔗</span>Link
+            </label>
+            <label id="mat-type-image" class="mat-type-btn" onclick="selectMatType('image')" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.75rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;font-size:.8rem;font-weight:700;color:var(--muted);">
+              <span style="font-size:1.5rem;">🖼️</span>Image
+            </label>
+          </div>
+          <input type="hidden" id="mat-type" value="pdf">
+        </div>
+
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input class="form-input" type="text" id="mat-title" placeholder="e.g. Chapter 5 Notes — Vectors" required>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label">Description (optional)</label>
+          <textarea class="form-textarea" id="mat-desc" placeholder="Brief description for students..."></textarea>
+        </div>
+
+        <!-- File Upload (PDF / Image) -->
+        <div class="form-group" id="mat-file-group">
+          <label class="form-label">Upload File <span style="color:var(--muted);font-weight:400;">(Max 10MB)</span></label>
+          <input type="file" id="mat-file" accept=".pdf,.jpg,.jpeg,.png,.webp" class="form-input" style="padding:.5rem;" onchange="checkFileSize(this)">
+          <!-- Progress Bar -->
+          <div id="mat-progress-wrap" style="display:none; margin-top:.75rem;">
+            <div style="font-size:.8rem; color:var(--muted); margin-bottom:.25rem;" id="mat-progress-label">Uploading... 0%</div>
+            <div style="background:var(--border); border-radius:10px; height:8px; overflow:hidden;">
+              <div id="mat-progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg,var(--primary),var(--accent)); transition:.3s; border-radius:10px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Link URL -->
+        <div class="form-group" id="mat-link-group" style="display:none;">
+          <label class="form-label">Resource URL *</label>
+          <input class="form-input" type="url" id="mat-link" placeholder="https://...">
+        </div>
+
+        <!-- Pin toggle -->
+        <div class="form-group" style="display:flex;align-items:center;gap:.75rem;">
+          <input type="checkbox" id="mat-pinned" style="width:18px;height:18px;accent-color:var(--accent);">
+          <label for="mat-pinned" style="font-size:.9rem;cursor:pointer;">📌 Pin this material <span style="color:var(--muted);font-size:.8rem;">(pinned items appear at top for students)</span></label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('materials-modal')">Cancel</button>
+        <button class="btn btn-primary" id="mat-submit-btn" onclick="submitMaterial(event)">
+          <span class="material-symbols-outlined">share</span> Share with Students
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
@@ -1200,7 +1307,7 @@
       const titles = {
         overview: 'Overview', courses: 'My Courses', editor: 'Course Editor',
         students: 'My Students', live: 'Live Classes', announcements: 'Announcements',
-        exams: 'Mock Exams', 'exam-editor': 'Edit Exam'
+        exams: 'Mock Exams', 'exam-editor': 'Edit Exam', materials: 'Course Materials'
       };
       document.getElementById('topbar-title').innerText = titles[id] || 'Dashboard';
 
@@ -1210,6 +1317,7 @@
       if (id === 'live') loadLiveClasses();
       if (id === 'announcements') loadAnnouncements();
       if (id === 'exams') loadExams();
+      if (id === 'materials') loadMaterials();
     }
 
     function showToast(msg, type = 'success') {
@@ -1272,6 +1380,13 @@
         const options = '<option value="" disabled selected>Select Course...</option>' + courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
         document.getElementById('ann-course').innerHTML = options;
         document.getElementById('e-course').innerHTML = options;
+        // Materials modal course selector
+        const matOptions = '<option value="" disabled selected>Select Course...</option>' + courses.map(c => `<option value="${c.id}" data-title="${c.title.replace(/"/g,'&quot;')}">${c.title}</option>`).join('');
+        const matCourseEl = document.getElementById('mat-course-id');
+        if (matCourseEl) matCourseEl.innerHTML = matOptions;
+        // Filter dropdown in materials panel
+        const matFilter = document.getElementById('mat-filter-course');
+        if (matFilter) matFilter.innerHTML = '<option value="">All Courses</option>' + courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
       } catch (e) {
         showToast(e.message, 'error');
       }
@@ -1762,8 +1877,287 @@
       }
     }
 
+    // ── COURSE MATERIALS ──────────────────────────────────────────
+    const EMAILJS_SERVICE_ID = 'service_kzzgnik';
+    const EMAILJS_MATERIAL_TEMPLATE_ID = 'template_materials'; // Create this template in EmailJS dashboard
+    const EMAILJS_PUBLIC_KEY = 'a-OveV3kaoWp2uMgf';
+
+    let allMaterialsData = [];
+    let currentMatType = 'pdf';
+
+    function selectMatType(type) {
+      currentMatType = type;
+      document.getElementById('mat-type').value = type;
+      // Reset border colors
+      ['pdf','announcement','link','image'].forEach(t => {
+        const el = document.getElementById('mat-type-' + t);
+        if (el) { el.style.borderColor = 'var(--border)'; el.style.color = 'var(--muted)'; el.style.background = 'transparent'; }
+      });
+      const active = document.getElementById('mat-type-' + type);
+      if (active) { active.style.borderColor = 'var(--accent)'; active.style.color = 'var(--accent)'; active.style.background = 'rgba(0,210,255,.08)'; }
+      // Show/hide file vs link fields
+      document.getElementById('mat-file-group').style.display = (type === 'pdf' || type === 'image') ? 'block' : 'none';
+      document.getElementById('mat-link-group').style.display = (type === 'link') ? 'block' : 'none';
+      // Update file accept
+      const fileInput = document.getElementById('mat-file');
+      fileInput.accept = type === 'pdf' ? '.pdf,application/pdf' : '.jpg,.jpeg,.png,.webp,image/*';
+    }
+
+    function checkFileSize(input) {
+      if (input.files[0] && input.files[0].size > 10 * 1024 * 1024) {
+        showToast('File too large! Maximum size is 10MB.', 'error');
+        input.value = '';
+      }
+    }
+
+    function openMaterialModal() {
+      // Ensure courses loaded
+      if (!myCoursesData.length) loadCourses();
+      document.getElementById('mat-title').value = '';
+      document.getElementById('mat-desc').value = '';
+      document.getElementById('mat-file').value = '';
+      document.getElementById('mat-link').value = '';
+      document.getElementById('mat-pinned').checked = false;
+      document.getElementById('mat-progress-wrap').style.display = 'none';
+      document.getElementById('mat-progress-bar').style.width = '0%';
+      selectMatType('pdf');
+      document.getElementById('materials-modal').classList.add('open');
+    }
+
+    async function submitMaterial(e) {
+      e.preventDefault();
+      const btn = document.getElementById('mat-submit-btn');
+      const courseId = document.getElementById('mat-course-id').value;
+      const type = document.getElementById('mat-type').value;
+      const title = document.getElementById('mat-title').value.trim();
+      const desc = document.getElementById('mat-desc').value.trim();
+      const isPinned = document.getElementById('mat-pinned').checked;
+      const linkUrl = document.getElementById('mat-link').value.trim();
+      const fileInput = document.getElementById('mat-file');
+
+      if (!courseId) return showToast('Please select a course', 'error');
+      if (!title) return showToast('Title is required', 'error');
+      if (type === 'link' && !linkUrl) return showToast('Please enter a URL for link type', 'error');
+      if ((type === 'pdf' || type === 'image') && !fileInput.files[0]) return showToast('Please select a file to upload', 'error');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Uploading...';
+
+      try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const user = session?.user;
+        if (!user) throw new Error('Not authenticated');
+
+        let fileUrl = null;
+
+        // Upload file if needed
+        if ((type === 'pdf' || type === 'image') && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const filePath = `${courseId}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+
+          // Show progress
+          const progressWrap = document.getElementById('mat-progress-wrap');
+          const progressBar = document.getElementById('mat-progress-bar');
+          const progressLabel = document.getElementById('mat-progress-label');
+          progressWrap.style.display = 'block';
+
+          // Simulate progress during upload
+          let prog = 0;
+          const progInterval = setInterval(() => {
+            prog = Math.min(prog + 5, 85);
+            progressBar.style.width = prog + '%';
+            progressLabel.textContent = `Uploading... ${prog}%`;
+          }, 150);
+
+          const { data: uploadData, error: uploadError } = await window.supabaseClient.storage
+            .from('course-materials')
+            .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+          clearInterval(progInterval);
+
+          if (uploadError) throw new Error('Upload failed: ' + uploadError.message);
+
+          progressBar.style.width = '100%';
+          progressLabel.textContent = 'Upload complete!';
+
+          const { data: urlData } = window.supabaseClient.storage
+            .from('course-materials')
+            .getPublicUrl(filePath);
+          fileUrl = urlData.publicUrl;
+        }
+
+        // Get teacher name
+        const teacherName = document.querySelector('.user-name-display')?.innerText || 'Teacher';
+
+        // Insert material record
+        const { error: insertError } = await window.supabaseClient.from('course_materials').insert({
+          course_id: courseId,
+          teacher_id: user.id,
+          teacher_name: teacherName,
+          title: title,
+          description: desc || null,
+          material_type: type,
+          file_url: fileUrl || null,
+          link_url: linkUrl || null,
+          is_pinned: isPinned
+        });
+
+        if (insertError) throw new Error(insertError.message);
+
+        // Get course name for email
+        const courseOption = document.querySelector(`#mat-course-id option[value="${courseId}"]`);
+        const courseName = courseOption?.textContent || 'Your Course';
+
+        // Send EmailJS notifications to enrolled students (fire and forget)
+        sendMaterialNotifications(courseId, courseName, title, type, teacherName);
+
+        closeModal('materials-modal');
+        showToast('Material shared with students! 🎉');
+        loadMaterials();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined">share</span> Share with Students';
+      }
+    }
+
+    async function sendMaterialNotifications(courseId, courseName, materialTitle, materialType, teacherName) {
+      try {
+        if (typeof emailjs === 'undefined') return;
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        const { data: enrolled } = await window.supabaseClient
+          .from('enrollments')
+          .select('user_id, profiles(email, full_name)')
+          .eq('course_id', courseId)
+          .in('status', ['paid', 'active', 'free_trial']);
+
+        if (!enrolled) return;
+        enrolled.forEach(student => {
+          if (student.profiles?.email) {
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_MATERIAL_TEMPLATE_ID, {
+              student_name: student.profiles.full_name || 'Student',
+              student_email: student.profiles.email,
+              teacher_name: teacherName,
+              course_name: courseName,
+              material_title: materialTitle,
+              material_type: materialType,
+              dashboard_link: 'https://athenaeumacademy.com/dashboard-student.html'
+            }).catch(() => {}); // fail silently
+          }
+        });
+      } catch (e) {
+        console.warn('Email notification failed:', e);
+      }
+    }
+
+    async function loadMaterials() {
+      const container = document.getElementById('materials-list-container');
+      if (!container) return;
+      container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);">Loading...</div>';
+
+      try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const user = session?.user;
+        if (!user) return;
+
+        const { data, error } = await window.supabaseClient
+          .from('course_materials')
+          .select('*, courses(title)')
+          .eq('teacher_id', user.id)
+          .order('is_pinned', { ascending: false })
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allMaterialsData = data || [];
+        renderFilteredMaterials();
+      } catch (err) {
+        container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--red);">Error: ${err.message}</div>`;
+      }
+    }
+
+    function renderFilteredMaterials() {
+      const container = document.getElementById('materials-list-container');
+      if (!container) return;
+      const filterCourse = document.getElementById('mat-filter-course')?.value || '';
+      const filtered = filterCourse ? allMaterialsData.filter(m => m.course_id === filterCourse) : allMaterialsData;
+
+      if (!filtered.length) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:3rem;color:var(--muted);">
+            <span class="material-symbols-outlined" style="font-size:3rem;display:block;margin-bottom:1rem;opacity:.3;">folder_open</span>
+            <p>No materials shared yet.</p>
+            <p style="font-size:.85rem;margin-top:.5rem;">Click "Share New Material" to get started.</p>
+          </div>`;
+        return;
+      }
+
+      const typeIcons = { pdf: '📄', announcement: '📢', link: '🔗', image: '🖼️' };
+      const typeColors = { pdf: 'var(--red)', announcement: 'var(--orange)', link: 'var(--accent)', image: 'var(--purple)' };
+
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem;">
+          ${filtered.map(m => {
+            const timeAgo = getTimeAgo(m.created_at);
+            const courseTitle = m.courses?.title || 'Unknown Course';
+            let actionBtn = '';
+            if (m.material_type === 'pdf' || m.material_type === 'image') {
+              actionBtn = m.file_url ? `<a href="${m.file_url}" target="_blank" class="btn btn-ghost btn-sm" style="color:var(--accent);"><span class="material-symbols-outlined" style="font-size:1rem;">download</span> View File</a>` : '';
+            } else if (m.material_type === 'link') {
+              actionBtn = m.link_url ? `<a href="${m.link_url}" target="_blank" class="btn btn-ghost btn-sm" style="color:var(--accent);"><span class="material-symbols-outlined" style="font-size:1rem;">open_in_new</span> Open Link</a>` : '';
+            }
+            return `
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;position:relative;transition:.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              ${m.is_pinned ? '<span style="position:absolute;top:.75rem;right:.75rem;background:rgba(255,215,0,.15);color:var(--gold);border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:.1rem .5rem;font-size:.7rem;font-weight:800;">📌 PINNED</span>' : ''}
+              <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+                <div style="width:42px;height:42px;border-radius:10px;background:rgba(0,0,0,.2);display:grid;place-items:center;font-size:1.4rem;flex-shrink:0;">${typeIcons[m.material_type] || '📁'}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:800;font-size:.95rem;margin-bottom:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.title}</div>
+                  <div style="font-size:.75rem;color:var(--muted);">${courseTitle}</div>
+                </div>
+              </div>
+              ${m.description ? `<p style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem;line-height:1.4;">${m.description}</p>` : ''}
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border);">
+                <span style="font-size:.75rem;color:var(--muted);">Shared ${timeAgo}</span>
+                <div style="display:flex;gap:.5rem;">
+                  ${actionBtn}
+                  <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="deleteMaterial('${m.id}')">
+                    <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`;
+    }
+
+    async function deleteMaterial(id) {
+      if (!confirm('Delete this material? This cannot be undone.')) return;
+      try {
+        const { error } = await window.supabaseClient.from('course_materials').delete().eq('id', id);
+        if (error) throw error;
+        showToast('Material deleted');
+        loadMaterials();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    function getTimeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      const hrs = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      if (mins < 2) return 'just now';
+      if (mins < 60) return `${mins} minutes ago`;
+      if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`;
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
+
     window.onload = init;
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="athenaeum-assistant.js?v=2" defer></script>
 </body>
 
