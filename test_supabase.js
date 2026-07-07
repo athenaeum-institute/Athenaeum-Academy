@@ -6,15 +6,15 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function test() {
   const { data, error } = await supabase
-    .from('courses')
-    .select('*, profiles:instructor_id(full_name, avatar_url)')
-    .eq('is_published', true)
-    .order('created_at', { ascending: false });
+    .from('enrollments')
+    .select('*, courses(title)')
+    .eq('payment_status', 'pending');
 
   if (error) {
     console.error('Error:', error);
   } else {
-    console.log(`Found ${data.length} courses`);
+    console.log(`Found ${data.length} enrollments`);
+    console.log(data);
   }
 }
 
