@@ -125,16 +125,16 @@
 
               <!-- Payment Tabs -->
               <div class="payment-tabs">
-                <button type="button" class="pay-tab active" onclick="switchPayTab('card')">
-                  <span class="material-symbols-outlined">credit_card</span> Credit/Debit Card
+                <button type="button" class="pay-tab" onclick="alert('Card payments are coming soon! Please use Local Payment.')" style="opacity: 0.6;">
+                  <span class="material-symbols-outlined">credit_card</span> Card (Coming Soon)
                 </button>
-                <button type="button" class="pay-tab" onclick="switchPayTab('local')">
+                <button type="button" class="pay-tab active" onclick="switchPayTab('local')">
                   <span class="material-symbols-outlined">account_balance_wallet</span> Local Payment
                 </button>
               </div>
 
               <!-- Card Payment Section -->
-              <div id="pay-card">
+              <div id="pay-card" style="display:none;">
                 <!-- 3D Card Preview -->
                 <div class="card-preview-wrap">
                   <div class="card-preview" id="card-preview">
@@ -200,15 +200,15 @@
               </div><!-- /#pay-card -->
 
               <!-- Local Payment Section -->
-              <div id="pay-local" style="display:none;">
+              <div id="pay-local" style="display:block;">
                 <div class="local-payment-panel">
 
-                  <div class="local-pay-option" onclick="selectLocalPay(this, 'easypaisa')">
+                  <div class="local-pay-option" style="opacity: 0.6; pointer-events: none;" onclick="selectLocalPay(this, 'easypaisa')">
                     <div class="local-pay-icon"
                       style="background:#006A4E; color:#fff; font-weight:900; font-family:'Urbanist'; font-size:1.1rem;">
                       ep</div>
                     <div class="local-pay-info">
-                      <h4>Easypaisa</h4>
+                      <h4>Easypaisa <span style="font-size:0.7rem; color:#ef4444; border:1px solid #ef4444; padding:2px 4px; border-radius:4px; margin-left:4px;">Coming Soon</span></h4>
                       <p>Pay instantly via the Easypaisa app.</p>
                     </div>
                     <div class="local-pay-radio"></div>
@@ -225,7 +225,7 @@
                       Transaction ID (TID) below to verify automatically.</p>
                   </div>
 
-                  <div class="local-pay-option" onclick="selectLocalPay(this, 'jazzcash')">
+                  <div class="local-pay-option selected" onclick="selectLocalPay(this, 'jazzcash')">
                     <div class="local-pay-icon"
                       style="background:#ED1C24; color:#fff; font-weight:900; font-family:'Urbanist'; font-size:1.1rem;">
                       JC</div>
@@ -235,19 +235,21 @@
                     </div>
                     <div class="local-pay-radio"></div>
                   </div>
-                  <div class="local-pay-details" id="details-jazzcash">
-                    <div class="account-row"><span class="acc-label">JazzCash Till ID:</span> <span
-                        class="acc-val">00112233</span></div>
-                    <button type="button" class="copy-btn" onclick="copyText('00112233', this)">
-                      <span class="material-symbols-outlined">content_copy</span> Copy Till ID
+                  <div class="local-pay-details show" id="details-jazzcash">
+                    <div class="account-row"><span class="acc-label">JazzCash Number:</span> <span
+                        class="acc-val">03294862198</span></div>
+                    <div class="account-row"><span class="acc-label">Account Title:</span> <span
+                        class="acc-val">Ali Abbas</span></div>
+                    <button type="button" class="copy-btn" onclick="copyText('03294862198', this)">
+                      <span class="material-symbols-outlined">content_copy</span> Copy Number
                     </button>
                   </div>
 
-                  <div class="local-pay-option" onclick="selectLocalPay(this, 'bank')">
+                  <div class="local-pay-option" style="opacity: 0.6; pointer-events: none;" onclick="selectLocalPay(this, 'bank')">
                     <div class="local-pay-icon" style="background:#005088; color:#fff;"><span
                         class="material-symbols-outlined">account_balance</span></div>
                     <div class="local-pay-info">
-                      <h4>Bank Transfer (IBFT)</h4>
+                      <h4>Bank Transfer (IBFT) <span style="font-size:0.7rem; color:#ef4444; border:1px solid #ef4444; padding:2px 4px; border-radius:4px; margin-left:4px;">Coming Soon</span></h4>
                       <p>Direct transfer from any Pakistani bank.</p>
                     </div>
                     <div class="local-pay-radio"></div>
@@ -474,9 +476,13 @@
     });
 
     // ── Payment Tabs ────────────────────────────────────────
-    let currentMethod = 'card';
+    let currentMethod = 'local';
 
     function switchPayTab(type) {
+      if (type === 'card') {
+        alert('Card payments are coming soon! Please use Local Payment.');
+        return;
+      }
       currentMethod = type;
       const tabs = document.querySelectorAll('.pay-tab');
       tabs.forEach(t => t.classList.remove('active'));
@@ -503,7 +509,7 @@
     }
 
     // ── Local Payments ──────────────────────────────────────
-    let selectedLocalId = 'easypaisa';
+    let selectedLocalId = 'jazzcash';
 
     function selectLocalPay(el, id) {
       selectedLocalId = id;
