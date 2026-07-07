@@ -674,7 +674,7 @@ ${studentName || 'Applicant'}`
 
           if (user) {
             const finalPaymentStatus = (currentMethod === 'local') ? 'pending' : 'paid';
-            const tidVal = (currentMethod === 'local') ? tid : null;
+            const tidVal = (currentMethod === 'local') ? document.getElementById('local-tid').value : null;
 
             if (isCartMode) {
               const enrollmentData = cartItemsList.map(item => ({
