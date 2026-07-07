@@ -35,13 +35,13 @@ USING (
   EXISTS (
     SELECT 1 FROM enrollments
     WHERE enrollments.course_id = course_materials.course_id
-    AND enrollments.user_id = (SELECT auth.uid())
-    AND enrollments.status IN ('paid', 'active', 'free_trial')
+    AND enrollments.student_id = (SELECT auth.uid())
+    AND enrollments.payment_status IN ('paid', 'active', 'free', 'trial')
   )
   OR
   EXISTS (
     SELECT 1 FROM profiles
-    WHERE profiles.user_id = (SELECT auth.uid())
+    WHERE profiles.id = (SELECT auth.uid())
     AND profiles.role = 'admin'
   )
 );
@@ -70,7 +70,7 @@ USING (
   OR
   EXISTS (
     SELECT 1 FROM profiles
-    WHERE profiles.user_id = (SELECT auth.uid())
+    WHERE profiles.id = (SELECT auth.uid())
     AND profiles.role = 'admin'
   )
 );
@@ -118,7 +118,7 @@ TO authenticated
 USING (
   EXISTS (
     SELECT 1 FROM profiles
-    WHERE profiles.user_id = (SELECT auth.uid())
+    WHERE profiles.id = (SELECT auth.uid())
     AND profiles.role = 'admin'
   )
 );
