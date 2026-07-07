@@ -2316,7 +2316,7 @@
         // 1. Fetch pending enrollments and course details
         const { data: enrollments, error: err1 } = await window.supabaseClient
           .from('enrollments')
-          .select('*, courses!enrollments_course_id_fkey(title)')
+          .select('*, courses(title)')
           .eq('payment_status', 'pending')
           .order('enrolled_at', { ascending: false });
           
