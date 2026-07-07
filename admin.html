@@ -2313,31 +2313,48 @@
         if(!tbody) return;
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted)">Loading...</td></tr>';
         
-        const { data, error } = await window.supabaseClient
+        // 1. Fetch pending enrollments and course details
+        const { data: enrollments, error: err1 } = await window.supabaseClient
           .from('enrollments')
-          .select('*, profiles!enrollments_student_id_fkey(full_name, email), courses!enrollments_course_id_fkey(title)')
+          .select('*, courses!enrollments_course_id_fkey(title)')
           .eq('payment_status', 'pending')
           .order('enrolled_at', { ascending: false });
           
-        if (error) throw error;
+        if (err1) throw err1;
         
+        // Update badge
         const badge = document.getElementById('approvals-badge');
         if (badge) {
-          badge.textContent = data.length;
-          badge.style.display = data.length > 0 ? 'inline-block' : 'none';
+          badge.textContent = enrollments.length;
+          badge.style.display = enrollments.length > 0 ? 'inline-block' : 'none';
         }
         
-        if (!data || data.length === 0) {
+        if (!enrollments || enrollments.length === 0) {
           tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted)">No pending approvals.</td></tr>';
           return;
         }
+
+        // 2. Fetch profiles separately since enrollments references auth.users
+        const studentIds = enrollments.map(e => e.student_id);
+        const { data: profiles, error: err2 } = await window.supabaseClient
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', studentIds);
+          
+        if (err2) throw err2;
         
-        tbody.innerHTML = data.map(e => `
+        // Create lookup map
+        const profileMap = {};
+        profiles.forEach(p => { profileMap[p.id] = p; });
+        
+        tbody.innerHTML = enrollments.map(e => {
+          const profile = profileMap[e.student_id] || {};
+          return `
           <tr>
             <td>${new Date(e.enrolled_at).toLocaleDateString()}</td>
             <td>
-              <strong>${e.profiles?.full_name || 'Student'}</strong><br>
-              <span style="font-size:0.75rem; color:var(--muted)">${e.profiles?.email || ''}</span>
+              <strong>${profile.full_name || 'Student'}</strong><br>
+              <span style="font-size:0.75rem; color:var(--muted)">${profile.email || ''}</span>
             </td>
             <td>${e.courses?.title || 'Course'}</td>
             <td><strong style="color:var(--accent)">${e.transaction_id || 'N/A'}</strong></td>
@@ -2346,9 +2363,11 @@
               <button class="btn btn-danger btn-sm" onclick="rejectPayment('${e.student_id}', '${e.course_id}')" style="margin-left:5px">Reject</button>
             </td>
           </tr>
-        `).join('');
+        `}).join('');
       } catch (err) {
         console.error('Error loading approvals:', err);
+        const tbody = document.getElementById('approvals-tbody');
+        if(tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--red)">Failed to load approvals. Check console.</td></tr>';
       }
     }
 
