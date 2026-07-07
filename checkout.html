@@ -449,7 +449,8 @@
               document.getElementById('slider-max-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
             }
             document.getElementById('std-price-disp').textContent = 'Rs. ' + basePrice.toLocaleString();
-            updateSliderPrice();
+            document.getElementById('total-price').textContent = 'Rs. ' + basePrice.toLocaleString();
+            document.getElementById('pay-submit-btn').innerHTML = '<span class="material-symbols-outlined">lock</span> Pay Rs. ' + basePrice.toLocaleString();
           } else {
             alert('Your cart is empty');
             window.location.href = 'courses.html';
