@@ -1160,6 +1160,7 @@
       
       container.innerHTML = courses.map(c => {
         const isFreeTrial = c.payment_status === 'free';
+        const isPending = c.payment_status === 'pending';
         
         // Find if there's an active/upcoming live class for this course
         const activeClass = liveClassesData.find(lc => {
@@ -1172,7 +1173,9 @@
         
         // Show Upgrade button if on trial, otherwise show Live Class
         let primaryBtnHTML = '';
-        if (isFreeTrial) {
+        if (isPending) {
+          primaryBtnHTML = `<button disabled class="btn btn-disabled" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#e5e7eb; color:#9ca3af; cursor:not-allowed;">Under Review</button>`;
+        } else if (isFreeTrial) {
           primaryBtnHTML = `<a href="checkout.html?course=${c.id}" class="btn btn-primary" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background: #d29922; color:#000;"><span class="material-symbols-outlined" style="font-size:1rem; margin-right:4px;">upgrade</span> Upgrade</a>`;
         } else {
           if (isCurrentlyLive) {
@@ -1181,19 +1184,24 @@
             primaryBtnHTML = `<button disabled class="btn btn-disabled" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; background:#e5e7eb; color:#9ca3af; cursor:not-allowed;">No Class Today</button>`;
           }
         }
+
+        let startBtnHTML = isPending 
+          ? `<button disabled class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem; opacity:0.5; cursor:not-allowed;">Start Course</button>`
+          : `<a href="#" onclick="event.preventDefault(); window.startCourse('${c.id}')" class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Start Course</a>`;
           
         return `
-        <div class="course-card">
+        <div class="course-card" style="${isPending ? 'opacity:0.8; filter:grayscale(0.5);' : ''}">
           <img src="${c.thumbnail_url || 'https://via.placeholder.com/250x120'}" class="course-img" loading="lazy" decoding="async">
           <div class="course-body">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
               <div style="font-size:0.75rem; color:var(--accent); font-weight:800; text-transform:uppercase;">${c.subject || c.category}</div>
               ${isFreeTrial ? `<div style="font-size:0.65rem; background:rgba(210,153,34,0.2); color:#d29922; padding:0.1rem 0.4rem; border-radius:4px; font-weight:700;">TRIAL</div>` : ''}
+              ${isPending ? `<div style="font-size:0.65rem; background:rgba(239,68,68,0.1); color:#ef4444; padding:0.1rem 0.4rem; border-radius:4px; font-weight:700;">VERIFICATION PENDING</div>` : ''}
             </div>
             <h4 style="margin-bottom:1rem; font-size:1.1rem">${c.title}</h4>
             <div style="display:flex; gap:0.5rem;">
               ${primaryBtnHTML}
-              <a href="#" onclick="event.preventDefault(); window.startCourse('${c.id}')" class="btn btn-outline" style="flex:1; justify-content:center; padding:0.5rem; font-size:0.85rem">Start Course</a>
+              ${startBtnHTML}
             </div>
           </div>
         </div>
