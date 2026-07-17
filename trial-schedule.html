@@ -482,11 +482,14 @@
         let courseId = coursesData && coursesData.length > 0 ? coursesData[0].id : null;
 
         if (courseId) {
-          await window.supabaseClient.from('enrollments').insert({
-            user_id: user.id,
+          const { error: enrollErr } = await window.supabaseClient.from('enrollments').insert({
+            student_id: user.id,
             course_id: courseId,
-            status: 'free_trial'
+            payment_status: 'free'
           });
+          if (enrollErr && enrollErr.code !== '23505') { // Ignore unique violation if already enrolled
+            console.warn("Enrollment error:", enrollErr);
+          }
         }
 
         await window.supabaseClient.from('free_trial_requests').insert({

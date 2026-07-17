@@ -426,6 +426,25 @@ window.AthenaeumAdmin = (function() {
       try {
         const { error } = await sb.from('free_trial_requests').update({ status: newStatus }).eq('id', id);
         if (error) throw error;
+        
+        // Auto-enroll student when admin confirms
+        if (newStatus === 'confirmed') {
+          const { data: req } = await sb.from('free_trial_requests').select('user_id, course_name').eq('id', id).single();
+          if (req && req.user_id && req.course_name) {
+            const { data: courses } = await sb.from('courses').select('id').eq('title', req.course_name).limit(1);
+            if (courses && courses.length > 0) {
+              const { error: enrollErr } = await sb.from('enrollments').insert({
+                student_id: req.user_id,
+                course_id: courses[0].id,
+                payment_status: 'free'
+              });
+              if (enrollErr && enrollErr.code !== '23505') { // ignore duplicate unique constraint
+                console.warn("Could not auto-enroll:", enrollErr);
+              }
+            }
+          }
+        }
+        
         return { status: 'success' };
       } catch (err) {
         console.error("Error updating free trial:", err);
