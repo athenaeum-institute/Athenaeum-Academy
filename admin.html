@@ -1082,6 +1082,55 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+
+    /* ── FREE TRIAL REAL-TIME NOTIFICATION ── */
+    @keyframes trialPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+      70%  { box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
+    }
+    .trial-badge-pulse {
+      animation: trialPulse 1.2s ease-out infinite;
+    }
+
+    #trial-alert-banner {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99999;
+      background: linear-gradient(135deg, #005088, #00D2FF);
+      color: #fff;
+      padding: 1rem 1.75rem;
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 210, 255, 0.45);
+      font-size: 1rem;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      gap: .85rem;
+      cursor: pointer;
+      max-width: 480px;
+      width: 90%;
+      animation: slideDown .4s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    #trial-alert-banner .alert-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    #trial-alert-banner .alert-close {
+      margin-left: auto;
+      font-size: 1.2rem;
+      opacity: .7;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    #trial-alert-banner .alert-close:hover { opacity: 1; }
   </style>
 
   <!-- Vercel Speed Insights -->
@@ -3454,6 +3503,93 @@
       }
     }
 
+    // ── REAL-TIME FREE TRIAL NOTIFICATIONS ──
+    function subscribeToFreeTrialRequests() {
+      try {
+        const channel = window.supabaseClient
+          .channel('admin-free-trial-watch')
+          .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'free_trial_requests' },
+            (payload) => {
+              const req = payload.new;
+              if (!req) return;
+
+              // 1. Update badge count
+              const badge = document.getElementById('trial-badge');
+              const currentCount = parseInt(badge.textContent) || 0;
+              const newCount = currentCount + 1;
+              badge.textContent = newCount;
+              badge.style.display = 'inline-block';
+              badge.classList.add('trial-badge-pulse');
+              setTimeout(() => badge.classList.remove('trial-badge-pulse'), 6000);
+
+              // 2. Show persistent alert banner
+              showTrialAlertBanner(req);
+
+              // 3. Also show the standard toast
+              showToast(`🎁 New Free Trial: ${req.full_name} — ${req.course_name}`, 'success');
+
+              // 4. Play a subtle notification beep
+              try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+              } catch (e) { /* audio not supported */ }
+            }
+          )
+          .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+              console.log('[Admin] Subscribed to free trial real-time notifications ✅');
+            }
+          });
+      } catch (err) {
+        console.warn('[Admin] Could not subscribe to free trial realtime:', err);
+      }
+    }
+
+    function showTrialAlertBanner(req) {
+      let banner = document.getElementById('trial-alert-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'trial-alert-banner';
+        document.body.appendChild(banner);
+      }
+      banner.innerHTML = `
+        <span class="alert-icon">🎁</span>
+        <div>
+          <div style="font-size:.8rem; opacity:.85; margin-bottom:.15rem;">New Free Trial Request</div>
+          <div>${req.full_name} wants to try <strong>${req.course_name}</strong></div>
+          <div style="font-size:.8rem; opacity:.8; margin-top:.2rem;">📞 ${req.phone} &nbsp;|&nbsp; ⏰ ${req.preferred_time}</div>
+        </div>
+        <span class="alert-close" onclick="dismissTrialBanner()">✕</span>
+      `;
+      banner.style.display = 'flex';
+      // Auto-dismiss after 15 seconds; clicking navigates to free trials panel
+      banner.onclick = (e) => {
+        if (!e.target.classList.contains('alert-close')) {
+          showPanel('freetrials');
+          loadFreeTrials();
+        }
+        dismissTrialBanner();
+      };
+      clearTimeout(window._trialBannerTimer);
+      window._trialBannerTimer = setTimeout(dismissTrialBanner, 15000);
+    }
+
+    function dismissTrialBanner() {
+      const banner = document.getElementById('trial-alert-banner');
+      if (banner) banner.style.display = 'none';
+    }
+
     // ── AUTO-DETECT SESSION ──
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { session } } = await window.supabaseClient.auth.getSession();
@@ -3471,6 +3607,7 @@
       loadLiveClasses();
       loadFreeTrials();
       loadTeacherCodes();
+      subscribeToFreeTrialRequests();
       showToast('Auto-logged in as Admin 👋', 'success');
     });
   </script>
