@@ -382,8 +382,12 @@ window.AthenaeumAdmin = (function() {
       const sb = getClient();
       if (!sb) return { status: 'error' };
       try {
-        // Use RPC to bypass RLS securely
-        const { data, error } = await sb.rpc('admin_delete_live_class', { class_id: id });
+        const { data: sessionData } = await sb.auth.getSession();
+        const caller_id = sessionData?.session?.user?.id;
+        if (!caller_id) throw new Error('No active session found.');
+
+        // Use RPC to bypass RLS securely, passing caller_id explicitly
+        const { data, error } = await sb.rpc('admin_delete_live_class', { class_id: id, caller_id: caller_id });
         
         if (error) {
           if (error.message.includes('Could not find function')) {
