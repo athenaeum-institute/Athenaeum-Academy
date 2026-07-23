@@ -23,6 +23,9 @@
   <script src="supabase-teacher.js"></script>
   <script src="announcements.js"></script>
   <script src="security.js"></script>
+  <!-- Intro.js for guided tour -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@7/minified/introjs.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/intro.js@7/minified/intro.min.js"></script>
   <style>
     :root {
       --bg: #0d1117;
@@ -621,31 +624,31 @@
     </div>
 
     <div class="nav-section">Main Menu</div>
-    <div class="nav-item active" onclick="showPanel('overview')">
+    <div id="tour-t-overview" class="nav-item active" onclick="showPanel('overview')">
       <span class="material-symbols-outlined">dashboard</span>
       <span>Overview</span>
     </div>
-    <div class="nav-item" onclick="showPanel('courses')">
+    <div id="tour-t-courses" class="nav-item" onclick="showPanel('courses')">
       <span class="material-symbols-outlined">menu_book</span>
       <span>My Courses</span>
     </div>
-    <div class="nav-item" onclick="showPanel('students')">
+    <div id="tour-t-students" class="nav-item" onclick="showPanel('students')">
       <span class="material-symbols-outlined">groups</span>
       <span>My Students</span>
     </div>
-    <div class="nav-item" onclick="showPanel('live')">
+    <div id="tour-t-live" class="nav-item" onclick="showPanel('live')">
       <span class="material-symbols-outlined">videocam</span>
       <span>Live Classes</span>
     </div>
-    <div class="nav-item" onclick="showPanel('announcements')">
+    <div id="tour-t-announce" class="nav-item" onclick="showPanel('announcements')">
       <span class="material-symbols-outlined">campaign</span>
       <span>Announcements</span>
     </div>
-    <div class="nav-item" onclick="showPanel('materials')">
+    <div id="tour-t-materials" class="nav-item" onclick="showPanel('materials')">
       <span class="material-symbols-outlined">folder_shared</span>
       <span>Course Materials</span>
     </div>
-    <div class="nav-item" onclick="showPanel('exams')">
+    <div id="tour-t-exams" class="nav-item" onclick="showPanel('exams')">
       <span class="material-symbols-outlined">quiz</span>
       <span>Mock Exams</span>
     </div>
@@ -672,6 +675,9 @@
   <main class="main">
     <header class="topbar">
       <div class="topbar-title" id="topbar-title">Overview</div>
+      <button onclick="startTeacherTour()" title="Portal Guide" style="display:inline-flex; align-items:center; gap:0.4rem; background:linear-gradient(135deg,#005088,#00D2FF); color:#fff; border:none; border-radius:50px; padding:0.35rem 0.9rem; font-weight:700; font-size:0.78rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,210,255,0.2); font-family:'Urbanist',sans-serif; margin-left:auto;">
+        <span class="material-symbols-outlined" style="font-size:0.95rem;">help</span> Guide
+      </button>
     </header>
 
     <div class="page-content">
@@ -2159,6 +2165,149 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="athenaeum-assistant.js?v=2" defer></script>
+
+  <!-- ── TEACHER PORTAL GUIDED TOUR ─────────────────── -->
+  <style>
+    .introjs-tooltip {
+      background: linear-gradient(135deg, #0d1117, #161b22) !important;
+      border: 1px solid rgba(0,210,255,0.25) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,210,255,0.1) !important;
+      color: #e6edf3 !important;
+      font-family: 'Urbanist', sans-serif !important;
+      max-width: 340px !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    .introjs-tooltip-header {
+      background: linear-gradient(90deg, #005088, #00D2FF) !important;
+      padding: 1rem 1.25rem 0.75rem !important;
+    }
+    .introjs-tooltip-title {
+      color: #fff !important;
+      font-size: 1rem !important;
+      font-weight: 800 !important;
+      font-family: 'Urbanist', sans-serif !important;
+    }
+    .introjs-tooltiptext {
+      padding: 1rem 1.25rem !important;
+      font-size: 0.9rem !important;
+      line-height: 1.6 !important;
+      color: #8b949e !important;
+    }
+    .introjs-tooltiptext strong { color: #00D2FF !important; }
+    .introjs-tooltipbuttons {
+      border-top: 1px solid #30363d !important;
+      padding: 0.75rem 1.25rem !important;
+      display: flex !important;
+      gap: 0.5rem !important;
+      justify-content: flex-end !important;
+      background: rgba(0,0,0,0.4) !important;
+    }
+    .introjs-button {
+      border-radius: 50px !important;
+      font-family: 'Urbanist', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 0.82rem !important;
+      padding: 0.4rem 1rem !important;
+      border: none !important;
+      cursor: pointer !important;
+      text-shadow: none !important;
+    }
+    .introjs-nextbutton {
+      background: linear-gradient(135deg, #005088, #00D2FF) !important;
+      color: #fff !important;
+      box-shadow: 0 2px 8px rgba(0,210,255,0.3) !important;
+    }
+    .introjs-prevbutton {
+      background: #21262d !important;
+      color: #8b949e !important;
+      border: 1px solid #30363d !important;
+    }
+    .introjs-skipbutton { color: #484f58 !important; font-size: 1.2rem !important; }
+    .introjs-bullets ul li a { background: #30363d !important; }
+    .introjs-bullets ul li a.active { background: #00D2FF !important; width: 20px !important; }
+    .introjs-helperLayer {
+      border-radius: 10px !important;
+      box-shadow: rgba(0,0,0,0.85) 0 0 0 5000px, 0 0 0 3px rgba(0,210,255,0.5) !important;
+    }
+    .introjs-arrow.top { border-bottom-color: #005088 !important; }
+    .introjs-arrow.right { border-left-color: #161b22 !important; }
+    .introjs-arrow.left { border-right-color: #161b22 !important; }
+    .introjs-arrow.bottom { border-top-color: #161b22 !important; }
+  </style>
+
+  <script>
+    function startTeacherTour() {
+      introJs().setOptions({
+        steps: [
+          {
+            title: '👋 Athenaeum Teacher Portal',
+            intro: '<p style="margin:0">Is guided tour mein aapka <strong>Teacher Portal step-by-step</strong> explain kiya jayega.<br><br>Shuroo karte hain! 🚀</p>',
+            element: document.querySelector('.sidebar')
+          },
+          {
+            title: '📊 Overview',
+            intro: '<p style="margin:0">Ye aapka <strong>main dashboard</strong> hai. Total courses, students, lessons aur rating ek jagah par!</p>',
+            element: document.querySelector('#tour-t-overview')
+          },
+          {
+            title: '📚 My Courses',
+            intro: '<p style="margin:0">Yahan apne <strong>courses manage</strong> karein. Naya course banayein, modules aur lessons add karein, content upload karein.</p>',
+            element: document.querySelector('#tour-t-courses')
+          },
+          {
+            title: '👥 My Students',
+            intro: '<p style="margin:0">Apne <strong>enrolled students</strong> dekhen — unka naam, course aur plan type. Progress track karein.</p>',
+            element: document.querySelector('#tour-t-students')
+          },
+          {
+            title: '🎥 Live Classes',
+            intro: '<p style="margin:0">Yahan <strong>live sessions schedule</strong> karein. Zoom/Meet link add karein, time set karein aur students ko notify karein.</p>',
+            element: document.querySelector('#tour-t-live')
+          },
+          {
+            title: '📢 Announcements',
+            intro: '<p style="margin:0">Students ko <strong>koi bhi important update</strong> bhejein. Ye announcement seedha unke dashboard par dikhai degi.</p>',
+            element: document.querySelector('#tour-t-announce')
+          },
+          {
+            title: '📁 Course Materials',
+            intro: '<p style="margin:0">Notes, slides, PDFs — <strong>course materials upload</strong> karein taakay students download kar sakein.</p>',
+            element: document.querySelector('#tour-t-materials')
+          },
+          {
+            title: '📝 Mock Exams',
+            intro: '<p style="margin:0"><strong>Practice exams banayein</strong>, MCQs add karein aur students ki taiyari check karein. Exam results auto-grade hote hain!</p>',
+            element: document.querySelector('#tour-t-exams')
+          },
+          {
+            title: '🎉 Sab Ready Hai!',
+            intro: '<p style="margin:0">Aap bilkul tayyar hain! <br><br>Koi cheez samajh na aaye toh upar <strong>"Guide" button</strong> dabayein — tour dobara chalu ho jayega.<br><br>Happy Teaching! 🌟</p>',
+            element: document.querySelector('.topbar')
+          }
+        ],
+        showProgress: true,
+        showBullets: true,
+        exitOnOverlayClick: false,
+        nextLabel: 'Agla →',
+        prevLabel: '← Pichla',
+        doneLabel: '✓ Shuru Karein!',
+        skipLabel: '✕',
+        scrollToElement: false
+      }).start();
+    }
+
+    // Auto-start on first visit
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        if (!localStorage.getItem('teacher_tour_done')) {
+          startTeacherTour();
+          localStorage.setItem('teacher_tour_done', '1');
+        }
+      }, 1500);
+    });
+  </script>
 </body>
 
 </html>

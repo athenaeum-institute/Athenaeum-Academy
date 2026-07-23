@@ -30,6 +30,9 @@
   <script src="supabase-student.js"></script>
   <script src="announcements.js"></script>
   <script src="security.js"></script>
+  <!-- Intro.js for guided tour -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@7/minified/introjs.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/intro.js@7/minified/intro.min.js"></script>
 
   <style>
     /* ── CUSTOM UI MODS FOR STUDENT DASHBOARD (REDESIGNED) ── */
@@ -532,14 +535,14 @@
       <a href="index.html" class="sidebar-brand" style="font-family:'Merriweather',serif">🎓 Athenaeum</a>
     </div>
     <div class="sidebar-nav">
-      <a href="dashboard-student.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span>
+      <a id="tour-overview" href="dashboard-student.html" class="nav-item active"><span class="material-symbols-outlined">dashboard</span>
         Overview</a>
-      <a href="courses.html" class="nav-item"><span class="material-symbols-outlined">menu_book</span> My Courses</a>
-      <a href="#student-materials" class="nav-item" onclick="document.getElementById('student-materials').scrollIntoView({behavior:'smooth'}); return false;"><span class="material-symbols-outlined">folder_shared</span> Course Materials</a>
-      <a href="student-live-classes.html" class="nav-item"><span class="material-symbols-outlined">videocam</span> Live
+      <a id="tour-courses" href="courses.html" class="nav-item"><span class="material-symbols-outlined">menu_book</span> My Courses</a>
+      <a id="tour-materials" href="#student-materials" class="nav-item" onclick="document.getElementById('student-materials').scrollIntoView({behavior:'smooth'}); return false;"><span class="material-symbols-outlined">folder_shared</span> Course Materials</a>
+      <a id="tour-live" href="student-live-classes.html" class="nav-item"><span class="material-symbols-outlined">videocam</span> Live
         Classes</a>
-      <a href="mock-exam.html" class="nav-item"><span class="material-symbols-outlined">quiz</span> Mock Exams</a>
-      <a href="community.html" class="nav-item"><span class="material-symbols-outlined">forum</span> Community Feed</a>
+      <a id="tour-exams" href="mock-exam.html" class="nav-item"><span class="material-symbols-outlined">quiz</span> Mock Exams</a>
+      <a id="tour-community" href="community.html" class="nav-item"><span class="material-symbols-outlined">forum</span> Community Feed</a>
     </div>
     <div class="sidebar-footer">
       <div class="user-profile">
@@ -566,6 +569,11 @@
         <a href="index.html" class="glass-btn">
           <span class="material-symbols-outlined">home</span> Home
         </a>
+
+        <!-- Tour Button -->
+        <button id="tour-btn" onclick="startStudentTour()" title="Portal Guide" style="display:inline-flex; align-items:center; gap:0.4rem; background:linear-gradient(135deg,#005088,#00D2FF); color:#fff; border:none; border-radius:50px; padding:0.4rem 1rem; font-weight:700; font-size:0.82rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,210,255,0.3); transition:all 0.2s;">
+          <span class="material-symbols-outlined" style="font-size:1rem;">help</span> Guide
+        </button>
 
         <!-- Streak -->
         <div id="streak-badge" class="badge"
@@ -1442,6 +1450,158 @@
     window.onload = init;
   </script>
   <script src="athenaeum-assistant.js?v=2" defer></script>
+
+  <!-- ── STUDENT PORTAL GUIDED TOUR ─────────────────── -->
+  <style>
+    /* Custom Tour Styling */
+    .introjs-tooltip {
+      background: linear-gradient(135deg, #0a0f1e, #001a33) !important;
+      border: 1px solid rgba(0, 210, 255, 0.3) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 20px 60px rgba(0, 210, 255, 0.15), 0 0 0 1px rgba(0,210,255,0.1) !important;
+      color: #e0f7ff !important;
+      font-family: 'Urbanist', sans-serif !important;
+      max-width: 340px !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    .introjs-tooltip-header {
+      background: linear-gradient(90deg, #005088, #00D2FF) !important;
+      padding: 1rem 1.25rem 0.75rem !important;
+      border-bottom: none !important;
+    }
+    .introjs-tooltip-title {
+      color: #fff !important;
+      font-size: 1rem !important;
+      font-weight: 800 !important;
+      font-family: 'Urbanist', sans-serif !important;
+    }
+    .introjs-tooltiptext {
+      padding: 1rem 1.25rem !important;
+      font-size: 0.9rem !important;
+      line-height: 1.6 !important;
+      color: #c8e6ff !important;
+    }
+    .introjs-tooltipbuttons {
+      border-top: 1px solid rgba(0,210,255,0.15) !important;
+      padding: 0.75rem 1.25rem !important;
+      display: flex !important;
+      gap: 0.5rem !important;
+      justify-content: flex-end !important;
+      background: rgba(0,0,0,0.3) !important;
+    }
+    .introjs-button {
+      border-radius: 50px !important;
+      font-family: 'Urbanist', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 0.82rem !important;
+      padding: 0.4rem 1rem !important;
+      border: none !important;
+      cursor: pointer !important;
+      transition: all 0.2s !important;
+      text-shadow: none !important;
+    }
+    .introjs-nextbutton {
+      background: linear-gradient(135deg, #005088, #00D2FF) !important;
+      color: #fff !important;
+      box-shadow: 0 2px 8px rgba(0,210,255,0.3) !important;
+    }
+    .introjs-nextbutton:hover { opacity: 0.85 !important; }
+    .introjs-prevbutton {
+      background: rgba(255,255,255,0.08) !important;
+      color: #c8e6ff !important;
+      border: 1px solid rgba(0,210,255,0.2) !important;
+    }
+    .introjs-skipbutton {
+      color: rgba(200,230,255,0.5) !important;
+      font-size: 1.2rem !important;
+      line-height: 1 !important;
+    }
+    .introjs-bullets ul li a {
+      background: rgba(0,210,255,0.3) !important;
+    }
+    .introjs-bullets ul li a.active {
+      background: #00D2FF !important;
+      width: 20px !important;
+    }
+    .introjs-helperLayer {
+      border-radius: 10px !important;
+      box-shadow: rgba(0,0,0,0.7) 0 0 0 5000px, 0 0 0 3px rgba(0,210,255,0.6) !important;
+    }
+    .introjs-arrow { border-bottom-color: #001a33 !important; }
+    .introjs-arrow.top { border-bottom-color: #005088 !important; }
+    .introjs-arrow.right { border-left-color: #001a33 !important; }
+    .introjs-arrow.left { border-right-color: #001a33 !important; }
+    .introjs-arrow.bottom { border-top-color: #001a33 !important; }
+  </style>
+
+  <script>
+    function startStudentTour() {
+      introJs().setOptions({
+        steps: [
+          {
+            title: '👋 Athenaeum Student Portal',
+            intro: '<p style="margin:0">Apke is guided tour mein <strong>aapka portal step-by-step</strong> explain kiya jayega.<br><br>Shuroo karte hain! 🚀</p>',
+            element: document.querySelector('#sidebar')
+          },
+          {
+            title: '📊 Overview',
+            intro: '<p style="margin:0">Ye <strong>aapka Dashboard</strong> hai. Yahan aapko apni stats, ongoing courses, recent announcements aur streak nazar aayenge.</p>',
+            element: document.querySelector('#tour-overview')
+          },
+          {
+            title: '📚 My Courses',
+            intro: '<p style="margin:0">Yahan aap apne <strong>enrolled courses</strong> dekh sakte hain. Har course ka content, lectures aur progress track karein.</p>',
+            element: document.querySelector('#tour-courses')
+          },
+          {
+            title: '📁 Course Materials',
+            intro: '<p style="margin:0">Teacher ke share kiye <strong>notes, slides aur resources</strong> yahan milenge. Kabhi bhi download karein aur study karein!</p>',
+            element: document.querySelector('#tour-materials')
+          },
+          {
+            title: '🎥 Live Classes',
+            intro: '<p style="margin:0"><strong>Upcoming aur ongoing live sessions</strong> yahan dikhengi. Join button se seedha class mein enter ho jayen!</p>',
+            element: document.querySelector('#tour-live')
+          },
+          {
+            title: '📝 Mock Exams',
+            intro: '<p style="margin:0">Apni taiyari check karein! <strong>Practice tests</strong> yahan hain. Exam dein, score dekhen aur improve karte rahen.</p>',
+            element: document.querySelector('#tour-exams')
+          },
+          {
+            title: '💬 Community Feed',
+            intro: '<p style="margin:0">Questions poochein, discussions karein aur <strong>dusre students se connect</strong> karein. Akele mat parhein — milkar sikhein!</p>',
+            element: document.querySelector('#tour-community')
+          },
+          {
+            title: '🎉 Sab Ready Hai!',
+            intro: '<p style="margin:0">Aap bilkul tayyar hain! <br><br>Koi bhi cheez samajh na aaye toh upar <strong>"Guide" button</strong> dabayein — tour dobara chalu ho jayega.<br><br>Happy Learning! 🌟</p>',
+            element: document.querySelector('#tour-btn')
+          }
+        ],
+        showProgress: true,
+        showBullets: true,
+        exitOnOverlayClick: false,
+        nextLabel: 'Agla →',
+        prevLabel: '← Pichla',
+        doneLabel: '✓ Shuru Karein!',
+        skipLabel: '✕',
+        tooltipClass: 'athenaeum-tour',
+        scrollToElement: false
+      }).start();
+    }
+
+    // Auto-start on first visit
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        if (!localStorage.getItem('student_tour_done')) {
+          startStudentTour();
+          localStorage.setItem('student_tour_done', '1');
+        }
+      }, 1500);
+    });
+  </script>
 </body>
 
 </html>
