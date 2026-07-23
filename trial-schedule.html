@@ -357,24 +357,7 @@
           <div id="trial-phone-error" class="error-message">Phone number is required</div>
           
           <select id="trial-course" class="trial-form-input" required>
-            <option value="" disabled selected>Select Course</option>
-            <option value="O Level Mathematics">O Level Mathematics</option>
-            <option value="O Level Physics">O Level Physics</option>
-            <option value="O Level Chemistry">O Level Chemistry</option>
-            <option value="O Level Biology">O Level Biology</option>
-            <option value="O Level English">O Level English</option>
-            <option value="A Level Mathematics">A Level Mathematics</option>
-            <option value="A Level Physics">A Level Physics</option>
-            <option value="A Level Chemistry">A Level Chemistry</option>
-            <option value="A Level Biology">A Level Biology</option>
-            <option value="Matric Mathematics">Matric Mathematics</option>
-            <option value="Matric Physics">Matric Physics</option>
-            <option value="Matric Chemistry">Matric Chemistry</option>
-            <option value="Inter Mathematics">Inter Mathematics</option>
-            <option value="Inter Physics">Inter Physics</option>
-            <option value="Inter Chemistry">Inter Chemistry</option>
-            <option value="MDCAT Preparation">MDCAT Preparation</option>
-            <option value="ECAT Preparation">ECAT Preparation</option>
+            <option value="" disabled selected>Loading courses...</option>
           </select>
           <div id="trial-course-error" class="error-message">Please select a course</div>
           
@@ -415,9 +398,37 @@
   <script>
     let courseId = null;
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
       courseId = urlParams.get('course');
+
+      const courseSelect = document.getElementById('trial-course');
+      try {
+        const { data: courses, error } = await window.supabaseClient
+          .from('courses')
+          .select('id, title')
+          .eq('is_published', true)
+          .order('title');
+
+        if (courses && courses.length > 0) {
+          courseSelect.innerHTML = '<option value="" disabled selected>Select Course</option>';
+          courses.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.title; // We keep title as the value for existing logic compatibility
+            opt.textContent = c.title;
+            // If the URL has an ID or title that matches, auto-select it
+            if (courseId && (c.id === courseId || c.title === courseId)) {
+              opt.selected = true;
+            }
+            courseSelect.appendChild(opt);
+          });
+        } else {
+          courseSelect.innerHTML = '<option value="" disabled selected>No courses available</option>';
+        }
+      } catch (err) {
+        console.error("Error loading courses:", err);
+        courseSelect.innerHTML = '<option value="" disabled selected>Select Course</option>';
+      }
     });
 
     function validateField(id, errorId) {
