@@ -382,8 +382,12 @@ window.AthenaeumAdmin = (function() {
       const sb = getClient();
       if (!sb) return { status: 'error' };
       try {
-        const { error } = await sb.from('live_classes').delete().eq('id', id);
+        // Add .select() to verify that the row was actually deleted
+        const { data, error } = await sb.from('live_classes').delete().eq('id', id).select();
         if (error) throw error;
+        if (!data || data.length === 0) {
+          return { status: 'error', message: 'Database Blocked: You do not have permission. Please run the fix-admin-delete-rls.sql script in Supabase SQL Editor.' };
+        }
         return { status: 'success' };
       } catch (err) {
         console.error("Error deleting live class:", err);
