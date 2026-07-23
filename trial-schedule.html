@@ -473,10 +473,11 @@
           return;
         }
 
+        const searchPattern = '%' + formData.courseName.replace(/\\s+/g, '%') + '%';
         const { data: coursesData } = await window.supabaseClient
           .from('courses')
           .select('id')
-          .eq('title', formData.courseName)
+          .ilike('title', searchPattern)
           .limit(1);
 
         let courseId = coursesData && coursesData.length > 0 ? coursesData[0].id : null;

@@ -431,7 +431,8 @@ window.AthenaeumAdmin = (function() {
         if (newStatus === 'confirmed') {
           const { data: req } = await sb.from('free_trial_requests').select('user_id, course_name').eq('id', id).single();
           if (req && req.user_id && req.course_name) {
-            const { data: courses } = await sb.from('courses').select('id').eq('title', req.course_name).limit(1);
+            const searchPattern = '%' + req.course_name.replace(/\\s+/g, '%') + '%';
+            const { data: courses } = await sb.from('courses').select('id').ilike('title', searchPattern).limit(1);
             if (courses && courses.length > 0) {
               const { error: enrollErr } = await sb.from('enrollments').insert({
                 student_id: req.user_id,
