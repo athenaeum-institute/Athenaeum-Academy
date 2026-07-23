@@ -250,12 +250,13 @@ class AthenaeumTeacherService {
     const tid = await this.getTeacherId();
     examData.teacher_id = tid;
     
-    if (examData.id) {
-      const { data, error } = await this.client.from('exams').update(examData).eq('id', examData.id).select().single();
+    if (!examData.id) {
+      delete examData.id;
+      const { data, error } = await this.client.from('exams').insert([examData]).select().single();
       if (error) throw error;
       return data;
     } else {
-      const { data, error } = await this.client.from('exams').insert([examData]).select().single();
+      const { data, error } = await this.client.from('exams').update(examData).eq('id', examData.id).select().single();
       if (error) throw error;
       return data;
     }
@@ -268,12 +269,13 @@ class AthenaeumTeacherService {
   }
 
   async saveQuestion(qData) {
-    if (qData.id) {
-      const { data, error } = await this.client.from('exam_questions').update(qData).eq('id', qData.id).select().single();
+    if (!qData.id) {
+      delete qData.id;
+      const { data, error } = await this.client.from('exam_questions').insert([qData]).select().single();
       if (error) throw error;
       return data;
     } else {
-      const { data, error } = await this.client.from('exam_questions').insert([qData]).select().single();
+      const { data, error } = await this.client.from('exam_questions').update(qData).eq('id', qData.id).select().single();
       if (error) throw error;
       return data;
     }
