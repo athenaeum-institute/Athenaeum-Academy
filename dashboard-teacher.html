@@ -1642,12 +1642,23 @@
                     <td>${e.courses?.title || 'Unknown'}</td>
                     <td>${e.duration_minutes} mins</td>
                     <td><span class="badge ${e.is_published ? 'badge-green' : 'badge-gray'}">${e.is_published ? 'Published' : 'Draft'}</span></td>
-                    <td>
-                        <button class="btn btn-ghost btn-sm" onclick="manageExamContent('${e.id}','${e.title.replace(/'/g, "\\'")}('${e.id}')">Questions</button>
+                    <td style="display:flex; gap:0.5rem; justify-content:center;">
+                        <button class="btn btn-ghost btn-sm" onclick="manageExamContent('${e.id}','${e.title.replace(/'/g, "\\'")}')">Questions</button>
+                        <button class="btn btn-ghost btn-sm" onclick="togglePublishExam('${e.id}', ${e.is_published})">
+                            ${e.is_published ? 'Unpublish' : 'Publish'}
+                        </button>
                     </td>
                 </tr>
             `).join('');
       } catch (e) { tb.innerHTML = '<tr><td colspan="5">Error</td></tr>'; }
+    }
+
+    async function togglePublishExam(eid, currentStatus) {
+      try {
+        await svc.saveExam({ id: eid, is_published: !currentStatus });
+        showToast('Exam ' + (!currentStatus ? 'Published' : 'Unpublished'));
+        loadExams();
+      } catch (e) { showToast(e.message, 'error'); }
     }
     function openExamModal() {
       document.getElementById('e-id').value = '';
