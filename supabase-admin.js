@@ -382,12 +382,20 @@ window.AthenaeumAdmin = (function() {
       const sb = getClient();
       if (!sb) return { status: 'error' };
       try {
-        // Add .select() to verify that the row was actually deleted
-        const { data, error } = await sb.from('live_classes').delete().eq('id', id).select();
-        if (error) throw error;
-        if (!data || data.length === 0) {
-          return { status: 'error', message: 'Database Blocked: You do not have permission. Please run the fix-admin-delete-rls.sql script in Supabase SQL Editor.' };
+        // Use RPC to bypass RLS securely
+        const { data, error } = await sb.rpc('admin_delete_live_class', { class_id: id });
+        
+        if (error) {
+          if (error.message.includes('Could not find function')) {
+            return { status: 'error', message: 'Function missing! You MUST run the force-delete-rpc.sql script in Supabase SQL Editor.' };
+          }
+          throw error;
         }
+        
+        if (data === false) {
+           return { status: 'error', message: 'Access Denied by RPC. You are not recognized as an admin.' };
+        }
+        
         return { status: 'success' };
       } catch (err) {
         console.error("Error deleting live class:", err);
