@@ -195,8 +195,8 @@ class AthenaeumTeacherService {
         course_title: courseMap[e.course_id],
         student: {
           full_name: profileMap[e.student_id]?.full_name || 'Unknown',
-          plan_type: profileMap[e.student_id]?.plan_type || 'trial',
-          email: 'Hidden (Privacy)' // Teachers cannot directly query auth.users email
+          plan_type: e.payment_status || e.status || 'trial', // Use enrollment's own payment_status
+          email: 'Hidden (Privacy)'
         }
       }));
     } catch (err) {
